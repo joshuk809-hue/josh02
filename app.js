@@ -1,4 +1,4 @@
-/* L'Hamburger del Contadino — fidelity card + CRM mock.
+/* Hamburgheria del Contadino — fidelity card + CRM mock.
  * All money is stored as integer cents so totals never drift.
  * Data lives in localStorage; the first run seeds a deterministic demo dataset. */
 (() => {
@@ -422,7 +422,7 @@
           </select>
           <div class="wallet">
             <div class="wallet-top">
-              <div class="wallet-brand">L'Hamburger<br>del Contadino<small>CARTA FEDELTÀ</small></div>
+              <div class="wallet-brand">Hamburgheria<br>del Contadino<small>CARTA FEDELTÀ</small></div>
               <span class="wallet-tier">${s.tier.name}</span>
             </div>
             <div class="wallet-points"><b class="num">${intFmt.format(s.points)}</b><span>points</span></div>
@@ -603,7 +603,7 @@
     const id = cardIdFrom(text);
     const c = id && customerById(id);
     if (!c) {
-      scanMsg(id ? `Card ${id} is not registered. Enrol the customer in the CRM tab.` : `That ${source} holds no L'Hamburger del Contadino card.`, 'err');
+      scanMsg(id ? `Card ${id} is not registered. Enrol the customer in the CRM tab.` : `That ${source} holds no Hamburgheria del Contadino card.`, 'err');
       return false;
     }
     ui.tillCustomer = c.id;

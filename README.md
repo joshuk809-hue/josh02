@@ -1,4 +1,4 @@
-# L'Hamburger del Contadino — Fidelity card & CRM (mock)
+# Hamburgheria del Contadino — Fidelity card & CRM (mock)
 
 A working, self-contained mock of a QR loyalty card with a customer tracker for a local burger restaurant.
 The QR on each card encodes the restaurant's fidelity link plus the card number:
@@ -43,7 +43,7 @@ All amounts are stored as integer cents, so totals are exact. Each receipt also 
 
 Third-party code: [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) (MIT) and [jsQR](https://github.com/cozmo/jsQR) (Apache-2.0, license in `vendor/`).
 
-## Official fidelity QR — Hamburgeria di Chiari
+## Official fidelity QR — Hamburgheria del Contadino
 
 The ready-to-print files are in `qr/`. They link to the fidelity section at
 `https://lhamburgerdelcontadino.plateform.app/frontpage/fidelity`.

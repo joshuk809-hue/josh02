@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* Generates the official fidelity QR code for Hamburgeria di Chiari.
+/* Generates the official fidelity QR code for Hamburgheria del Contadino.
  *
  *   node tools/make-fidelity-qr.js
  *
@@ -19,7 +19,7 @@ const qrcode = require('../vendor/qrcode.js');
 const jsQR = require('../vendor/jsQR.js');
 
 const TARGET_URL = 'https://lhamburgerdelcontadino.plateform.app/frontpage/fidelity';
-const RESTAURANT = 'Hamburgeria di Chiari';
+const RESTAURANT = 'Hamburgheria del Contadino';
 const OUT = path.join(__dirname, '..', 'qr');
 const QUIET = 4; // modules of white border required by the QR spec
 const PNG_TARGET_PX = 2048;
