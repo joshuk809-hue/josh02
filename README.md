@@ -129,3 +129,28 @@ Both signing paths were tested with throwaway keys:
 Keys, certificates, signed `.pkpass` files and save links are listed in `.gitignore` so they never get committed.
 
 The fonts for the artwork are Cinzel and Cormorant Garamond, both under the SIL Open Font License (licence files in `wallet/design/fonts/`).
+
+## Contadino Club: mobile app (`mobile/`)
+
+This is an installable mobile web app (a PWA) for customers, with a staff side for the restaurant. Open `mobile/index.html`.
+For installing and offline use, serve it over HTTPS or `localhost`, for example `python3 -m http.server` and then `/mobile/`.
+Customers add it from Safari ("Aggiungi alla schermata Home") or Chrome ("Installa app"). It then opens full-screen with the crest icon and also works offline.
+
+**Customers (in Italian):**
+- **Home:** their floating contactless card, points and the next reward, progress to the next tier, the next event, the latest message, and *Il tuo solito* (favourite dish, side, drink and dessert).
+- **Novità:** news, events and personal invitations. Customers answer *Partecipo / Forse / Non posso* on events, and can accept offers.
+- **Messaggi:** chat with the restaurant.
+- **Carta:** contactless card, rewards and full visit history. *Simula una visita* plays a tap at the till.
+- **Profilo:** notification preferences, vegetarian and allergy notes, install instructions, and the phone notification opt-in.
+- New items arrive as an in-app banner, with unread badges on the tabs.
+
+**Staff (in English):**
+- **Dashboard:** revenue, visits, active members, items sold (30 days, 90 days or all time). Favourite meals, sides, drinks and desserts are ranked by units, with the share of their category and how many customers have each as their favourite. Also members per card and engagement per post (open rate and RSVPs).
+- **Customers:** search, and filter by card or behaviour. Each profile shows favourite meal, side, drink and dessert with counts, spend by category, monthly spend, everything ordered, allergies and recent visits, with buttons to message or invite.
+- **Messages:** inbox of customer conversations with unread counts, and replies.
+- **Send:** publish news, events (date, time, place, seats), invites or direct messages to all members, one card tier, a behaviour segment (VIP, Regular, New, At risk), **fans of a dish** (for example everyone who orders the Boscaiolo) or a single customer. It shows the audience size before sending, and the sent list tracks opens and RSVPs.
+
+**Demo notes:**
+- Everything runs on one device, with a *Cliente / Staff* switch and data in `localStorage` (sample customers and content). Switch to Staff, send something, then switch back to Cliente to watch it arrive.
+- For production, the two sides need a shared backend (for example Firebase or Supabase) and Web Push. The screens and data model are ready for that.
+- Icons: `node tools/build-mobile-icons.js`.
