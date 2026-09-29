@@ -42,3 +42,24 @@ All amounts are stored as integer cents, so totals are exact. Each receipt also 
 - Deep links: `?card=LHC-10421` or `#LHC-10421` opens that card; `#till` and `#crm` open those views.
 
 Third-party code: [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) (MIT) and [jsQR](https://github.com/cozmo/jsQR) (Apache-2.0, license in `vendor/`).
+
+## Official fidelity QR — Hamburgeria di Chiari
+
+The ready-to-print files are in `qr/`. They link to the fidelity section at
+`https://lhamburgerdelcontadino.plateform.app/frontpage/fidelity`.
+
+| File | Use it for |
+|------|------------|
+| `qr/fidelity-qr.svg` | Vector QR code. Send this one to print shops; it scales to any size. |
+| `qr/fidelity-qr.png` | 2014 × 2014 px at 300 dpi (about 17 cm). For social posts, menus and digital use. |
+| `qr/fidelity-poster.pdf` | A5 counter or table card in Italian, ready to print. |
+| `qr/fidelity-poster.png` | Preview of the card. |
+
+The QR uses error-correction level H, so it still scans with up to about 30% of it damaged or stained. The generator checks that each output decodes back to the exact URL.
+To rebuild the files (for example after a change of URL or name), edit `TARGET_URL` or `RESTAURANT` in `tools/make-fidelity-qr.js` and run:
+
+```
+node tools/make-fidelity-qr.js
+```
+
+Print the QR at least 2 × 2 cm, and keep the white border around it.
