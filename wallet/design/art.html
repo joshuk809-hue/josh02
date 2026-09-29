@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Wallet artwork</title>
+<!-- Rendered headlessly by tools/build-wallet-passes.js: it calls window.renderArt(tier, kind)
+     at the exact pixel size of each wallet image. Open in a browser with
+     ?tier=riserva&kind=strip to preview one piece. -->
+<style>
+  @font-face { font-family: "Cinzel"; font-weight: 500; src: url("fonts/cinzel-latin-500-normal.woff2") format("woff2"); }
+  @font-face { font-family: "Cinzel"; font-weight: 600; src: url("fonts/cinzel-latin-600-normal.woff2") format("woff2"); }
+  @font-face { font-family: "Cormorant Garamond"; font-weight: 500; src: url("fonts/cormorant-garamond-latin-500-normal.woff2") format("woff2"); }
+  @font-face { font-family: "Cormorant Garamond"; font-weight: 600; src: url("fonts/cormorant-garamond-latin-600-normal.woff2") format("woff2"); }
+  @font-face { font-family: "Cormorant Garamond"; font-weight: 500; font-style: italic; src: url("fonts/cormorant-garamond-latin-500-italic.woff2") format("woff2"); }
+  @font-face { font-family: "Cormorant Garamond"; font-weight: 600; font-style: italic; src: url("fonts/cormorant-garamond-latin-600-italic.woff2") format("woff2"); }
+  html, body { margin: 0; padding: 0; background: transparent; overflow: hidden; }
+  svg { display: block; }
+</style>
+</head>
+<body>
+<div id="art"></div>
+<script>
+(() => {
+  const SERIF = '"Cormorant Garamond", "Liberation Serif", serif';
+  const CAPS = '"Cinzel", "Liberation Serif", serif';
+  let uid = 0;
+  const id = (p) => `${p}${++uid}`;
+
+  // ---------- Motifs ----------
+
+  // Wheat ear: stem plus alternating kernels, drawn along a direction.
+  function wheatEar(x, y, angle, len, stroke, sw) {
+    const rad = (angle * Math.PI) / 180;
+    const dx = Math.sin(rad), dy = -Math.cos(rad);
+    const px = Math.cos(rad), py = Math.sin(rad);
+    let s = `<path d="M${x} ${y} Q${x + dx * len * 0.5 + px * len * 0.04} ${y + dy * len * 0.5 + py * len * 0.04} ${x + dx * len} ${y + dy * len}" fill="none" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round"/>`;
+    const kernels = 7;
+    const k = len * 0.085; // kernel length
+    for (let i = 0; i < kernels; i++) {
+      const t = 0.42 + (i / kernels) * 0.54;
+      const cx = x + dx * len * t, cy = y + dy * len * t;
+      const size = k * (1 - i * 0.055);
+      for (const side of [-1, 1]) {
+        const a = angle + side * 28;
+        const ox = cx + px * side * size * 0.45, oy = cy + py * side * size * 0.45;
+        s += `<ellipse cx="${ox}" cy="${oy}" rx="${size * 0.3}" ry="${size * 0.62}" transform="rotate(${a} ${ox} ${oy})" fill="none" stroke="${stroke}" stroke-width="${sw}"/>`;
+      }
+    }
+    // awns
+    const tipx = x + dx * len, tipy = y + dy * len;
+    s += `<path d="M${tipx} ${tipy} l${dx * k * 1.2} ${dy * k * 1.2}" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round"/>`;
+    return s;
+  }
+
+  // Sprout: a stem with two opening leaves.
+  function sprout(x, y, h, stroke, sw, fill) {
+    const top = y - h;
+    return `
+      <path d="M${x} ${y} C${x - h * 0.04} ${y - h * 0.45} ${x + h * 0.05} ${y - h * 0.7} ${x} ${top}" fill="none" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round"/>
+      <path d="M${x} ${y - h * 0.62} C${x - h * 0.12} ${y - h * 0.9} ${x - h * 0.5} ${y - h * 0.95} ${x - h * 0.62} ${y - h * 0.78} C${x - h * 0.45} ${y - h * 0.6} ${x - h * 0.15} ${y - h * 0.56} ${x} ${y - h * 0.62}Z" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>
+      <path d="M${x} ${y - h * 0.8} C${x + h * 0.1} ${y - h * 1.08} ${x + h * 0.42} ${y - h * 1.12} ${x + h * 0.55} ${y - h * 0.97} C${x + h * 0.4} ${y - h * 0.8} ${x + h * 0.14} ${y - h * 0.75} ${x} ${y - h * 0.8}Z" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>
+      <path d="M${x - h * 0.05} ${y - h * 0.64} Q${x - h * 0.3} ${y - h * 0.74} ${x - h * 0.55} ${y - h * 0.78}" fill="none" stroke="${stroke}" stroke-width="${sw * 0.6}" opacity=".7"/>
+      <path d="M${x + h * 0.03} ${y - h * 0.82} Q${x + h * 0.25} ${y - h * 0.93} ${x + h * 0.5} ${y - h * 0.96}" fill="none" stroke="${stroke}" stroke-width="${sw * 0.6}" opacity=".7"/>`;
+  }
+
+  // Ploughed-field furrows: gently curved parallel lines receding to a horizon.
+  function furrows(w, h, x0, stroke, count, sw, opacity) {
+    let s = '';
+    for (let i = 0; i < count; i++) {
+      const t = i / (count - 1);
+      const y = h * 0.52 + t * t * h * 0.62;
+      s += `<path d="M${x0} ${y + h * 0.1} Q${x0 + (w - x0) * 0.55} ${y - h * 0.16 * (1 - t)} ${w + 4} ${y - h * 0.04}" fill="none" stroke="${stroke}" stroke-width="${sw}" opacity="${opacity * (0.45 + t * 0.55)}"/>`;
+    }
+    return s;
+  }
+
+  // Guilloché rosette, the engraved pattern of banknotes and fine watches.
+  function guilloche(cx, cy, R, stroke, sw, opacity) {
+    let s = '';
+    const curves = 14;
+    for (let c = 0; c < curves; c++) {
+      const phase = (c / curves) * Math.PI * 2 / 9;
+      let d = '';
+      for (let i = 0; i <= 720; i++) {
+        const t = (i / 720) * Math.PI * 2;
+        const r = R * (0.8 + 0.1 * Math.cos(9 * t + phase) + 0.035 * Math.sin(27 * t - phase * 3));
+        d += `${i ? 'L' : 'M'}${(cx + r * Math.cos(t)).toFixed(2)} ${(cy + r * Math.sin(t)).toFixed(2)}`;
+      }
+      s += `<path d="${d}Z" fill="none" stroke="${stroke}" stroke-width="${sw}" opacity="${opacity}"/>`;
+    }
+    for (const k of [0.32, 0.36, 0.98, 1.02]) {
+      s += `<circle cx="${cx}" cy="${cy}" r="${R * k}" fill="none" stroke="${stroke}" stroke-width="${sw}" opacity="${opacity * 1.3}"/>`;
+    }
+    return s;
+  }
+
+  // Crest: double ring, monogram, wheat sprig.
+  function crest(cx, cy, r, ink, bg, withBg) {
+    const g = r / 50;
+    return `
+      ${withBg ? `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${bg}"/>` : ''}
+      <circle cx="${cx}" cy="${cy}" r="${r * 0.94}" fill="none" stroke="${ink}" stroke-width="${2.2 * g}"/>
+      <circle cx="${cx}" cy="${cy}" r="${r * 0.84}" fill="none" stroke="${ink}" stroke-width="${0.9 * g}"/>
+      <text x="${cx}" y="${cy + r * 0.2}" text-anchor="middle" font-family='${CAPS}' font-weight="600" font-size="${r * 0.62}" fill="${ink}" letter-spacing="${-r * 0.02}">HC</text>
+      ${wheatEar(cx - r * 0.1, cy + r * 0.66, -62, r * 0.42, ink, 1.1 * g)}
+      ${wheatEar(cx + r * 0.1, cy + r * 0.66, 62, r * 0.42, ink, 1.1 * g)}
+      <circle cx="${cx}" cy="${cy - r * 0.56}" r="${r * 0.035}" fill="${ink}"/>`;
+  }
+
+  function foilGradient(tier, gid, x1 = '0', y1 = '0', x2 = '1', y2 = '1') {
+    const f = tier.colors.foil;
+    return `<linearGradient id="${gid}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}">${f.map((c, i) => `<stop offset="${(i / (f.length - 1)).toFixed(2)}" stop-color="${c}"/>`).join('')}</linearGradient>`;
+  }
+
+  // ---------- Compositions ----------
+
+  // Background shared by strip & hero: vertical gradient + soft light + grain.
+  function ground(tier, w, h) {
+    const c = tier.colors;
+    const bg = id('bg'), glow = id('gl'), grain = id('gr');
+    return {
+      defs: `
+        <linearGradient id="${bg}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c.bgTop}"/><stop offset="1" stop-color="${c.bgBottom}"/></linearGradient>
+        <radialGradient id="${glow}" cx="0.78" cy="0.1" r="0.8"><stop offset="0" stop-color="${c.accent}" stop-opacity=".16"/><stop offset="1" stop-color="${c.accent}" stop-opacity="0"/></radialGradient>
+        <filter id="${grain}" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .05 0"/></filter>`,
+      body: `<rect width="${w}" height="${h}" fill="url(#${bg})"/><rect width="${w}" height="${h}" fill="url(#${glow})"/><rect width="${w}" height="${h}" filter="url(#${grain})"/>`,
+    };
+  }
+
+  // Strip: Apple overlays the points (primary field) at the left, so art lives on the right.
+  // `hero` adds the tier title for Google Wallet, which puts no text over its image.
+  function banner(tier, w, h, hero) {
+    const c = tier.colors;
+    const g = ground(tier, w, h);
+    const u = h / 123; // design unit: Apple strip height in points
+    let defs = g.defs;
+    let art = '';
+    const right = w - (hero ? 78 : 70) * u;
+    const scaleArt = hero ? 0.8 : 1;
+
+    if (tier.id === 'germoglio') {
+      art += furrows(w, h, w * 0.3, c.accent, 11, 0.7 * u, 0.32);
+      art += sprout(right, h * 0.9, h * 0.62 * scaleArt, c.accent, 1.3 * u, c.accentDeep + '55');
+      if (!hero) art += sprout(right - 58 * u, h * 0.98, h * 0.34, c.accent, 1 * u, c.accentDeep + '33');
+      art += sprout(right + 46 * u, h * 1.0, h * 0.26, c.accent, 0.9 * u, c.accentDeep + '33');
+    } else if (tier.id === 'raccolto') {
+      art += furrows(w, h, w * 0.35, c.accent, 9, 0.7 * u, 0.26);
+      const ears = [[-40, -14, 0.8], [-18, -6, 0.95], [0, 0, 1.08], [18, 7, 0.95], [40, 15, 0.8]];
+      for (const [dx, a, s] of ears) art += wheatEar(right + dx * u * 0.25, h * 1.02, a, h * 0.78 * s * scaleArt, c.accent, 1.05 * u);
+      art += `<path d="M${right - 22 * u} ${h * 0.86} q${22 * u} ${-8 * u} ${44 * u} 0" fill="none" stroke="${c.accent}" stroke-width="${1.6 * u}"/>`;
+    } else {
+      const foil = id('foil');
+      defs += foilGradient(tier, foil);
+      art += guilloche(right, h * 0.5, h * 0.78 * scaleArt, `url(#${foil})`, 0.4 * u, 0.45);
+      art += `<rect x="${6 * u}" y="${6 * u}" width="${w - 12 * u}" height="${h - 12 * u}" rx="${4 * u}" fill="none" stroke="url(#${foil})" stroke-width="${0.8 * u}" opacity=".7"/>`;
+      art += `<rect x="${9 * u}" y="${9 * u}" width="${w - 18 * u}" height="${h - 18 * u}" rx="${3 * u}" fill="none" stroke="url(#${foil})" stroke-width="${0.4 * u}" opacity=".45"/>`;
+      art += crest(right, h * 0.5, h * 0.3 * scaleArt, `url(#${foil})`, c.background, true);
+    }
+
+    let title = '';
+    if (hero) {
+      const fill = tier.colors.foil ? `url(#${(() => { const f = id('tf'); defs += foilGradient(tier, f, '0', '0', '1', '0'); return f; })()})` : c.foreground;
+      title = `
+        <text x="${36 * u}" y="${h * 0.44}" font-family='${CAPS}' font-weight="500" font-size="${10 * u}" letter-spacing="${4 * u}" fill="${c.label}">CARTA FEDELTÀ</text>
+        <text x="${34 * u}" y="${h * 0.74}" font-family='${CAPS}' font-weight="600" font-size="${27 * u}" letter-spacing="${5 * u}" fill="${fill}">${tier.name.toUpperCase()}</text>
+        <text x="${36 * u}" y="${h * 0.88}" font-family='${SERIF}' font-style="italic" font-weight="500" font-size="${11 * u}" fill="${c.foreground}" opacity=".8">${tier.motto}</text>`;
+    }
+
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><defs>${defs}</defs>${g.body}${art}${title}</svg>`;
+  }
+
+  // Apple logo slot (160×50 pt): crest + two-line wordmark, transparent.
+  function logo(tier, w, h) {
+    const c = tier.colors;
+    const u = h / 50;
+    let defs = '';
+    let ink = c.foreground;
+    if (tier.colors.foil) { const f = id('lf'); defs = foilGradient(tier, f, '0', '0', '1', '0'); ink = `url(#${f})`; }
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><defs>${defs}</defs>
+      ${crest(20 * u, 25 * u, 18 * u, ink, 'none', false)}
+      <text x="${45 * u}" y="${21 * u}" font-family='${CAPS}' font-weight="600" font-size="${10.2 * u}" letter-spacing="${1.3 * u}" fill="${ink}">HAMBURGHERIA</text>
+      <text x="${45.5 * u}" y="${37 * u}" font-family='${SERIF}' font-style="italic" font-weight="600" font-size="${15.5 * u}" fill="${c.foreground}">del Contadino</text>
+    </svg>`;
+  }
+
+  // Square mark on the tier colour: Apple icon (29 pt) and Google program logo.
+  function mark(tier, w, h, round) {
+    const c = tier.colors;
+    let defs = '';
+    let ink = c.accent;
+    if (tier.colors.foil) { const f = id('mf'); defs = foilGradient(tier, f); ink = `url(#${f})`; }
+    const bg = round ? `<circle cx="${w / 2}" cy="${h / 2}" r="${w / 2}" fill="${c.background}"/>` : `<rect width="${w}" height="${h}" fill="${c.background}"/>`;
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><defs>${defs}</defs>${bg}${crest(w / 2, h / 2, w * 0.4, ink, c.background, false)}</svg>`;
+  }
+
+  window.renderArt = (tier, kind, w, h) => {
+    const el = document.getElementById('art');
+    if (kind === 'strip') el.innerHTML = banner(tier, w, h, false);
+    else if (kind === 'hero') el.innerHTML = banner(tier, w, h, true);
+    else if (kind === 'logo') el.innerHTML = logo(tier, w, h);
+    else if (kind === 'icon') el.innerHTML = mark(tier, w, h, false);
+    else if (kind === 'google-logo') el.innerHTML = mark(tier, w, h, false);
+    else throw new Error(`unknown kind ${kind}`);
+    const faces = ['500 12px Cinzel', '600 12px Cinzel', '500 12px "Cormorant Garamond"', 'italic 500 12px "Cormorant Garamond"', 'italic 600 12px "Cormorant Garamond"'];
+    return Promise.all(faces.map((f) => document.fonts.load(f))).then(() => document.fonts.ready).then(() => true);
+  };
+})();
+</script>
+</body>
+</html>

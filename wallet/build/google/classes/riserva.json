@@ -1,0 +1,51 @@
+{
+  "id": "ISSUER_ID.hdc_fidelity_riserva",
+  "issuerName": "Hamburgheria del Contadino",
+  "programName": "Carta Fedeltà · Riserva",
+  "programLogo": {
+    "sourceUri": {
+      "uri": "https://YOUR-HOST/wallet/art/riserva/google-logo.png"
+    },
+    "contentDescription": {
+      "defaultValue": {
+        "language": "it-IT",
+        "value": "Hamburgheria del Contadino logo"
+      }
+    }
+  },
+  "heroImage": {
+    "sourceUri": {
+      "uri": "https://YOUR-HOST/wallet/art/riserva/hero.png"
+    },
+    "contentDescription": {
+      "defaultValue": {
+        "language": "it-IT",
+        "value": "Carta Riserva"
+      }
+    }
+  },
+  "hexBackgroundColor": "#0e0d0b",
+  "rewardsTier": "Riserva",
+  "rewardsTierLabel": "Livello",
+  "accountNameLabel": "Socio",
+  "accountIdLabel": "Carta",
+  "countryCode": "IT",
+  "reviewStatus": "UNDER_REVIEW",
+  "multipleDevicesAndHoldersAllowedStatus": "ONE_USER_ALL_DEVICES",
+  "homepageUri": {
+    "uri": "https://lhamburgerdelcontadino.plateform.app/frontpage/fidelity",
+    "description": "Sezione fedeltà"
+  },
+  "textModulesData": [
+    {
+      "id": "perks",
+      "header": "Vantaggi Riserva",
+      "body": "1,5 punti per ogni euro · Tavolo riservato, senza attesa · Degustazione privata del nuovo menu · Un calice della casa ad ogni visita"
+    },
+    {
+      "id": "rewards",
+      "header": "Premi",
+      "body": "Patatine rustiche: 80 pt · Tiramisù della nonna: 120 pt · Il Contadino: 200 pt"
+    }
+  ]
+}

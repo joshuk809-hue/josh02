@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!--ARTIFACT-START-->
+<title>Contadino Wallet Cards</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600&display=swap">
+<style>
+:root {
+  color-scheme: dark;
+  --ground: #0f0e0c;
+  --panel: #171512;
+  --line: #2b2721;
+  --ink: #efe8d8;
+  --ink-2: #b9b09c;
+  --muted: #847b69;
+  --gold: #d9bc72;
+  --caps: "Cinzel", "Trajan Pro", Georgia, serif;
+  --serif: "Cormorant Garamond", Garamond, Georgia, serif;
+  --sans: "Inter", -apple-system, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+  --sf: -apple-system, "SF Pro Text", "Inter", "Segoe UI", sans-serif;
+  --roboto: "Google Sans", Roboto, "Inter", "Segoe UI", sans-serif;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--ground); color: var(--ink); font: 15px/1.55 var(--sans); -webkit-font-smoothing: antialiased; }
+.shell { max-width: 1180px; margin: 0 auto; padding-inline: 16px; padding-block: 40px 64px; }
+h1, h2, h3 { margin: 0; font-weight: 500; text-wrap: balance; }
+p { margin: 0; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+header { display: grid; gap: 14px; max-width: 760px; margin-bottom: 36px; }
+.eyebrow { font-family: var(--caps); font-size: .78rem; letter-spacing: .32em; color: var(--gold); }
+h1 { font-family: var(--serif); font-size: clamp(2.3rem, 5vw, 3.6rem); line-height: 1.02; font-weight: 500; }
+h1 em { color: var(--gold); }
+.lede { color: var(--ink-2); font-size: 1.02rem; max-width: 62ch; }
+
+.switch { display: inline-flex; gap: 2px; padding: 3px; border: 1px solid var(--line); border-radius: 999px; margin-bottom: 26px; }
+.switch button { border: 0; background: transparent; color: var(--ink-2); font: 500 .88rem var(--sans); padding: 8px 18px; border-radius: 999px; cursor: pointer; }
+.switch button[aria-pressed="true"] { background: var(--ink); color: var(--ground); }
+
+.tiers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; align-items: start; }
+.tier-col { display: flex; flex-direction: column; gap: 18px; }
+.tier-meta h2 { font-family: var(--caps); font-size: 1.35rem; letter-spacing: .16em; }
+.tier-meta .who { font-size: .8rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+.tier-meta .motto { font-family: var(--serif); font-style: italic; font-size: 1.12rem; color: var(--ink-2); margin-top: 6px; }
+.riserva .tier-meta h2 { background: linear-gradient(90deg, #b8923f, #f5e3a8 45%, #c9a456 70%, #e8cf8a); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+/* ---------- Apple Wallet store card ---------- */
+.pass {
+  --bg: #162d21; --fg: #f1ecdd; --label: #a8c79a;
+  position: relative; background: var(--bg); color: var(--fg); border-radius: 14px; overflow: hidden;
+  font-family: var(--sf); box-shadow: 0 30px 60px -20px rgba(0,0,0,.8), 0 0 0 1px rgba(255,255,255,.04);
+  max-width: 375px; width: 100%; margin-inline: auto;
+}
+.raccolto .pass, .raccolto .gpass { --bg: #342113; --fg: #f7ebd3; --label: #d8a547; }
+.riserva .pass, .riserva .gpass { --bg: #0e0d0b; --fg: #efe3c2; --label: #c2a45c; }
+.riserva .pass::after, .riserva .gpass::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  border: 1px solid transparent; background: linear-gradient(135deg, #7a5c22, #e8cf8a, #b8923f, #f5e3a8, #8a6d2f) border-box;
+  -webkit-mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+.lbl { display: block; font-size: .6rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--label); }
+.pass-head { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px 8px; gap: 10px; }
+.pass-head img { height: 40px; width: auto; display: block; }
+.pass-head .hf { text-align: right; }
+.pass-head .hf b { font-size: .95rem; font-weight: 500; letter-spacing: .02em; }
+.pass-strip { aspect-ratio: 375 / 123; background-size: cover; background-position: center; padding: 0 14px; display: flex; flex-direction: column; justify-content: center; }
+.pass-strip b { font-size: 2.6rem; font-weight: 300; line-height: 1; }
+.pass-row { display: flex; justify-content: space-between; gap: 10px; padding: 10px 14px 0; }
+.pass-row b { display: block; font-size: .95rem; font-weight: 400; }
+.pass-row .r { text-align: right; }
+.pass-qr { background: #fff; border-radius: 8px; width: 150px; margin: 18px auto 16px; padding: 8px 8px 4px; text-align: center; }
+.pass-qr svg { width: 100%; height: auto; display: block; }
+.pass-qr small { font: 500 .68rem var(--sf); color: #222; letter-spacing: .04em; }
+
+/* ---------- Google Wallet loyalty card ---------- */
+.gpass {
+  --bg: #162d21; --fg: #f1ecdd; --label: #a8c79a;
+  position: relative; background: var(--bg); color: var(--fg); border-radius: 22px; overflow: hidden;
+  font-family: var(--roboto); box-shadow: 0 30px 60px -20px rgba(0,0,0,.8), 0 0 0 1px rgba(255,255,255,.04);
+  max-width: 375px; width: 100%; margin-inline: auto;
+}
+.g-top { display: flex; align-items: center; gap: 10px; padding: 16px 18px 6px; }
+.g-top img { width: 30px; height: 30px; border-radius: 50%; display: block; }
+.g-top span { font-size: .9rem; font-weight: 500; }
+.g-prog { padding: 4px 18px 0; font-size: 1.28rem; font-weight: 400; }
+.g-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 14px; padding: 16px 18px 0; }
+.g-grid .lbl { font-weight: 500; letter-spacing: .02em; text-transform: none; font-size: .72rem; opacity: .9; }
+.g-grid b { display: block; font-size: 1rem; font-weight: 400; }
+.g-qr { background: #fff; border-radius: 14px; width: 170px; margin: 20px auto 18px; padding: 10px 10px 6px; text-align: center; }
+.g-qr svg { width: 100%; height: auto; display: block; }
+.g-qr small { font: 500 .7rem var(--roboto); color: #333; }
+.g-hero { display: block; width: 100%; height: auto; }
+
+.perks { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.perks li { display: grid; grid-template-columns: 14px 1fr; gap: 8px; font-size: .92rem; color: var(--ink-2); }
+.perks li::before { content: ""; width: 6px; height: 6px; margin-top: .55em; border-radius: 50%; background: var(--label, var(--gold)); }
+.germoglio { --label: #a8c79a; } .raccolto { --label: #d8a547; } .riserva { --label: #d9bc72; }
+.thr { font-size: .8rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 10px; }
+
+section.live { margin-top: 56px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.live-card { border: 1px solid var(--line); background: var(--panel); border-radius: 14px; padding: 22px; display: grid; gap: 12px; align-content: start; }
+.live-card h3 { font-family: var(--serif); font-size: 1.6rem; }
+.live-card ol { margin: 0; padding-left: 1.2em; color: var(--ink-2); display: grid; gap: 6px; font-size: .92rem; }
+code { font-family: ui-monospace, "SFMono-Regular", Menlo, monospace; font-size: .82em; background: #221f1a; padding: 1px 5px; border-radius: 4px; color: var(--ink); overflow-wrap: anywhere; }
+.status { font-size: .82rem; color: var(--muted); }
+.status b { color: var(--ink); font-weight: 600; }
+
+@media (max-width: 980px) { .tiers { grid-template-columns: minmax(0, 1fr); max-width: 420px; margin-inline: auto; } section.live { grid-template-columns: minmax(0, 1fr); } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="shell">
+  <header>
+    <span class="eyebrow">Hamburgheria del Contadino · Carta Fedeltà</span>
+    <h1>Three cards, from the first sprout to the <em>reserve</em>.</h1>
+    <p class="lede">Every customer carries their fidelity card in Apple Wallet or Google Wallet. The card grows with them: it starts as a sprout, becomes the harvest, and the best guests are set aside in the Riserva. The QR code on each card opens the restaurant's fidelity page with that customer's card number.</p>
+  </header>
+
+  <div class="switch" role="group" aria-label="Wallet">
+    <button type="button" id="show-apple" aria-pressed="true">Apple Wallet</button>
+    <button type="button" id="show-google" aria-pressed="false">Google Wallet</button>
+  </div>
+
+  <div class="tiers" id="tiers"></div>
+
+  <section class="live">
+    <div class="live-card">
+      <h3>Going live on Apple Wallet</h3>
+      <ol>
+        <li>In an Apple Developer account, create a <b>Pass Type ID</b> (for example <code>pass.it.hamburgheriadelcontadino.fidelity</code>) and download its certificate.</li>
+        <li>Export the certificate and key as PEM files, and download Apple's WWDR G4 certificate.</li>
+        <li>Run <code>node tools/build-wallet-passes.js --card LHC-10458 --name "Marco Bianchi" --spend 1290 --points 312</code> with the <code>APPLE_*</code> variables set.</li>
+        <li>Send the resulting <code>.pkpass</code> by email or link: one tap adds it to Wallet.</li>
+      </ol>
+      <p class="status">The repo includes the pass bundles for all three tiers. <b>They install once signed</b> with your certificate.</p>
+    </div>
+    <div class="live-card">
+      <h3>Going live on Google Wallet</h3>
+      <ol>
+        <li>In the <b>Google Pay &amp; Wallet Console</b>, request Google Wallet API access. You get an <b>Issuer ID</b>.</li>
+        <li>Create a service account with Wallet access, then download its JSON key.</li>
+        <li>Upload <code>wallet/art/</code> to any public HTTPS address (Google fetches the images from there).</li>
+        <li>Run the same build command with <code>GOOGLE_*</code> set: each customer gets an "Add to Google Wallet" link.</li>
+      </ol>
+      <p class="status">The classes for all three tiers and the customer objects are ready in <code>wallet/build/google/</code>.</p>
+    </div>
+  </section>
+</div>
+
+<script src="../vendor/qrcode.js"></script>
+<script>
+(() => {
+  const URL_BASE = 'https://lhamburgerdelcontadino.plateform.app/frontpage/fidelity?card=';
+  const TIERS = [
+    { id: 'germoglio', name: 'Germoglio', who: 'New customers · the sprout', motto: 'Ogni raccolto comincia da un seme.', thr: 'From the first visit · 1 point per €1',
+      perks: ['1 punto per ogni euro', 'Patatine rustiche omaggio a 80 punti', 'Dolce di benvenuto alla seconda visita'],
+      sample: { card: 'LHC-10717', name: 'Elena Bruno', points: 46, since: 'set 2026', next: 'Patatine rustiche · 34 pt', spent: '133,50 €' } },
+    { id: 'raccolto', name: 'Raccolto', who: 'Regular customers · the harvest', motto: 'Il frutto di ogni visita.', thr: 'From €250 spent · 1.25 points per €1',
+      perks: ['1,25 punti per ogni euro', 'Burger del mese in anteprima', 'Tavolo prenotabile anche il sabato sera'],
+      sample: { card: 'LHC-10421', name: 'Giulia Rossi', points: 164, since: 'mar 2026', next: 'Il Contadino · 36 pt', spent: '553,00 €' } },
+    { id: 'riserva', name: 'Riserva', who: 'VIP customers · the reserve', motto: 'Il meglio del raccolto, messo da parte per te.', thr: 'From €600 spent · 1.5 points per €1',
+      perks: ['1,5 punti per ogni euro', 'Tavolo riservato, senza attesa', 'Degustazione privata del nuovo menu', 'Un calice della casa ad ogni visita'],
+      sample: { card: 'LHC-10458', name: 'Marco Bianchi', points: 312, since: 'mar 2026', next: 'Tutti i premi sbloccati', spent: '1.290,00 €' } },
+  ];
+
+  const qr = (text) => {
+    if (!window.qrcode) return '';
+    const q = window.qrcode(0, 'M'); q.addData(text); q.make();
+    const n = q.getModuleCount(), m = 2, size = n + m * 2;
+    let d = '';
+    for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.isDark(r, c)) d += `M${c + m} ${r + m}h1v1h-1z`;
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" shape-rendering="crispEdges" role="img" aria-label="QR code"><rect width="${size}" height="${size}" fill="#fff"/><path d="${d}" fill="#111"/></svg>`;
+  };
+
+  const apple = (t, s) => `
+    <div class="pass" aria-label="Apple Wallet card, ${t.name}">
+      <div class="pass-head"><img src="art/${t.id}/logo@3x.png" alt="Hamburgheria del Contadino"><div class="hf"><span class="lbl">Livello</span><b>${t.name.toUpperCase()}</b></div></div>
+      <div class="pass-strip" style="background-image:url('art/${t.id}/strip@3x.png')"><span class="lbl">Punti</span><b>${s.points}</b></div>
+      <div class="pass-row"><div><span class="lbl">Socio</span><b>${s.name}</b></div></div>
+      <div class="pass-row"><div><span class="lbl">Prossimo premio</span><b>${s.next}</b></div><div class="r"><span class="lbl">Dal</span><b>${s.since}</b></div></div>
+      <div class="pass-qr">${qr(URL_BASE + s.card)}<small>${s.card}</small></div>
+    </div>`;
+
+  const google = (t, s) => `
+    <div class="gpass" aria-label="Google Wallet card, ${t.name}">
+      <div class="g-top"><img src="art/${t.id}/google-logo.png" alt=""><span>Hamburgheria del Contadino</span></div>
+      <div class="g-prog">Carta Fedeltà · ${t.name}</div>
+      <div class="g-grid">
+        <div><span class="lbl">Socio</span><b>${s.name}</b></div>
+        <div><span class="lbl">Livello</span><b>${t.name}</b></div>
+        <div><span class="lbl">Punti</span><b>${s.points}</b></div>
+        <div><span class="lbl">Speso</span><b>${s.spent}</b></div>
+      </div>
+      <div class="g-qr">${qr(URL_BASE + s.card)}<small>${s.card}</small></div>
+      <img class="g-hero" src="art/${t.id}/hero.png" alt="">
+    </div>`;
+
+  let mode = 'apple';
+  function render() {
+    document.getElementById('tiers').innerHTML = TIERS.map((t) => `
+      <article class="tier-col ${t.id}">
+        <div class="tier-meta"><h2>${t.name.toUpperCase()}</h2><div class="who">${t.who}</div><p class="motto">${t.motto}</p></div>
+        ${mode === 'apple' ? apple(t, t.sample) : google(t, t.sample)}
+        <ul class="perks">${t.perks.map((p) => `<li>${p}</li>`).join('')}</ul>
+        <p class="thr">${t.thr}</p>
+      </article>`).join('');
+    document.getElementById('show-apple').setAttribute('aria-pressed', String(mode === 'apple'));
+    document.getElementById('show-google').setAttribute('aria-pressed', String(mode === 'google'));
+  }
+  document.getElementById('show-apple').addEventListener('click', () => { mode = 'apple'; render(); });
+  document.getElementById('show-google').addEventListener('click', () => { mode = 'google'; render(); });
+  render();
+})();
+</script>
+<!--ARTIFACT-END-->
+</body>
+</html>

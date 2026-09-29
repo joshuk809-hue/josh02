@@ -1,0 +1,51 @@
+{
+  "id": "ISSUER_ID.hdc_fidelity_germoglio",
+  "issuerName": "Hamburgheria del Contadino",
+  "programName": "Carta Fedeltà · Germoglio",
+  "programLogo": {
+    "sourceUri": {
+      "uri": "https://YOUR-HOST/wallet/art/germoglio/google-logo.png"
+    },
+    "contentDescription": {
+      "defaultValue": {
+        "language": "it-IT",
+        "value": "Hamburgheria del Contadino logo"
+      }
+    }
+  },
+  "heroImage": {
+    "sourceUri": {
+      "uri": "https://YOUR-HOST/wallet/art/germoglio/hero.png"
+    },
+    "contentDescription": {
+      "defaultValue": {
+        "language": "it-IT",
+        "value": "Carta Germoglio"
+      }
+    }
+  },
+  "hexBackgroundColor": "#162d21",
+  "rewardsTier": "Germoglio",
+  "rewardsTierLabel": "Livello",
+  "accountNameLabel": "Socio",
+  "accountIdLabel": "Carta",
+  "countryCode": "IT",
+  "reviewStatus": "UNDER_REVIEW",
+  "multipleDevicesAndHoldersAllowedStatus": "ONE_USER_ALL_DEVICES",
+  "homepageUri": {
+    "uri": "https://lhamburgerdelcontadino.plateform.app/frontpage/fidelity",
+    "description": "Sezione fedeltà"
+  },
+  "textModulesData": [
+    {
+      "id": "perks",
+      "header": "Vantaggi Germoglio",
+      "body": "1 punto per ogni euro · Patatine rustiche omaggio a 80 punti · Dolce di benvenuto alla seconda visita"
+    },
+    {
+      "id": "rewards",
+      "header": "Premi",
+      "body": "Patatine rustiche: 80 pt · Tiramisù della nonna: 120 pt · Il Contadino: 200 pt"
+    }
+  ]
+}

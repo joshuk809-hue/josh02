@@ -1,0 +1,51 @@
+{
+  "id": "ISSUER_ID.hdc_fidelity_raccolto",
+  "issuerName": "Hamburgheria del Contadino",
+  "programName": "Carta Fedeltà · Raccolto",
+  "programLogo": {
+    "sourceUri": {
+      "uri": "https://YOUR-HOST/wallet/art/raccolto/google-logo.png"
+    },
+    "contentDescription": {
+      "defaultValue": {
+        "language": "it-IT",
+        "value": "Hamburgheria del Contadino logo"
+      }
+    }
+  },
+  "heroImage": {
+    "sourceUri": {
+      "uri": "https://YOUR-HOST/wallet/art/raccolto/hero.png"
+    },
+    "contentDescription": {
+      "defaultValue": {
+        "language": "it-IT",
+        "value": "Carta Raccolto"
+      }
+    }
+  },
+  "hexBackgroundColor": "#342113",
+  "rewardsTier": "Raccolto",
+  "rewardsTierLabel": "Livello",
+  "accountNameLabel": "Socio",
+  "accountIdLabel": "Carta",
+  "countryCode": "IT",
+  "reviewStatus": "UNDER_REVIEW",
+  "multipleDevicesAndHoldersAllowedStatus": "ONE_USER_ALL_DEVICES",
+  "homepageUri": {
+    "uri": "https://lhamburgerdelcontadino.plateform.app/frontpage/fidelity",
+    "description": "Sezione fedeltà"
+  },
+  "textModulesData": [
+    {
+      "id": "perks",
+      "header": "Vantaggi Raccolto",
+      "body": "1,25 punti per ogni euro · Burger del mese in anteprima · Tavolo prenotabile anche il sabato sera"
+    },
+    {
+      "id": "rewards",
+      "header": "Premi",
+      "body": "Patatine rustiche: 80 pt · Tiramisù della nonna: 120 pt · Il Contadino: 200 pt"
+    }
+  ]
+}

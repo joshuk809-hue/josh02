@@ -5,7 +5,7 @@
   'use strict';
 
   const BASE_URL = 'https://lhamburgerdelcontadino.plateform.app/frontpage/fidelity';
-  const STORE_KEY = 'lhc-fidelity-v1';
+  const STORE_KEY = 'lhc-fidelity-v2';
   const DAY = 86400000;
 
   const eur = new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' });
@@ -46,9 +46,10 @@
 
   // Tiers by lifetime spend (cents). Points per euro paid = multiplier.
   const TIERS = [
-    { id: 'seme', name: 'Seme', min: 0, mult: 1 },
-    { id: 'germoglio', name: 'Germoglio', min: 25000, mult: 1.25 },
-    { id: 'raccolto', name: 'Raccolto', min: 60000, mult: 1.5 },
+    // Same tiers as the wallet passes (wallet/tiers.js): new, regular, VIP.
+    { id: 'germoglio', name: 'Germoglio', min: 0, mult: 1, motto: 'Ogni raccolto comincia da un seme.' },
+    { id: 'raccolto', name: 'Raccolto', min: 25000, mult: 1.25, motto: 'Il frutto di ogni visita.' },
+    { id: 'riserva', name: 'Riserva', min: 60000, mult: 1.5, motto: 'Il meglio del raccolto, messo da parte per te.' },
   ];
   const tierFor = (spend) => TIERS.reduce((t, x) => (spend >= x.min ? x : t), TIERS[0]);
   const nextTierFor = (spend) => TIERS.find((t) => t.min > spend) || null;
@@ -411,7 +412,7 @@
     const tierProgress = s.next
       ? `<p>${money(s.next.min - s.spend)} more to reach <b>${s.next.name}</b> (×${s.next.mult} points)</p>
          <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct(s.spend - s.tier.min, s.next.min - s.tier.min)}"><div style="width:${pct(s.spend - s.tier.min, s.next.min - s.tier.min)}%"></div></div>`
-      : '<p>You are at the top tier, <b>Raccolto</b>: ×1.5 points on every euro.</p>';
+      : '<p>You are at the top tier, <b>Riserva</b>: ×1.5 points on every euro.</p>';
 
     $('#view-card').innerHTML = `
       <div class="card-layout">
@@ -420,18 +421,24 @@
           <select class="input" id="card-who">
             ${state.customers.map((x) => `<option value="${esc(x.id)}" ${x.id === c.id ? 'selected' : ''}>${esc(x.name)} · ${esc(x.id)}</option>`).join('')}
           </select>
-          <div class="wallet">
-            <div class="wallet-top">
-              <div class="wallet-brand">Hamburgheria<br>del Contadino<small>CARTA FEDELTÀ</small></div>
-              <span class="wallet-tier">${s.tier.name}</span>
+          <div class="wallet w-${s.tier.id}">
+            <div class="wallet-head">
+              <img class="wallet-logo" src="wallet/art/${s.tier.id}/logo@3x.png" alt="Hamburgheria del Contadino">
+              <div class="wallet-hf"><span class="wallet-label">Livello</span><b>${s.tier.name.toUpperCase()}</b></div>
             </div>
-            <div class="wallet-points"><b class="num">${intFmt.format(s.points)}</b><span>points</span></div>
-            <div class="wallet-qr">${qrSvg(url)}</div>
-            <div class="wallet-foot">
-              <div><div class="wallet-name">${esc(c.name)}</div><div class="wallet-id">${esc(c.id)}</div></div>
-              <div class="wallet-since">Member since<br>${dateFmt.format(c.joined)}</div>
+            <div class="wallet-strip" style="background-image:url('wallet/art/${s.tier.id}/strip@3x.png')">
+              <span class="wallet-label">Punti</span><b>${intFmt.format(s.points)}</b>
             </div>
+            <div class="wallet-fields">
+              <div><span class="wallet-label">Socio</span><b>${esc(c.name)}</b></div>
+              <div class="r"><span class="wallet-label">Dal</span><b>${new Intl.DateTimeFormat('it-IT', { month: 'short', year: 'numeric' }).format(c.joined)}</b></div>
+            </div>
+            <div class="wallet-fields">
+              <div><span class="wallet-label">Prossimo premio</span><b>${nextReward ? `${esc(nextReward.label)} · ${nextReward.cost - s.points} pt` : 'Tutti i premi sbloccati'}</b></div>
+            </div>
+            <div class="wallet-qr">${qrSvg(url)}<small>${esc(c.id)}</small></div>
           </div>
+          <p class="wallet-note">${esc(s.tier.motto)}</p>
           <div class="url-row">
             <code>${esc(url)}</code>
             <button class="btn" data-action="copy" data-text="${esc(url)}" data-what="Card link">Copy</button>

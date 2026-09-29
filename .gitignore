@@ -1,0 +1,8 @@
+# Wallet signing credentials and signed, customer-specific output
+*.pem
+*.p12
+*.key
+service-account*.json
+wallet/build/apple/*.pkpass
+wallet/build/google/save-links.txt
+node_modules/

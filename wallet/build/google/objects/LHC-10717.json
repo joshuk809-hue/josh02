@@ -1,0 +1,49 @@
+{
+  "id": "ISSUER_ID.LHC-10717",
+  "classId": "ISSUER_ID.hdc_fidelity_germoglio",
+  "state": "ACTIVE",
+  "accountId": "LHC-10717",
+  "accountName": "Elena Bruno",
+  "loyaltyPoints": {
+    "label": "Punti",
+    "balance": {
+      "int": 46
+    }
+  },
+  "secondaryLoyaltyPoints": {
+    "label": "Speso",
+    "balance": {
+      "money": {
+        "micros": "133500000",
+        "currencyCode": "EUR"
+      }
+    }
+  },
+  "barcode": {
+    "type": "QR_CODE",
+    "value": "https://lhamburgerdelcontadino.plateform.app/frontpage/fidelity?card=LHC-10717",
+    "alternateText": "LHC-10717"
+  },
+  "hexBackgroundColor": "#162d21",
+  "textModulesData": [
+    {
+      "id": "next",
+      "header": "Prossimo premio",
+      "body": "Patatine rustiche · mancano 34 pt"
+    },
+    {
+      "id": "progress",
+      "header": "Il tuo percorso",
+      "body": "116,50 € per diventare Raccolto"
+    }
+  ],
+  "linksModuleData": {
+    "uris": [
+      {
+        "uri": "https://lhamburgerdelcontadino.plateform.app/frontpage/fidelity?card=LHC-10717",
+        "description": "La tua carta online",
+        "id": "card"
+      }
+    ]
+  }
+}

@@ -28,7 +28,7 @@ For each customer, the CRM profile shows:
 ## Programme rules (edit in `app.js`)
 
 - **Points:** 1 point per €1 paid, multiplied by the tier bonus. Fractions are rounded down.
-- **Tiers** (based on lifetime spend): Seme €0 (×1) → Germoglio €250 (×1.25) → Raccolto €600 (×1.5).
+- **Tiers** (based on lifetime spend, the same as the wallet cards): Germoglio €0 (×1) → Raccolto €250 (×1.25) → Riserva €600 (×1.5).
 - **Rewards:** free rustic fries 80 pt · free tiramisù 120 pt · free Il Contadino burger 200 pt.
 - **Segments:** *At risk* = no visit for 45+ days · *New* = member for 30 days or less · *VIP* = €400+ spent or 4+ visits a month · otherwise *Regular*.
 
@@ -63,3 +63,56 @@ node tools/make-fidelity-qr.js
 ```
 
 Print the QR at least 2 × 2 cm, and keep the white border around it.
+
+## Apple Wallet & Google Wallet cards
+
+There are three card designs, one for each type of customer. The names follow the life of a field, in keeping with *Contadino* (farmer):
+
+| Card | Customers | From | Points per €1 | Look |
+|------|-----------|------|---------------|------|
+| **Germoglio** (the sprout) | New | first visit | 1 | Bottle green and cream, with fine-line sprouts over ploughed furrows |
+| **Raccolto** (the harvest) | Regular | €250 spent | 1.25 | Roasted chestnut, with a sheaf of wheat engraved in wheat-gold |
+| **Riserva** (the reserve) | VIP | €600 spent | 1.5 | Black, with a gold-foil border, a guilloché rosette and a gold crest |
+
+Open `wallet/index.html` to see every card as it appears in Apple Wallet and in Google Wallet. The customer card in the app uses the same design.
+The perks listed for each tier in `wallet/tiers.js` are **suggestions**. Edit them before launch.
+
+**Build:** `node tools/build-wallet-passes.js` renders the artwork into `wallet/art/` and builds the three sample cards.
+To build a card for one customer:
+
+```
+node tools/build-wallet-passes.js --card LHC-10458 --name "Marco Bianchi" --spend 1290.00 --points 312 --since 2026-03-29
+```
+
+**Apple Wallet:** the script always writes the pass bundle to `wallet/build/apple/<card>.pass/` (`pass.json`, images and `manifest.json`).
+An iPhone only accepts a pass that is signed with the restaurant's own certificate. To get one:
+1. In an Apple Developer account, create a Pass Type ID.
+2. Download its certificate, then export the certificate and private key as PEM files.
+3. Download Apple's WWDR G4 certificate.
+4. Set these variables and run the build again. It signs the pass with `openssl` and writes `wallet/build/apple/<card>.pkpass`:
+
+```
+APPLE_PASS_TYPE_ID=pass.it.hamburgheriadelcontadino.fidelity APPLE_TEAM_ID=ABCDE12345 \
+APPLE_CERT_PEM=cert.pem APPLE_KEY_PEM=key.pem APPLE_WWDR_PEM=AppleWWDRCAG4.pem \
+node tools/build-wallet-passes.js --card ... --name ...
+```
+
+**Google Wallet:** the script always writes the tier classes to `wallet/build/google/classes/` and the customer objects to `wallet/build/google/objects/`.
+To get "Add to Google Wallet" links:
+1. Get an Issuer ID in the Google Pay & Wallet Console.
+2. Create a service account with Wallet access and download its JSON key.
+3. Put `wallet/art/` online at a public HTTPS address.
+4. Set these variables and run the build. The links are written to `wallet/build/google/save-links.txt`:
+
+```
+GOOGLE_ISSUER_ID=3388000000012345678 GOOGLE_SA_KEY=service-account.json \
+GOOGLE_IMAGE_BASE_URL=https://your-host/wallet/art node tools/build-wallet-passes.js
+```
+
+Both signing paths were tested with throwaway keys:
+- The `.pkpass` signature verifies over the manifest, and every file hash matches.
+- The Google JWT verifies with RS256.
+
+Keys, certificates, signed `.pkpass` files and save links are listed in `.gitignore` so they never get committed.
+
+The fonts for the artwork are Cinzel and Cormorant Garamond, both under the SIL Open Font License (licence files in `wallet/design/fonts/`).

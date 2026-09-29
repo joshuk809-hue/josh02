@@ -1,0 +1,101 @@
+{
+  "formatVersion": 1,
+  "passTypeIdentifier": "pass.it.hamburgheriadelcontadino.fidelity",
+  "teamIdentifier": "TEAMID0000",
+  "serialNumber": "LHC-10421",
+  "organizationName": "Hamburgheria del Contadino",
+  "description": "Carta Fedeltà Hamburgheria del Contadino · Raccolto",
+  "backgroundColor": "rgb(52, 33, 19)",
+  "foregroundColor": "rgb(247, 235, 211)",
+  "labelColor": "rgb(216, 165, 71)",
+  "sharingProhibited": true,
+  "storeCard": {
+    "headerFields": [
+      {
+        "key": "tier",
+        "label": "LIVELLO",
+        "value": "RACCOLTO",
+        "changeMessage": "Benvenuto nel livello %@"
+      }
+    ],
+    "primaryFields": [
+      {
+        "key": "points",
+        "label": "PUNTI",
+        "value": 164,
+        "changeMessage": "Ora hai %@ punti"
+      }
+    ],
+    "secondaryFields": [
+      {
+        "key": "member",
+        "label": "SOCIO",
+        "value": "Giulia Rossi"
+      }
+    ],
+    "auxiliaryFields": [
+      {
+        "key": "next",
+        "label": "PROSSIMO PREMIO",
+        "value": "Il Contadino · mancano 36 pt"
+      },
+      {
+        "key": "since",
+        "label": "DAL",
+        "value": "marzo 2026",
+        "textAlignment": "PKTextAlignmentRight"
+      }
+    ],
+    "backFields": [
+      {
+        "key": "card",
+        "label": "Numero carta",
+        "value": "LHC-10421"
+      },
+      {
+        "key": "perks",
+        "label": "Vantaggi Raccolto",
+        "value": "• 1,25 punti per ogni euro\n• Burger del mese in anteprima\n• Tavolo prenotabile anche il sabato sera"
+      },
+      {
+        "key": "progress",
+        "label": "Il tuo percorso",
+        "value": "47,00 € per diventare Riserva.\nGermoglio → Raccolto (da 250,00 €) → Riserva (da 600,00 €)."
+      },
+      {
+        "key": "rewards",
+        "label": "Premi",
+        "value": "Patatine rustiche: 80 punti\nTiramisù della nonna: 120 punti\nIl Contadino: 200 punti"
+      },
+      {
+        "key": "how",
+        "label": "Come funziona",
+        "value": "Mostra questa carta alla cassa prima di pagare: i punti si aggiungono in automatico e puoi usarli per i premi."
+      },
+      {
+        "key": "web",
+        "label": "La tua carta online",
+        "value": "https://lhamburgerdelcontadino.plateform.app/frontpage/fidelity?card=LHC-10421"
+      },
+      {
+        "key": "motto",
+        "label": "Raccolto",
+        "value": "Il frutto di ogni visita."
+      }
+    ]
+  },
+  "barcodes": [
+    {
+      "format": "PKBarcodeFormatQR",
+      "message": "https://lhamburgerdelcontadino.plateform.app/frontpage/fidelity?card=LHC-10421",
+      "messageEncoding": "iso-8859-1",
+      "altText": "LHC-10421"
+    }
+  ],
+  "barcode": {
+    "format": "PKBarcodeFormatQR",
+    "message": "https://lhamburgerdelcontadino.plateform.app/frontpage/fidelity?card=LHC-10421",
+    "messageEncoding": "iso-8859-1",
+    "altText": "LHC-10421"
+  }
+}

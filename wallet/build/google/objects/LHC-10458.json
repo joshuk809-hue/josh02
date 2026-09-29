@@ -1,0 +1,49 @@
+{
+  "id": "ISSUER_ID.LHC-10458",
+  "classId": "ISSUER_ID.hdc_fidelity_riserva",
+  "state": "ACTIVE",
+  "accountId": "LHC-10458",
+  "accountName": "Marco Bianchi",
+  "loyaltyPoints": {
+    "label": "Punti",
+    "balance": {
+      "int": 312
+    }
+  },
+  "secondaryLoyaltyPoints": {
+    "label": "Speso",
+    "balance": {
+      "money": {
+        "micros": "1290000000",
+        "currencyCode": "EUR"
+      }
+    }
+  },
+  "barcode": {
+    "type": "QR_CODE",
+    "value": "https://lhamburgerdelcontadino.plateform.app/frontpage/fidelity?card=LHC-10458",
+    "alternateText": "LHC-10458"
+  },
+  "hexBackgroundColor": "#0e0d0b",
+  "textModulesData": [
+    {
+      "id": "next",
+      "header": "Prossimo premio",
+      "body": "Tutti i premi sbloccati"
+    },
+    {
+      "id": "progress",
+      "header": "Il tuo percorso",
+      "body": "Livello massimo: Riserva"
+    }
+  ],
+  "linksModuleData": {
+    "uris": [
+      {
+        "uri": "https://lhamburgerdelcontadino.plateform.app/frontpage/fidelity?card=LHC-10458",
+        "description": "La tua carta online",
+        "id": "card"
+      }
+    ]
+  }
+}

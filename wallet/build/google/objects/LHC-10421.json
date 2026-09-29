@@ -1,0 +1,49 @@
+{
+  "id": "ISSUER_ID.LHC-10421",
+  "classId": "ISSUER_ID.hdc_fidelity_raccolto",
+  "state": "ACTIVE",
+  "accountId": "LHC-10421",
+  "accountName": "Giulia Rossi",
+  "loyaltyPoints": {
+    "label": "Punti",
+    "balance": {
+      "int": 164
+    }
+  },
+  "secondaryLoyaltyPoints": {
+    "label": "Speso",
+    "balance": {
+      "money": {
+        "micros": "553000000",
+        "currencyCode": "EUR"
+      }
+    }
+  },
+  "barcode": {
+    "type": "QR_CODE",
+    "value": "https://lhamburgerdelcontadino.plateform.app/frontpage/fidelity?card=LHC-10421",
+    "alternateText": "LHC-10421"
+  },
+  "hexBackgroundColor": "#342113",
+  "textModulesData": [
+    {
+      "id": "next",
+      "header": "Prossimo premio",
+      "body": "Il Contadino · mancano 36 pt"
+    },
+    {
+      "id": "progress",
+      "header": "Il tuo percorso",
+      "body": "47,00 € per diventare Riserva"
+    }
+  ],
+  "linksModuleData": {
+    "uris": [
+      {
+        "uri": "https://lhamburgerdelcontadino.plateform.app/frontpage/fidelity?card=LHC-10421",
+        "description": "La tua carta online",
+        "id": "card"
+      }
+    ]
+  }
+}
