@@ -19,11 +19,7 @@
       }
     }
   },
-  "barcode": {
-    "type": "QR_CODE",
-    "value": "https://lhamburgerdelcontadino.plateform.app/frontpage/fidelity?card=LHC-10458",
-    "alternateText": "LHC-10458"
-  },
+  "smartTapRedemptionValue": "LHC-10458",
   "hexBackgroundColor": "#0e0d0b",
   "textModulesData": [
     {

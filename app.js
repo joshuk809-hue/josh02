@@ -273,20 +273,6 @@
 
   // ---------- Rendering primitives ----------
 
-  function qrSvg(text) {
-    const qr = window.qrcode(0, 'M');
-    qr.addData(text);
-    qr.make();
-    const n = qr.getModuleCount();
-    const m = 4; // quiet zone
-    let d = '';
-    for (let r = 0; r < n; r++) {
-      for (let c = 0; c < n; c++) if (qr.isDark(r, c)) d += `M${c + m} ${r + m}h1v1h-1z`;
-    }
-    const size = n + m * 2;
-    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" role="img" aria-label="QR code for ${esc(text)}" shape-rendering="crispEdges"><rect width="${size}" height="${size}" fill="#ffffff"/><path d="${d}" fill="#15200f"/></svg>`;
-  }
-
   function niceMax(v) {
     if (v <= 0) return 1000;
     const step = 10 ** Math.floor(Math.log10(v));
@@ -367,6 +353,8 @@
     }).join('')}</div>`;
   }
 
+  const NFC_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M8.5 8.8a4.6 4.6 0 0 1 0 6.4"/><path d="M11.6 6.2a8.3 8.3 0 0 1 0 11.6"/><path d="M14.7 3.6a12 12 0 0 1 0 16.8"/><path d="M5.4 11.2a1.2 1.2 0 0 1 0 1.6"/></svg>';
+
   const tierBadge = (t) => `<span class="tier tier-${t.id}">${t.name}</span>`;
   const segPill = (s) => `<span class="pill seg-${s.id}">${s.label}</span>`;
 
@@ -436,14 +424,19 @@
             <div class="wallet-fields">
               <div><span class="wallet-label">Prossimo premio</span><b>${nextReward ? `${esc(nextReward.label)} · ${nextReward.cost - s.points} pt` : 'Tutti i premi sbloccati'}</b></div>
             </div>
-            <div class="wallet-qr">${qrSvg(url)}<small>${esc(c.id)}</small></div>
+            <div class="wallet-nfc">
+              <div class="wallet-nfc-ring">${NFC_ICON}</div>
+              <small>Avvicina il telefono al lettore</small>
+              <span class="wallet-id">${esc(c.id.replace('-', ' '))}</span>
+            </div>
+            <div class="wallet-sheen" aria-hidden="true"></div>
           </div>
           <p class="wallet-note">${esc(s.tier.motto)}</p>
           <div class="url-row">
             <code>${esc(url)}</code>
             <button class="btn" data-action="copy" data-text="${esc(url)}" data-what="Card link">Copy</button>
           </div>
-          <p class="hint" style="margin-top:8px">Show this code at the till. It holds the fidelity link plus the card number, which staff scan to find you.</p>
+          <p class="hint" style="margin-top:8px">Contactless card: the customer holds their phone to the till's reader, which receives the card number over NFC. The card has no QR code.</p>
         </div>
 
         <div class="stack">
@@ -500,7 +493,7 @@
           <div class="row" style="flex-wrap:nowrap"><input class="input" id="find-input" placeholder="LHC-10421"><button class="btn" type="submit">Find</button></div>
         </form>
         <div>
-          <span class="field-label">Quick pick</span>
+          <span class="field-label">Contactless tap (simulated)</span>
           <div class="row">${state.customers.slice(0, 6).map((x) => `<button class="btn" data-action="till-pick" data-id="${esc(x.id)}">${esc(x.name.split(' ')[0])}</button>`).join('')}</div>
         </div>
       </div>`;

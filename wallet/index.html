@@ -7,213 +7,434 @@
 <title>Contadino Wallet Cards</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Inter:wght@300;400;500;600&display=swap">
 <style>
+/* Local copies of the fonts, used when Google Fonts is unreachable (e.g. offline). */
+@font-face { font-family: "HdC Cinzel"; font-weight: 600; src: url("design/fonts/cinzel-latin-600-normal.woff2") format("woff2"); }
+@font-face { font-family: "HdC Cinzel"; font-weight: 500; src: url("design/fonts/cinzel-latin-500-normal.woff2") format("woff2"); }
+@font-face { font-family: "HdC Cormorant"; font-weight: 500; src: url("design/fonts/cormorant-garamond-latin-500-normal.woff2") format("woff2"); }
+@font-face { font-family: "HdC Cormorant"; font-weight: 500; font-style: italic; src: url("design/fonts/cormorant-garamond-latin-500-italic.woff2") format("woff2"); }
+@font-face { font-family: "HdC Cormorant"; font-weight: 600; src: url("design/fonts/cormorant-garamond-latin-600-normal.woff2") format("woff2"); }
+@font-face { font-family: "HdC Cormorant"; font-weight: 600; font-style: italic; src: url("design/fonts/cormorant-garamond-latin-600-italic.woff2") format("woff2"); }
+/* Single dark world on purpose: the cards are lit like objects on a black velvet table. */
 :root {
   color-scheme: dark;
-  --ground: #0f0e0c;
-  --panel: #171512;
-  --line: #2b2721;
-  --ink: #efe8d8;
-  --ink-2: #b9b09c;
-  --muted: #847b69;
+  --ground: #0a0908;
+  --ground-2: #13110e;
+  --line: rgba(239, 227, 194, .1);
+  --ink: #f1ead9;
+  --ink-2: #b8ae98;
+  --muted: #7d7461;
   --gold: #d9bc72;
-  --caps: "Cinzel", "Trajan Pro", Georgia, serif;
-  --serif: "Cormorant Garamond", Garamond, Georgia, serif;
+  --caps: "Cinzel", "HdC Cinzel", "Trajan Pro", Georgia, serif;
+  --serif: "Cormorant Garamond", "HdC Cormorant", Garamond, Georgia, serif;
   --sans: "Inter", -apple-system, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
   --sf: -apple-system, "SF Pro Text", "Inter", "Segoe UI", sans-serif;
   --roboto: "Google Sans", Roboto, "Inter", "Segoe UI", sans-serif;
+  --ease: cubic-bezier(.2, .7, .1, 1);
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
-body { margin: 0; background: var(--ground); color: var(--ink); font: 15px/1.55 var(--sans); -webkit-font-smoothing: antialiased; }
-.shell { max-width: 1180px; margin: 0 auto; padding-inline: 16px; padding-block: 40px 64px; }
-h1, h2, h3 { margin: 0; font-weight: 500; text-wrap: balance; }
+html { background: var(--ground); }
+body {
+  margin: 0; color: var(--ink); font: 15px/1.6 var(--sans); -webkit-font-smoothing: antialiased;
+  background:
+    radial-gradient(1200px 700px at 50% -10%, rgba(217, 188, 114, .11), transparent 60%),
+    radial-gradient(900px 600px at 85% 40%, rgba(80, 120, 90, .07), transparent 60%),
+    var(--ground);
+  overflow-x: hidden;
+}
+body::before { /* film grain */
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: .06;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.shell { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding-inline: 16px; padding-block: 48px 72px; }
+h1, h2, h3 { margin: 0; font-weight: 400; text-wrap: balance; }
 p { margin: 0; }
-:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+:focus-visible { outline: 1.5px solid var(--gold); outline-offset: 4px; }
 
-header { display: grid; gap: 14px; max-width: 760px; margin-bottom: 36px; }
-.eyebrow { font-family: var(--caps); font-size: .78rem; letter-spacing: .32em; color: var(--gold); }
-h1 { font-family: var(--serif); font-size: clamp(2.3rem, 5vw, 3.6rem); line-height: 1.02; font-weight: 500; }
-h1 em { color: var(--gold); }
-.lede { color: var(--ink-2); font-size: 1.02rem; max-width: 62ch; }
+/* ---------- Intro ---------- */
+.intro { text-align: center; display: grid; gap: 16px; justify-items: center; }
+.eyebrow { font-family: var(--caps); font-size: .74rem; letter-spacing: .38em; color: var(--gold); }
+h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(2.4rem, 6vw, 4.6rem); line-height: 1; letter-spacing: -.01em; }
+h1 em { font-style: italic; background: linear-gradient(100deg, #9c7a34, #f5e3a8 40%, #c9a456 60%, #efd79a); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.lede { max-width: 58ch; color: var(--ink-2); font-size: 1.02rem; font-weight: 300; }
 
-.switch { display: inline-flex; gap: 2px; padding: 3px; border: 1px solid var(--line); border-radius: 999px; margin-bottom: 26px; }
-.switch button { border: 0; background: transparent; color: var(--ink-2); font: 500 .88rem var(--sans); padding: 8px 18px; border-radius: 999px; cursor: pointer; }
+/* ---------- Stage ---------- */
+.stage { position: relative; height: clamp(340px, 40vw, 480px); margin-top: 36px; }
+.stage .card3d { position: absolute; width: min(44%, 470px); left: 50%; top: 50%; }
+.stage .card3d:nth-child(1) { transform: translate(-118%, -52%) rotate(-9deg); z-index: 1; }
+.stage .card3d:nth-child(2) { transform: translate(-50%, -64%) rotate(0deg); z-index: 2; }
+.stage .card3d:nth-child(3) { transform: translate(18%, -46%) rotate(8deg); z-index: 3; }
+.stage .card3d { animation: rise 1.4s var(--ease) both; }
+.stage .card3d:nth-child(2) { animation-delay: .12s; }
+.stage .card3d:nth-child(3) { animation-delay: .24s; }
+@keyframes rise { from { translate: 0 60px; scale: .94; } to { translate: 0 0; scale: 1; } }
+
+/* ---------- 3D card ---------- */
+.card3d { perspective: 1400px; --rx: 0deg; --ry: 0deg; --mx: 50%; --my: 30%; --lift: 0; }
+.card-float { animation: float 7s ease-in-out infinite; transform-style: preserve-3d; }
+.card3d:nth-child(2) .card-float { animation-delay: -2.3s; }
+.card3d:nth-child(3) .card-float { animation-delay: -4.6s; }
+@keyframes float {
+  0%, 100% { transform: translate3d(0, 0, 0) rotateZ(0deg); }
+  50% { transform: translate3d(0, -14px, 0) rotateZ(.6deg); }
+}
+.card {
+  position: relative; aspect-ratio: 1011 / 638; width: 100%; border-radius: 4.6% / 7.3%;
+  container-type: inline-size; overflow: hidden; isolation: isolate;
+  transform: rotateX(var(--rx)) rotateY(var(--ry)) translateZ(calc(var(--lift) * 30px));
+  transition: transform .5s var(--ease);
+  background: #111 var(--img) center / cover no-repeat;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, .07) inset,
+    0 1px 0 rgba(255, 255, 255, .22) inset,
+    0 -1px 0 rgba(0, 0, 0, .5) inset,
+    0 2px 3px rgba(0, 0, 0, .35),
+    0 24px 40px -12px rgba(0, 0, 0, .7),
+    0 60px 90px -30px rgba(0, 0, 0, .75);
+  cursor: grab;
+}
+.card3d.active .card { transition: transform .08s linear; }
+/* clear-coat: a soft top light and a darker lower edge, like lacquer */
+.card-gloss { position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+  background:
+    linear-gradient(168deg, rgba(255,255,255,.26) 0%, rgba(255,255,255,.07) 22%, rgba(255,255,255,0) 42%),
+    linear-gradient(0deg, rgba(0,0,0,.28), rgba(0,0,0,0) 38%);
+  mix-blend-mode: soft-light; }
+/* specular hotspot that follows the pointer */
+.card-spec { position: absolute; inset: -20%; pointer-events: none; opacity: calc(.35 + var(--lift) * .5);
+  background: radial-gradient(38% 46% at var(--mx) var(--my), rgba(255,255,255,.55), rgba(255,255,255,.12) 38%, transparent 62%);
+  mix-blend-mode: overlay; transition: opacity .4s var(--ease); }
+/* periodic light sweep across the lacquer */
+.card-sheen { position: absolute; inset: 0; pointer-events: none; border-radius: inherit; overflow: hidden; }
+.card-sheen::before { content: ""; position: absolute; top: -60%; bottom: -60%; width: 28%; left: -40%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.07) 30%, rgba(255,255,255,.34) 50%, rgba(255,255,255,.07) 70%, transparent);
+  transform: rotate(18deg); mix-blend-mode: screen; animation: sheen 7.5s var(--ease) infinite; }
+.card3d:nth-child(2) .card-sheen::before { animation-delay: 2.5s; }
+.card3d:nth-child(3) .card-sheen::before { animation-delay: 5s; }
+@keyframes sheen { 0%, 62% { left: -40%; } 100% { left: 130%; } }
+/* holographic foil, Riserva only: shifts hue with the tilt */
+.t-riserva .card-holo { position: absolute; inset: 0; pointer-events: none; border-radius: inherit; mix-blend-mode: soft-light; opacity: calc(var(--lift) * .35);
+  background: linear-gradient(calc(115deg + var(--ry) * 4), transparent 20%, rgba(255, 236, 180, .55) 45%, rgba(255, 250, 230, .8) 50%, rgba(255, 236, 180, .55) 55%, transparent 80%); }
+.card-shadow { height: 26px; margin: 8% 10% 0; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,0,0,.65), transparent);
+  filter: blur(6px); animation: shadow 7s ease-in-out infinite; }
+.card3d:nth-child(2) .card-shadow { animation-delay: -2.3s; }
+.card3d:nth-child(3) .card-shadow { animation-delay: -4.6s; }
+@keyframes shadow { 0%, 100% { transform: scaleX(1); opacity: .9; } 50% { transform: scaleX(.86); opacity: .55; } }
+
+/* card typography, sized to the card (cqw) so it stays crisp at any size */
+.card-content { position: absolute; inset: 0; padding: 6.4cqw 7cqw 6cqw; display: grid; grid-template-rows: auto 1fr auto; color: var(--c-ink); }
+.c-top { display: flex; justify-content: space-between; align-items: flex-start; }
+.c-mark { display: grid; line-height: 1; }
+.c-h { font-family: var(--caps); font-weight: 600; font-size: 3.3cqw; letter-spacing: .32em; }
+.c-d { font-family: var(--serif); font-style: italic; font-weight: 500; font-size: 4.4cqw; margin-top: .9cqw; color: var(--c-label); }
+.c-nfc { width: 6.2cqw; height: auto; color: var(--c-ink); opacity: .9; filter: drop-shadow(0 1px 0 rgba(0,0,0,.4)); }
+.c-tier { align-self: end; font-family: var(--caps); font-weight: 600; font-size: 7.4cqw; letter-spacing: .2em; line-height: 1; margin-bottom: 4.2cqw;
+  color: var(--c-ink); text-shadow: 0 .15cqw 0 rgba(0,0,0,.55), 0 -.1cqw 0 rgba(255,255,255,.18); }
+.c-bottom { display: flex; justify-content: space-between; align-items: flex-end; gap: 4cqw; }
+.c-lbl { display: block; font-family: var(--sans); font-weight: 500; font-size: 1.9cqw; letter-spacing: .22em; text-transform: uppercase; color: var(--c-label); margin-bottom: .8cqw; }
+.c-name { font-family: var(--serif); font-weight: 500; font-size: 4.6cqw; line-height: 1; }
+.c-num { font-family: var(--sans); font-weight: 400; font-size: 3.1cqw; letter-spacing: .24em; font-variant-numeric: tabular-nums; }
+.c-bottom .r { text-align: right; }
+.t-germoglio { --c-ink: #f1ecdd; --c-label: #a8c79a; }
+.t-raccolto { --c-ink: #f7ebd3; --c-label: #d8a547; }
+.t-riserva { --c-ink: #efe3c2; --c-label: #c2a45c; }
+.foil-text, .t-riserva .c-tier, .t-riserva .c-h {
+  background: linear-gradient(100deg, #8a6d2f 0%, #e8cf8a 18%, #b8923f 32%, #fff1c4 46%, #b8923f 60%, #e8cf8a 78%, #8a6d2f 100%);
+  background-size: 240% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: none;
+  animation: foil 6s linear infinite;
+}
+.t-riserva .c-tier { filter: drop-shadow(0 .15cqw 0 rgba(0,0,0,.7)); }
+@keyframes foil { from { background-position: 0% 0; } to { background-position: 240% 0; } }
+
+/* ---------- Tier detail ---------- */
+.detail { margin-top: 64px; display: grid; gap: 28px; }
+.tabs { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; }
+.tab { border: 1px solid var(--line); background: rgba(255,255,255,.02); color: var(--ink-2); border-radius: 999px; padding: 9px 20px 9px 12px;
+  font: 500 .86rem var(--sans); letter-spacing: .04em; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; transition: all .3s var(--ease); }
+.tab i { width: 26px; height: 17px; border-radius: 3px; background: var(--img) center / cover; box-shadow: 0 0 0 1px rgba(255,255,255,.12) inset; }
+.tab[aria-selected="true"] { color: var(--ink); border-color: rgba(217,188,114,.5); background: rgba(217,188,114,.08); }
+.tier-view { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 48px; align-items: center; }
+.tier-view .card3d { width: 100%; max-width: 560px; justify-self: center; }
+.tier-view .card3d .card-float { animation-delay: 0s; }
+.tier-info { display: grid; gap: 14px; align-content: start; }
+.tier-info .who { font-size: .76rem; letter-spacing: .26em; text-transform: uppercase; color: var(--muted); }
+.tier-info h2 { font-family: var(--caps); font-weight: 600; font-size: clamp(2rem, 4vw, 2.8rem); letter-spacing: .14em; line-height: 1; }
+.tier-info .motto { font-family: var(--serif); font-style: italic; font-size: 1.35rem; color: var(--ink-2); line-height: 1.3; }
+.rate { display: flex; gap: 28px; padding-block: 14px; border-block: 1px solid var(--line); }
+.rate b { display: block; font-family: var(--serif); font-weight: 500; font-size: 2rem; line-height: 1; }
+.rate span { font-size: .74rem; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+.perks { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; }
+.perks li { display: grid; grid-template-columns: 18px 1fr; gap: 8px; color: var(--ink-2); font-weight: 300; }
+.perks li::before { content: ""; width: 7px; height: 7px; margin-top: .6em; transform: rotate(45deg); background: var(--c-label, var(--gold)); }
+.enter { animation: enter .7s var(--ease) both; }
+@keyframes enter { from { translate: 0 18px; } to { translate: 0 0; } }
+
+/* ---------- Wallet previews ---------- */
+.wallets { margin-top: 72px; display: grid; gap: 22px; justify-items: center; }
+.wallets h3 { font-family: var(--serif); font-size: clamp(1.8rem, 3.4vw, 2.5rem); text-align: center; }
+.wallets > p { color: var(--ink-2); text-align: center; max-width: 60ch; font-weight: 300; }
+.switch { display: inline-flex; gap: 2px; padding: 3px; border: 1px solid var(--line); border-radius: 999px; }
+.switch button { border: 0; background: transparent; color: var(--ink-2); font: 500 .86rem var(--sans); padding: 8px 18px; border-radius: 999px; cursor: pointer; }
 .switch button[aria-pressed="true"] { background: var(--ink); color: var(--ground); }
+.phones { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 26px; width: 100%; }
+.phone { border-radius: 38px; padding: 12px; background: linear-gradient(160deg, #2a2723, #121110 40%, #1d1b18); box-shadow: 0 0 0 1px rgba(255,255,255,.06) inset, 0 40px 70px -30px rgba(0,0,0,.9);
+  max-width: 330px; width: 100%; justify-self: center; }
+.screen { border-radius: 28px; background: #000; padding: 34px 10px 18px; min-height: 100%; display: grid; gap: 12px; align-content: start; }
 
-.tiers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; align-items: start; }
-.tier-col { display: flex; flex-direction: column; gap: 18px; }
-.tier-meta h2 { font-family: var(--caps); font-size: 1.35rem; letter-spacing: .16em; }
-.tier-meta .who { font-size: .8rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
-.tier-meta .motto { font-family: var(--serif); font-style: italic; font-size: 1.12rem; color: var(--ink-2); margin-top: 6px; }
-.riserva .tier-meta h2 { background: linear-gradient(90deg, #b8923f, #f5e3a8 45%, #c9a456 70%, #e8cf8a); -webkit-background-clip: text; background-clip: text; color: transparent; }
-
-/* ---------- Apple Wallet store card ---------- */
-.pass {
-  --bg: #162d21; --fg: #f1ecdd; --label: #a8c79a;
-  position: relative; background: var(--bg); color: var(--fg); border-radius: 14px; overflow: hidden;
-  font-family: var(--sf); box-shadow: 0 30px 60px -20px rgba(0,0,0,.8), 0 0 0 1px rgba(255,255,255,.04);
-  max-width: 375px; width: 100%; margin-inline: auto;
-}
-.raccolto .pass, .raccolto .gpass { --bg: #342113; --fg: #f7ebd3; --label: #d8a547; }
-.riserva .pass, .riserva .gpass { --bg: #0e0d0b; --fg: #efe3c2; --label: #c2a45c; }
-.riserva .pass::after, .riserva .gpass::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
-  border: 1px solid transparent; background: linear-gradient(135deg, #7a5c22, #e8cf8a, #b8923f, #f5e3a8, #8a6d2f) border-box;
+.pass { position: relative; border-radius: 12px; overflow: hidden; background: var(--p-bg); color: var(--c-ink); font-family: var(--sf);
+  box-shadow: 0 0 0 .5px rgba(255,255,255,.1) inset; }
+.gpass { position: relative; border-radius: 20px; overflow: hidden; background: var(--p-bg); color: var(--c-ink); font-family: var(--roboto); }
+.t-germoglio { --p-bg: #162d21; } .t-raccolto { --p-bg: #342113; } .t-riserva { --p-bg: #0e0d0b; }
+.t-riserva.pass::after, .t-riserva.gpass::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; border: 1px solid transparent;
+  background: linear-gradient(135deg, #7a5c22, #e8cf8a, #b8923f, #f5e3a8, #8a6d2f) border-box;
   -webkit-mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
-.lbl { display: block; font-size: .6rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--label); }
-.pass-head { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px 8px; gap: 10px; }
-.pass-head img { height: 40px; width: auto; display: block; }
-.pass-head .hf { text-align: right; }
-.pass-head .hf b { font-size: .95rem; font-weight: 500; letter-spacing: .02em; }
-.pass-strip { aspect-ratio: 375 / 123; background-size: cover; background-position: center; padding: 0 14px; display: flex; flex-direction: column; justify-content: center; }
-.pass-strip b { font-size: 2.6rem; font-weight: 300; line-height: 1; }
-.pass-row { display: flex; justify-content: space-between; gap: 10px; padding: 10px 14px 0; }
-.pass-row b { display: block; font-size: .95rem; font-weight: 400; }
-.pass-row .r { text-align: right; }
-.pass-qr { background: #fff; border-radius: 8px; width: 150px; margin: 18px auto 16px; padding: 8px 8px 4px; text-align: center; }
-.pass-qr svg { width: 100%; height: auto; display: block; }
-.pass-qr small { font: 500 .68rem var(--sf); color: #222; letter-spacing: .04em; }
+.lbl { display: block; font-size: .56rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--c-label); }
+.p-head { display: flex; justify-content: space-between; align-items: center; padding: 9px 11px 7px; }
+.p-head img { height: 34px; width: auto; display: block; }
+.p-head .hf { text-align: right; } .p-head b { font-size: .86rem; font-weight: 500; }
+.p-strip { aspect-ratio: 375 / 123; background: var(--img) center / cover; padding: 0 12px; display: flex; flex-direction: column; justify-content: center; }
+.p-strip b { font-size: 2.2rem; font-weight: 300; line-height: 1; font-variant-numeric: tabular-nums; }
+.p-row { display: flex; justify-content: space-between; gap: 8px; padding: 9px 12px 0; }
+.p-row b { display: block; font-size: .84rem; font-weight: 400; }
+.p-row .r { text-align: right; }
+.g-top { display: flex; align-items: center; gap: 9px; padding: 14px 16px 4px; font-size: .82rem; font-weight: 500; }
+.g-top img { width: 26px; height: 26px; border-radius: 50%; }
+.g-prog { padding: 2px 16px 0; font-size: 1.12rem; }
+.g-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; padding: 12px 16px 0; }
+.g-grid .lbl { text-transform: none; letter-spacing: 0; font-weight: 500; font-size: .66rem; }
+.g-grid b { display: block; font-size: .9rem; font-weight: 400; font-variant-numeric: tabular-nums; }
+.g-hero { display: block; width: 100%; height: auto; margin-top: 14px; }
 
-/* ---------- Google Wallet loyalty card ---------- */
-.gpass {
-  --bg: #162d21; --fg: #f1ecdd; --label: #a8c79a;
-  position: relative; background: var(--bg); color: var(--fg); border-radius: 22px; overflow: hidden;
-  font-family: var(--roboto); box-shadow: 0 30px 60px -20px rgba(0,0,0,.8), 0 0 0 1px rgba(255,255,255,.04);
-  max-width: 375px; width: 100%; margin-inline: auto;
+/* contactless zone in place of a barcode */
+.nfc { position: relative; display: grid; justify-items: center; gap: 8px; padding: 22px 12px 18px; }
+.nfc-ring { position: relative; width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; border: 1px solid color-mix(in srgb, var(--c-label) 60%, transparent); }
+.nfc-ring svg { width: 26px; height: 26px; color: var(--c-ink); }
+.nfc-ring::before, .nfc-ring::after { content: ""; position: absolute; inset: -1px; border-radius: 50%; border: 1px solid var(--c-label); opacity: 0; animation: pulse 2.8s var(--ease) infinite; }
+.nfc-ring::after { animation-delay: 1.4s; }
+@keyframes pulse { 0% { transform: scale(1); opacity: .7; } 100% { transform: scale(2.1); opacity: 0; } }
+.nfc small { font-size: .7rem; color: var(--c-label); letter-spacing: .03em; text-align: center; }
+.tap-btn { border: 1px solid color-mix(in srgb, var(--c-label) 55%, transparent); background: transparent; color: var(--c-ink); font: 500 .74rem var(--sans); letter-spacing: .06em;
+  padding: 6px 14px; border-radius: 999px; cursor: pointer; }
+.tap-btn:hover { background: color-mix(in srgb, var(--c-label) 14%, transparent); }
+.tapped .nfc-ring { animation: tapped .9s var(--ease); }
+@keyframes tapped { 0% { transform: scale(1); } 30% { transform: scale(.86); box-shadow: 0 0 0 10px color-mix(in srgb, var(--c-label) 25%, transparent); } 100% { transform: scale(1); box-shadow: 0 0 0 26px transparent; } }
+.earned { position: absolute; top: 4px; left: 50%; translate: -50% 0; font: 600 .82rem var(--sf); color: var(--c-label); opacity: 0; pointer-events: none; }
+.tapped .earned { animation: earned 1.6s var(--ease); }
+@keyframes earned { 0% { opacity: 0; transform: translateY(14px); } 25% { opacity: 1; } 80% { opacity: 1; transform: translateY(-6px); } 100% { opacity: 0; transform: translateY(-14px); } }
+.phone-cap { text-align: center; font-size: .78rem; color: var(--muted); letter-spacing: .14em; text-transform: uppercase; margin-top: 12px; }
+
+/* ---------- Going live ---------- */
+.live { margin-top: 80px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+.live-card { border: 1px solid var(--line); background: linear-gradient(180deg, rgba(255,255,255,.025), rgba(255,255,255,0)); border-radius: 16px; padding: 24px; display: grid; gap: 12px; align-content: start; }
+.live-card h3 { font-family: var(--serif); font-size: 1.7rem; }
+.live-card ol { margin: 0; padding-left: 1.2em; color: var(--ink-2); display: grid; gap: 7px; font-size: .92rem; font-weight: 300; }
+.live-card b { color: var(--ink); font-weight: 500; }
+code { font-family: ui-monospace, "SFMono-Regular", Menlo, monospace; font-size: .8em; background: rgba(255,255,255,.06); padding: 1px 5px; border-radius: 4px; color: var(--ink); overflow-wrap: anywhere; }
+.note { font-size: .82rem; color: var(--muted); }
+
+@media (max-width: 900px) {
+  .stage { height: auto; display: grid; gap: 8px; padding-top: 10px; }
+  .stage .card3d { position: relative; left: auto; top: auto; width: min(92%, 440px); justify-self: center; }
+  .stage .card3d:nth-child(n) { transform: none; }
+  .stage .card3d:nth-child(1) { rotate: -3deg; } .stage .card3d:nth-child(3) { rotate: 3deg; }
+  .tier-view { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .phones { grid-template-columns: minmax(0, 1fr); }
+  .live { grid-template-columns: minmax(0, 1fr); }
 }
-.g-top { display: flex; align-items: center; gap: 10px; padding: 16px 18px 6px; }
-.g-top img { width: 30px; height: 30px; border-radius: 50%; display: block; }
-.g-top span { font-size: .9rem; font-weight: 500; }
-.g-prog { padding: 4px 18px 0; font-size: 1.28rem; font-weight: 400; }
-.g-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 14px; padding: 16px 18px 0; }
-.g-grid .lbl { font-weight: 500; letter-spacing: .02em; text-transform: none; font-size: .72rem; opacity: .9; }
-.g-grid b { display: block; font-size: 1rem; font-weight: 400; }
-.g-qr { background: #fff; border-radius: 14px; width: 170px; margin: 20px auto 18px; padding: 10px 10px 6px; text-align: center; }
-.g-qr svg { width: 100%; height: auto; display: block; }
-.g-qr small { font: 500 .7rem var(--roboto); color: #333; }
-.g-hero { display: block; width: 100%; height: auto; }
-
-.perks { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-.perks li { display: grid; grid-template-columns: 14px 1fr; gap: 8px; font-size: .92rem; color: var(--ink-2); }
-.perks li::before { content: ""; width: 6px; height: 6px; margin-top: .55em; border-radius: 50%; background: var(--label, var(--gold)); }
-.germoglio { --label: #a8c79a; } .raccolto { --label: #d8a547; } .riserva { --label: #d9bc72; }
-.thr { font-size: .8rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 10px; }
-
-section.live { margin-top: 56px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
-.live-card { border: 1px solid var(--line); background: var(--panel); border-radius: 14px; padding: 22px; display: grid; gap: 12px; align-content: start; }
-.live-card h3 { font-family: var(--serif); font-size: 1.6rem; }
-.live-card ol { margin: 0; padding-left: 1.2em; color: var(--ink-2); display: grid; gap: 6px; font-size: .92rem; }
-code { font-family: ui-monospace, "SFMono-Regular", Menlo, monospace; font-size: .82em; background: #221f1a; padding: 1px 5px; border-radius: 4px; color: var(--ink); overflow-wrap: anywhere; }
-.status { font-size: .82rem; color: var(--muted); }
-.status b { color: var(--ink); font-weight: 600; }
-
-@media (max-width: 980px) { .tiers { grid-template-columns: minmax(0, 1fr); max-width: 420px; margin-inline: auto; } section.live { grid-template-columns: minmax(0, 1fr); } }
-@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
 </style>
 </head>
 <body>
 <div class="shell">
-  <header>
+  <section class="intro">
     <span class="eyebrow">Hamburgheria del Contadino · Carta Fedeltà</span>
-    <h1>Three cards, from the first sprout to the <em>reserve</em>.</h1>
-    <p class="lede">Every customer carries their fidelity card in Apple Wallet or Google Wallet. The card grows with them: it starts as a sprout, becomes the harvest, and the best guests are set aside in the Riserva. The QR code on each card opens the restaurant's fidelity page with that customer's card number.</p>
-  </header>
+    <h1>Non si mostra. <em>Si avvicina.</em></h1>
+    <p class="lede">Three contactless fidelity cards that live in Apple Wallet and Google Wallet. Customers hold their phone to the reader, as if paying, and the points arrive on their own. The card grows with them, from the first sprout to the Riserva set aside for the best guests.</p>
+  </section>
 
-  <div class="switch" role="group" aria-label="Wallet">
-    <button type="button" id="show-apple" aria-pressed="true">Apple Wallet</button>
-    <button type="button" id="show-google" aria-pressed="false">Google Wallet</button>
-  </div>
+  <div class="stage" id="stage" aria-label="The three cards"></div>
 
-  <div class="tiers" id="tiers"></div>
+  <section class="detail">
+    <div class="tabs" role="tablist" aria-label="Card" id="tabs"></div>
+    <div class="tier-view" id="tier-view" role="tabpanel"></div>
+  </section>
+
+  <section class="wallets">
+    <h3>In the wallet, <em style="font-style:italic">senza codici</em>.</h3>
+    <p>No barcode to scan: each pass carries its card number over NFC. Press "Prova il tap" to see a visit being recorded.</p>
+    <div class="switch" role="group" aria-label="Wallet">
+      <button type="button" id="show-apple" aria-pressed="true">Apple Wallet</button>
+      <button type="button" id="show-google" aria-pressed="false">Google Wallet</button>
+    </div>
+    <div class="phones" id="phones"></div>
+  </section>
 
   <section class="live">
     <div class="live-card">
-      <h3>Going live on Apple Wallet</h3>
+      <h3>Contactless on Apple Wallet</h3>
       <ol>
-        <li>In an Apple Developer account, create a <b>Pass Type ID</b> (for example <code>pass.it.hamburgheriadelcontadino.fidelity</code>) and download its certificate.</li>
-        <li>Export the certificate and key as PEM files, and download Apple's WWDR G4 certificate.</li>
-        <li>Run <code>node tools/build-wallet-passes.js --card LHC-10458 --name "Marco Bianchi" --spend 1290 --points 312</code> with the <code>APPLE_*</code> variables set.</li>
-        <li>Send the resulting <code>.pkpass</code> by email or link: one tap adds it to Wallet.</li>
+        <li>Create a <b>Pass Type ID</b> in an Apple Developer account, then ask Apple to enable <b>NFC</b> for it (Apple approves loyalty programmes case by case).</li>
+        <li>Generate a P-256 key pair for NFC. The public key goes in <code>APPLE_NFC_PUBLIC_KEY</code>, and the private key goes into the reader.</li>
+        <li>Build and sign the passes: <code>node tools/build-wallet-passes.js</code> with the <code>APPLE_*</code> variables set.</li>
+        <li>The till needs a reader that supports <b>Apple VAS</b>. Many current payment terminals already do.</li>
       </ol>
-      <p class="status">The repo includes the pass bundles for all three tiers. <b>They install once signed</b> with your certificate.</p>
     </div>
     <div class="live-card">
-      <h3>Going live on Google Wallet</h3>
+      <h3>Contactless on Google Wallet</h3>
       <ol>
-        <li>In the <b>Google Pay &amp; Wallet Console</b>, request Google Wallet API access. You get an <b>Issuer ID</b>.</li>
-        <li>Create a service account with Wallet access, then download its JSON key.</li>
-        <li>Upload <code>wallet/art/</code> to any public HTTPS address (Google fetches the images from there).</li>
-        <li>Run the same build command with <code>GOOGLE_*</code> set: each customer gets an "Add to Google Wallet" link.</li>
+        <li>Get an <b>Issuer ID</b> in the Google Pay &amp; Wallet Console, and ask for <b>Smart Tap</b> to be enabled.</li>
+        <li>Set <code>GOOGLE_SMART_TAP=1</code> together with the <code>GOOGLE_*</code> variables, then build. Each customer gets an "Add to Google Wallet" link.</li>
+        <li>The pass sends the card number to the reader on tap (<code>smartTapRedemptionValue</code>).</li>
+        <li>The till needs a <b>Smart Tap</b>-certified reader.</li>
       </ol>
-      <p class="status">The classes for all three tiers and the customer objects are ready in <code>wallet/build/google/</code>.</p>
     </div>
+    <p class="note" style="grid-column:1/-1">The passes contain no QR code: the card number travels only through the contactless chip in the phone. Until NFC is enabled, customers can still read their card number on the back of the pass.</p>
   </section>
 </div>
 
-<script src="../vendor/qrcode.js"></script>
 <script>
 (() => {
-  const URL_BASE = 'https://lhamburgerdelcontadino.plateform.app/frontpage/fidelity?card=';
   const TIERS = [
-    { id: 'germoglio', name: 'Germoglio', who: 'New customers · the sprout', motto: 'Ogni raccolto comincia da un seme.', thr: 'From the first visit · 1 point per €1',
+    { id: 'germoglio', name: 'Germoglio', who: 'Nuovi clienti · il germoglio', motto: 'Ogni raccolto comincia da un seme.', from: 'Prima visita', rate: '×1',
       perks: ['1 punto per ogni euro', 'Patatine rustiche omaggio a 80 punti', 'Dolce di benvenuto alla seconda visita'],
-      sample: { card: 'LHC-10717', name: 'Elena Bruno', points: 46, since: 'set 2026', next: 'Patatine rustiche · 34 pt', spent: '133,50 €' } },
-    { id: 'raccolto', name: 'Raccolto', who: 'Regular customers · the harvest', motto: 'Il frutto di ogni visita.', thr: 'From €250 spent · 1.25 points per €1',
+      s: { card: 'LHC 10717', name: 'Elena Bruno', points: 46, since: 'set 2026', next: 'Patatine rustiche · 34 pt', spent: '133,50 €', earn: 12 } },
+    { id: 'raccolto', name: 'Raccolto', who: 'Clienti abituali · il raccolto', motto: 'Il frutto di ogni visita.', from: 'Da 250 €', rate: '×1,25',
       perks: ['1,25 punti per ogni euro', 'Burger del mese in anteprima', 'Tavolo prenotabile anche il sabato sera'],
-      sample: { card: 'LHC-10421', name: 'Giulia Rossi', points: 164, since: 'mar 2026', next: 'Il Contadino · 36 pt', spent: '553,00 €' } },
-    { id: 'riserva', name: 'Riserva', who: 'VIP customers · the reserve', motto: 'Il meglio del raccolto, messo da parte per te.', thr: 'From €600 spent · 1.5 points per €1',
+      s: { card: 'LHC 10421', name: 'Giulia Rossi', points: 164, since: 'mar 2026', next: 'Il Contadino · 36 pt', spent: '553,00 €', earn: 23 } },
+    { id: 'riserva', name: 'Riserva', who: 'Clienti VIP · la riserva', motto: 'Il meglio del raccolto, messo da parte per te.', from: 'Da 600 €', rate: '×1,5',
       perks: ['1,5 punti per ogni euro', 'Tavolo riservato, senza attesa', 'Degustazione privata del nuovo menu', 'Un calice della casa ad ogni visita'],
-      sample: { card: 'LHC-10458', name: 'Marco Bianchi', points: 312, since: 'mar 2026', next: 'Tutti i premi sbloccati', spent: '1.290,00 €' } },
+      s: { card: 'LHC 10458', name: 'Marco Bianchi', points: 312, since: 'mar 2026', next: 'Tutti i premi sbloccati', spent: '1.290,00 €', earn: 54 } },
   ];
+  const NFC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M8.5 8.8a4.6 4.6 0 0 1 0 6.4"/><path d="M11.6 6.2a8.3 8.3 0 0 1 0 11.6"/><path d="M14.7 3.6a12 12 0 0 1 0 16.8"/><path d="M5.4 11.2a1.2 1.2 0 0 1 0 1.6"/></svg>';
+  const img = (t, f) => `art/${t.id}/${f}`;
 
-  const qr = (text) => {
-    if (!window.qrcode) return '';
-    const q = window.qrcode(0, 'M'); q.addData(text); q.make();
-    const n = q.getModuleCount(), m = 2, size = n + m * 2;
-    let d = '';
-    for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.isDark(r, c)) d += `M${c + m} ${r + m}h1v1h-1z`;
-    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" shape-rendering="crispEdges" role="img" aria-label="QR code"><rect width="${size}" height="${size}" fill="#fff"/><path d="${d}" fill="#111"/></svg>`;
-  };
-
-  const apple = (t, s) => `
-    <div class="pass" aria-label="Apple Wallet card, ${t.name}">
-      <div class="pass-head"><img src="art/${t.id}/logo@3x.png" alt="Hamburgheria del Contadino"><div class="hf"><span class="lbl">Livello</span><b>${t.name.toUpperCase()}</b></div></div>
-      <div class="pass-strip" style="background-image:url('art/${t.id}/strip@3x.png')"><span class="lbl">Punti</span><b>${s.points}</b></div>
-      <div class="pass-row"><div><span class="lbl">Socio</span><b>${s.name}</b></div></div>
-      <div class="pass-row"><div><span class="lbl">Prossimo premio</span><b>${s.next}</b></div><div class="r"><span class="lbl">Dal</span><b>${s.since}</b></div></div>
-      <div class="pass-qr">${qr(URL_BASE + s.card)}<small>${s.card}</small></div>
+  const card = (t) => `
+    <div class="card3d t-${t.id}" data-tilt>
+      <div class="card-float">
+        <div class="card" style="--img:url('${img(t, 'card@3x.jpg')}')" role="img" aria-label="Carta ${t.name}, ${t.s.name}">
+          <div class="card-content">
+            <div class="c-top">
+              <div class="c-mark"><span class="c-h">HAMBURGHERIA</span><span class="c-d">del Contadino</span></div>
+              <span class="c-nfc">${NFC}</span>
+            </div>
+            <div class="c-tier">${t.name.toUpperCase()}</div>
+            <div class="c-bottom">
+              <div><span class="c-lbl">Socio</span><span class="c-name">${t.s.name}</span></div>
+              <div class="r"><span class="c-lbl">Dal ${t.s.since}</span><span class="c-num">${t.s.card}</span></div>
+            </div>
+          </div>
+          <div class="card-gloss"></div><div class="card-holo"></div><div class="card-spec"></div><div class="card-sheen"></div>
+        </div>
+      </div>
+      <div class="card-shadow"></div>
     </div>`;
 
-  const google = (t, s) => `
-    <div class="gpass" aria-label="Google Wallet card, ${t.name}">
-      <div class="g-top"><img src="art/${t.id}/google-logo.png" alt=""><span>Hamburgheria del Contadino</span></div>
+  // ---- stage + tabs ----
+  document.getElementById('stage').innerHTML = TIERS.map(card).join('');
+  let current = 2;
+  const tabs = document.getElementById('tabs');
+  tabs.innerHTML = TIERS.map((t, i) => `<button class="tab" role="tab" id="tab-${t.id}" aria-selected="${i === current}" data-i="${i}"><i style="--img:url('${img(t, 'card@3x.jpg')}')"></i>${t.name}</button>`).join('');
+  function renderTier() {
+    const t = TIERS[current];
+    document.getElementById('tier-view').innerHTML = `
+      ${card(t)}
+      <div class="tier-info t-${t.id} enter">
+        <span class="who">${t.who}</span>
+        <h2 class="${t.id === 'riserva' ? 'foil-text' : ''}">${t.name.toUpperCase()}</h2>
+        <p class="motto">${t.motto}</p>
+        <div class="rate"><div><b>${t.rate}</b><span>punti per €1</span></div><div><b>${t.from}</b><span>spesa totale</span></div></div>
+        <ul class="perks">${t.perks.map((p) => `<li>${p}</li>`).join('')}</ul>
+      </div>`;
+    tabs.querySelectorAll('.tab').forEach((b, i) => b.setAttribute('aria-selected', String(i === current)));
+    bindTilt(document.querySelector('#tier-view [data-tilt]'));
+  }
+  tabs.addEventListener('click', (e) => { const b = e.target.closest('.tab'); if (b) { current = +b.dataset.i; renderTier(); } });
+
+  // ---- wallet previews ----
+  let mode = 'apple';
+  const apple = (t) => `
+    <div class="pass t-${t.id}">
+      <div class="p-head"><img src="${img(t, 'logo@3x.png')}" alt="Hamburgheria del Contadino"><div class="hf"><span class="lbl">Livello</span><b>${t.name.toUpperCase()}</b></div></div>
+      <div class="p-strip" style="--img:url('${img(t, 'strip@3x.png')}')"><span class="lbl">Punti</span><b data-points>${t.s.points}</b></div>
+      <div class="p-row"><div><span class="lbl">Socio</span><b>${t.s.name}</b></div></div>
+      <div class="p-row"><div><span class="lbl">Prossimo premio</span><b>${t.s.next}</b></div><div class="r"><span class="lbl">Dal</span><b>${t.s.since}</b></div></div>
+      ${nfcZone(t)}
+    </div>`;
+  const google = (t) => `
+    <div class="gpass t-${t.id}">
+      <div class="g-top"><img src="${img(t, 'google-logo.png')}" alt="">Hamburgheria del Contadino</div>
       <div class="g-prog">Carta Fedeltà · ${t.name}</div>
       <div class="g-grid">
-        <div><span class="lbl">Socio</span><b>${s.name}</b></div>
-        <div><span class="lbl">Livello</span><b>${t.name}</b></div>
-        <div><span class="lbl">Punti</span><b>${s.points}</b></div>
-        <div><span class="lbl">Speso</span><b>${s.spent}</b></div>
+        <div><span class="lbl">Socio</span><b>${t.s.name}</b></div><div><span class="lbl">Livello</span><b>${t.name}</b></div>
+        <div><span class="lbl">Punti</span><b data-points>${t.s.points}</b></div><div><span class="lbl">Speso</span><b>${t.s.spent}</b></div>
       </div>
-      <div class="g-qr">${qr(URL_BASE + s.card)}<small>${s.card}</small></div>
-      <img class="g-hero" src="art/${t.id}/hero.png" alt="">
+      ${nfcZone(t)}
+      <img class="g-hero" src="${img(t, 'hero.png')}" alt="">
     </div>`;
-
-  let mode = 'apple';
-  function render() {
-    document.getElementById('tiers').innerHTML = TIERS.map((t) => `
-      <article class="tier-col ${t.id}">
-        <div class="tier-meta"><h2>${t.name.toUpperCase()}</h2><div class="who">${t.who}</div><p class="motto">${t.motto}</p></div>
-        ${mode === 'apple' ? apple(t, t.sample) : google(t, t.sample)}
-        <ul class="perks">${t.perks.map((p) => `<li>${p}</li>`).join('')}</ul>
-        <p class="thr">${t.thr}</p>
-      </article>`).join('');
+  const nfcZone = (t) => `
+    <div class="nfc">
+      <span class="earned">+${t.s.earn} punti</span>
+      <div class="nfc-ring">${NFC}</div>
+      <small>Avvicina il telefono al lettore</small>
+      <button class="tap-btn" type="button" data-tap="${t.id}">Prova il tap</button>
+    </div>`;
+  function renderPhones() {
+    document.getElementById('phones').innerHTML = TIERS.map((t) => `
+      <div><div class="phone"><div class="screen">${mode === 'apple' ? apple(t) : google(t)}</div></div><p class="phone-cap">${t.name}</p></div>`).join('');
     document.getElementById('show-apple').setAttribute('aria-pressed', String(mode === 'apple'));
     document.getElementById('show-google').setAttribute('aria-pressed', String(mode === 'google'));
   }
-  document.getElementById('show-apple').addEventListener('click', () => { mode = 'apple'; render(); });
-  document.getElementById('show-google').addEventListener('click', () => { mode = 'google'; render(); });
-  render();
+  document.getElementById('show-apple').addEventListener('click', () => { mode = 'apple'; renderPhones(); });
+  document.getElementById('show-google').addEventListener('click', () => { mode = 'google'; renderPhones(); });
+  document.getElementById('phones').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-tap]');
+    if (!b) return;
+    const t = TIERS.find((x) => x.id === b.dataset.tap);
+    const pass = b.closest('.pass, .gpass');
+    pass.classList.remove('tapped'); void pass.offsetWidth; pass.classList.add('tapped');
+    const el = pass.querySelector('[data-points]');
+    const from = t.s.points, to = from + t.s.earn, t0 = performance.now();
+    const step = (now) => {
+      const k = Math.min(1, (now - t0) / 900);
+      el.textContent = Math.round(from + (to - from) * (1 - Math.pow(1 - k, 3)));
+      if (k < 1) requestAnimationFrame(step); else t.s.points = to;
+    };
+    setTimeout(() => requestAnimationFrame(step), 250);
+  });
+
+  // ---- tilt, specular and lift following the pointer ----
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function bindTilt(el) {
+    if (!el || reduce) return;
+    const cardEl = el.querySelector('.card');
+    let target = { rx: 0, ry: 0, mx: 50, my: 30, lift: 0 }, cur = { ...target }, raf = 0;
+    const loop = () => {
+      let moving = false;
+      for (const k in cur) { cur[k] += (target[k] - cur[k]) * 0.14; if (Math.abs(target[k] - cur[k]) > 0.01) moving = true; }
+      el.style.setProperty('--rx', `${cur.rx.toFixed(2)}deg`);
+      el.style.setProperty('--ry', `${cur.ry.toFixed(2)}deg`);
+      el.style.setProperty('--mx', `${cur.mx.toFixed(1)}%`);
+      el.style.setProperty('--my', `${cur.my.toFixed(1)}%`);
+      el.style.setProperty('--lift', cur.lift.toFixed(3));
+      raf = moving ? requestAnimationFrame(loop) : 0;
+    };
+    const kick = () => { if (!raf) raf = requestAnimationFrame(loop); };
+    cardEl.addEventListener('pointermove', (e) => {
+      const r = cardEl.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+      target = { rx: (0.5 - y) * 16, ry: (x - 0.5) * 22, mx: x * 100 + 20, my: y * 100 + 20, lift: 1 };
+      el.classList.add('active'); kick();
+    });
+    cardEl.addEventListener('pointerleave', () => { target = { rx: 0, ry: 0, mx: 50, my: 30, lift: 0 }; el.classList.remove('active'); kick(); });
+  }
+
+  document.querySelectorAll('#stage [data-tilt]').forEach(bindTilt);
+  renderTier();
+  renderPhones();
 })();
 </script>
 <!--ARTIFACT-END-->

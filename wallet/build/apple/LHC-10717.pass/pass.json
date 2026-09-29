@@ -70,7 +70,7 @@
       {
         "key": "how",
         "label": "Come funziona",
-        "value": "Mostra questa carta alla cassa prima di pagare: i punti si aggiungono in automatico e puoi usarli per i premi."
+        "value": "Avvicina il telefono al lettore contactless alla cassa, come per pagare: i punti si aggiungono da soli e puoi usarli per i premi."
       },
       {
         "key": "web",
@@ -83,19 +83,5 @@
         "value": "Ogni raccolto comincia da un seme."
       }
     ]
-  },
-  "barcodes": [
-    {
-      "format": "PKBarcodeFormatQR",
-      "message": "https://lhamburgerdelcontadino.plateform.app/frontpage/fidelity?card=LHC-10717",
-      "messageEncoding": "iso-8859-1",
-      "altText": "LHC-10717"
-    }
-  ],
-  "barcode": {
-    "format": "PKBarcodeFormatQR",
-    "message": "https://lhamburgerdelcontadino.plateform.app/frontpage/fidelity?card=LHC-10717",
-    "messageEncoding": "iso-8859-1",
-    "altText": "LHC-10717"
   }
 }

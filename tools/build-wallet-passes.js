@@ -15,6 +15,7 @@
  * Apple signing (Apple Developer account → Certificates → Pass Type ID):
  *   APPLE_PASS_TYPE_ID=pass.it.hamburgheriadelcontadino.fidelity  APPLE_TEAM_ID=ABCDE12345
  *   APPLE_CERT_PEM=cert.pem  APPLE_KEY_PEM=key.pem  [APPLE_KEY_PASS=...]  APPLE_WWDR_PEM=AppleWWDRCAG4.pem
+ * Contactless (optional, once approved): APPLE_NFC_PUBLIC_KEY=<base64 P-256 public key>  GOOGLE_SMART_TAP=1
  * Google (Google Pay & Wallet Console → Google Wallet API):
  *   GOOGLE_ISSUER_ID=3388000000012345678  GOOGLE_SA_KEY=service-account.json
  *   GOOGLE_IMAGE_BASE_URL=https://your-host/wallet/art   (public HTTPS copy of wallet/art)
@@ -42,6 +43,8 @@ const SAMPLES = [
 // Apple sizes are in points; Google sizes are pixels.
 const APPLE_IMAGES = { icon: [29, 29], logo: [160, 50], strip: [375, 123] };
 const GOOGLE_IMAGES = { hero: [1032, 336], 'google-logo': [660, 660] };
+// HD card face for the showcase page and the app (rendered at 3×: 3033×1914 px).
+const CARD_IMAGE = { card: [1011, 638] };
 
 // ---------------------------------------------------------------- helpers
 
@@ -131,6 +134,7 @@ async function renderArtwork() {
       for (const scale of [1, 2, 3]) jobs.push({ tier, kind, w, h, scale, file: `${kind}${scale > 1 ? `@${scale}x` : ''}.png` });
     }
     for (const [kind, [w, h]] of Object.entries(GOOGLE_IMAGES)) jobs.push({ tier, kind, w, h, scale: 1, file: `${kind}.png` });
+    for (const [kind, [w, h]] of Object.entries(CARD_IMAGE)) jobs.push({ tier, kind, w, h, scale: 3, file: `${kind}@3x.jpg`, jpeg: true });
   }
   try {
     for (const scale of [1, 2, 3]) {
@@ -141,7 +145,8 @@ async function renderArtwork() {
         await page.evaluate(([tier, kind, w, h]) => window.renderArt(tier, kind, w, h), [j.tier, j.kind, j.w, j.h]);
         const dir = path.join(ART, j.tier.id);
         fs.mkdirSync(dir, { recursive: true });
-        await page.screenshot({ path: path.join(dir, j.file), omitBackground: j.kind === 'logo', clip: { x: 0, y: 0, width: j.w, height: j.h } });
+        const shot = j.jpeg ? { type: 'jpeg', quality: 92 } : { omitBackground: j.kind === 'logo' };
+        await page.screenshot({ path: path.join(dir, j.file), ...shot, clip: { x: 0, y: 0, width: j.w, height: j.h } });
       }
       await page.close();
     }
@@ -179,13 +184,14 @@ function applePassJson(c, tier) {
         { key: 'perks', label: `Vantaggi ${tier.name}`, value: tier.perks.map((p) => `• ${p}`).join('\n') },
         { key: 'progress', label: 'Il tuo percorso', value: `${nextTierText(c.spend, tier)}.\nGermoglio → Raccolto (da ${eur(tierById.raccolto.min)}) → Riserva (da ${eur(tierById.riserva.min)}).` },
         { key: 'rewards', label: 'Premi', value: REWARDS.map((r) => `${r.label}: ${r.cost} punti`).join('\n') },
-        { key: 'how', label: 'Come funziona', value: 'Mostra questa carta alla cassa prima di pagare: i punti si aggiungono in automatico e puoi usarli per i premi.' },
+        { key: 'how', label: 'Come funziona', value: 'Avvicina il telefono al lettore contactless alla cassa, come per pagare: i punti si aggiungono da soli e puoi usarli per i premi.' },
         { key: 'web', label: 'La tua carta online', value: url },
         { key: 'motto', label: tier.name, value: tier.motto },
       ],
     },
-    barcodes: [{ format: 'PKBarcodeFormatQR', message: url, messageEncoding: 'iso-8859-1', altText: c.card }],
-    barcode: { format: 'PKBarcodeFormatQR', message: url, messageEncoding: 'iso-8859-1', altText: c.card },
+    // Contactless only: no barcode. The reader receives the card number over NFC (Apple VAS).
+    // Apple enables NFC for a Pass Type ID on request; its public key goes in APPLE_NFC_PUBLIC_KEY.
+    ...(env.APPLE_NFC_PUBLIC_KEY ? { nfc: { message: c.card, encryptionPublicKey: env.APPLE_NFC_PUBLIC_KEY } } : {}),
   };
 }
 
@@ -243,6 +249,8 @@ function googleClass(tier) {
     reviewStatus: 'UNDER_REVIEW',
     multipleDevicesAndHoldersAllowedStatus: 'ONE_USER_ALL_DEVICES',
     homepageUri: { uri: BRAND.fidelityUrl, description: 'Sezione fedeltà' },
+    // Smart Tap (Google's contactless loyalty) needs an issuer approved for it: GOOGLE_SMART_TAP=1.
+    ...(env.GOOGLE_SMART_TAP ? { enableSmartTap: true, redemptionIssuers: [issuer()] } : {}),
     textModulesData: [
       { id: 'perks', header: `Vantaggi ${tier.name}`, body: tier.perks.join(' · ') },
       { id: 'rewards', header: 'Premi', body: REWARDS.map((r) => `${r.label}: ${r.cost} pt`).join(' · ') },
@@ -260,7 +268,7 @@ function googleObject(c, tier) {
     accountName: c.name,
     loyaltyPoints: { label: 'Punti', balance: { int: c.points } },
     secondaryLoyaltyPoints: { label: 'Speso', balance: { money: { micros: String(c.spend * 10000), currencyCode: 'EUR' } } },
-    barcode: { type: 'QR_CODE', value: url, alternateText: c.card },
+    smartTapRedemptionValue: c.card, // sent to the till's reader on tap; no barcode
     hexBackgroundColor: tier.colors.background,
     textModulesData: [
       { id: 'next', header: 'Prossimo premio', body: nextRewardText(c.points) },

@@ -228,9 +228,22 @@ button, input, select { font: inherit; color: inherit; }
 .wallet-fields { display: flex; justify-content: space-between; gap: 12px; padding: 12px 16px 0; }
 .wallet-fields b { display: block; font-weight: 500; font-size: .98rem; }
 .wallet-fields .r { text-align: right; }
-.wallet-qr { background: #fff; border-radius: 10px; padding: 10px 10px 6px; margin: 16px auto 18px; width: min(210px, 70%); display: flex; flex-direction: column; align-items: center; }
-.wallet-qr svg { width: 100%; height: auto; display: block; }
-.wallet-qr small { font-family: var(--mono); font-size: .72rem; letter-spacing: .08em; color: #333; margin-top: 2px; }
+.wallet-nfc { display: grid; justify-items: center; gap: 8px; padding: 22px 16px 22px; }
+.wallet-nfc-ring { position: relative; width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--w-edge); }
+.wallet-nfc-ring svg { width: 26px; height: 26px; }
+.wallet-nfc-ring::before, .wallet-nfc-ring::after { content: ""; position: absolute; inset: -1px; border-radius: 50%; border: 1px solid var(--w-label); opacity: 0; animation: nfc-pulse 2.8s cubic-bezier(.2, .7, .1, 1) infinite; }
+.wallet-nfc-ring::after { animation-delay: 1.4s; }
+@keyframes nfc-pulse { 0% { transform: scale(1); opacity: .7; } 100% { transform: scale(2.1); opacity: 0; } }
+.wallet-nfc small { font-size: .72rem; color: var(--w-label); }
+.wallet-id { font-family: var(--sans, inherit); font-size: .8rem; letter-spacing: .24em; opacity: .85; }
+.wallet { animation: wallet-float 7s ease-in-out infinite; }
+@keyframes wallet-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+.wallet-sheen { position: absolute; inset: 0; pointer-events: none; overflow: hidden; border-radius: inherit;
+  background: linear-gradient(168deg, rgba(255,255,255,.14), rgba(255,255,255,0) 30%); }
+.wallet-sheen::before { content: ""; position: absolute; top: -50%; bottom: -50%; width: 30%; left: -40%; transform: rotate(18deg); mix-blend-mode: screen;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.06) 30%, rgba(255,255,255,.26) 50%, rgba(255,255,255,.06) 70%, transparent);
+  animation: wallet-sheen 7.5s cubic-bezier(.2, .7, .1, 1) infinite; }
+@keyframes wallet-sheen { 0%, 62% { left: -40%; } 100% { left: 130%; } }
 .wallet-note { font-family: var(--serif); font-style: italic; font-size: 1.02rem; color: var(--ink-2); margin-top: 10px; }
 .url-row { display: flex; gap: 8px; align-items: center; margin-top: 12px; }
 .url-row code { flex: 1; min-width: 0; font-size: .74rem; overflow-wrap: anywhere; color: var(--ink-2); background: var(--surface-2); padding: 6px 10px; border-radius: 8px; }
@@ -452,7 +465,6 @@ td.name { font-weight: 600; }
   </div>
 </div>
 
-<script src="vendor/qrcode.js"></script>
 <script src="vendor/jsQR.js"></script>
 <script src="app.js"></script>
 <!--ARTIFACT-END-->

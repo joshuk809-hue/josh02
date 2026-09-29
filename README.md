@@ -1,7 +1,7 @@
 # Hamburgheria del Contadino — Fidelity card & CRM (mock)
 
-A working, self-contained mock of a QR loyalty card with a customer tracker for a local burger restaurant.
-The QR on each card encodes the restaurant's fidelity link plus the card number:
+A working, self-contained mock of a contactless loyalty card with a customer tracker for a local burger restaurant.
+Each card is linked to the restaurant's fidelity page by its card number:
 
 ```
 https://lhamburgerdelcontadino.plateform.app/frontpage/fidelity?card=LHC-10421
@@ -74,7 +74,15 @@ There are three card designs, one for each type of customer. The names follow th
 | **Raccolto** (the harvest) | Regular | €250 spent | 1.25 | Roasted chestnut, with a sheaf of wheat engraved in wheat-gold |
 | **Riserva** (the reserve) | VIP | €600 spent | 1.5 | Black, with a gold-foil border, a guilloché rosette and a gold crest |
 
-Open `wallet/index.html` to see every card as it appears in Apple Wallet and in Google Wallet. The customer card in the app uses the same design.
+The cards are **contactless**: no QR code or barcode. At the till the customer holds their phone to the reader, as if paying, and the reader receives the card number over NFC.
+
+Open `wallet/index.html` for the animated showcase:
+- **Floating cards:** glossy, high-resolution cards that float over a black ground and tilt towards your pointer, with a specular highlight, a clear-coat sheen, a periodic light sweep and a moving floor shadow.
+- **Riserva:** its gold foil lettering shimmers.
+- **Wallet previews:** each pass in Apple Wallet and Google Wallet, with a "Prova il tap" button that plays a contactless tap and counts the points up.
+
+Motion is switched off for anyone who has "reduce motion" turned on. The customer card in the app uses the same design, with a pulsing contactless zone where the QR code used to be.
+The HD card faces are `wallet/art/<tier>/card@3x.jpg` (3033 × 1914 px).
 The perks listed for each tier in `wallet/tiers.js` are **suggestions**. Edit them before launch.
 
 **Build:** `node tools/build-wallet-passes.js` renders the artwork into `wallet/art/` and builds the three sample cards.
@@ -83,6 +91,11 @@ To build a card for one customer:
 ```
 node tools/build-wallet-passes.js --card LHC-10458 --name "Marco Bianchi" --spend 1290.00 --points 312 --since 2026-03-29
 ```
+
+**Contactless setup:**
+- **Apple Wallet:** Apple has to enable NFC for the Pass Type ID. Once it does, set `APPLE_NFC_PUBLIC_KEY` (a base64 P-256 public key) and each pass gets an `nfc` payload carrying the card number.
+- **Google Wallet:** once Smart Tap is enabled for your issuer, set `GOOGLE_SMART_TAP=1`. The classes then get `enableSmartTap`, and every object already carries `smartTapRedemptionValue`.
+- **The till** needs a reader that supports Apple VAS or Google Smart Tap. Many current payment terminals do.
 
 **Apple Wallet:** the script always writes the pass bundle to `wallet/build/apple/<card>.pass/` (`pass.json`, images and `manifest.json`).
 An iPhone only accepts a pass that is signed with the restaurant's own certificate. To get one:
