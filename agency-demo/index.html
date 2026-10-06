@@ -1,0 +1,944 @@
+<meta charset="utf-8">
+<title>Growth Suite Demo</title>
+<meta name="description" content="White-label demo of an AI growth package for small businesses: website, AI receptionist, CRM, reviews, automations, inventory and pricing.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sticky brand bar + scrollable module tabs, one working module at a time in a 1200px column.
+   --accent is overwritten at runtime from the client's brand colour (CONFIG / Brand settings). */
+:root {
+  --bg: #f4f5f2;
+  --surface: #ffffff;
+  --surface-2: #eceee9;
+  --fg: #1b1f1c;
+  --fg-2: #4b524d;
+  --muted: #747c76;
+  --line: #d9ddd7;
+  --accent: #2f7d5b;
+  --on-accent: #ffffff;
+  --good: #2a7a48; --good-soft: #ddf0e3;
+  --warn: #93600d; --warn-soft: #f7ead0;
+  --bad: #b23a2c;  --bad-soft: #f8dfda;
+  --info: #335f9c; --info-soft: #dfe8f5;
+  --shadow: 0 1px 2px rgba(20,30,25,.05), 0 6px 20px rgba(20,30,25,.06);
+  --display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", sans-serif;
+  --body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  --r: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121513; --surface: #1a1e1b; --surface-2: #232825; --fg: #eef1ee; --fg-2: #c3c9c4;
+    --muted: #8f9791; --line: #2f3531;
+    --good: #6fcf94; --good-soft: #1d3326; --warn: #e8b55a; --warn-soft: #3a2e17;
+    --bad: #f08a7c; --bad-soft: #3d201c; --info: #8db4ea; --info-soft: #1c2a3e;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.25);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #121513; --surface: #1a1e1b; --surface-2: #232825; --fg: #eef1ee; --fg-2: #c3c9c4;
+  --muted: #8f9791; --line: #2f3531;
+  --good: #6fcf94; --good-soft: #1d3326; --warn: #e8b55a; --warn-soft: #3a2e17;
+  --bad: #f08a7c; --bad-soft: #3d201c; --info: #8db4ea; --info-soft: #1c2a3e;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.25);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font: 15px/1.5 var(--body); margin: 0; }
+h1, h2, h3 { font-family: var(--display); line-height: 1.15; margin: 0; text-wrap: balance; letter-spacing: -.01em; }
+h2 { font-size: 1.45rem; }
+h3 { font-size: 1.05rem; }
+p { margin: 0; }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.num { font-variant-numeric: tabular-nums; }
+.mono { font-family: var(--mono); font-size: .85em; }
+.muted { color: var(--muted); }
+.eyebrow { font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; }
+
+/* Top bar */
+.topbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); border-bottom: 1px solid var(--line); }
+.topbar-in { max-width: 1200px; margin: 0 auto; padding: 12px 16px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.brand { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1 1 220px; }
+.logo { width: 36px; height: 36px; border-radius: 9px; background: var(--accent); color: var(--on-accent); display: grid; place-items: center; font-family: var(--display); font-weight: 700; font-size: 1.05rem; flex: none; }
+.brand-name { font-family: var(--display); font-weight: 700; font-size: 1.1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.brand-sub { font-size: .78rem; color: var(--muted); }
+.top-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.tabs { max-width: 1200px; margin: 0 auto; padding: 0 16px; display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { border: 0; background: none; padding: 10px 12px; border-bottom: 2px solid transparent; color: var(--fg-2); font-weight: 600; font-size: .9rem; white-space: nowrap; cursor: pointer; }
+.tab:hover { color: var(--fg); }
+.tab[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--accent); }
+
+main { max-width: 1200px; margin: 0 auto; padding: 24px 16px 64px; display: grid; gap: 20px; }
+.section-head { display: flex; justify-content: space-between; align-items: end; gap: 12px; flex-wrap: wrap; }
+.section-head p { color: var(--fg-2); max-width: 62ch; margin-top: 4px; }
+
+/* Controls */
+.btn { border: 1px solid var(--line); background: var(--surface); padding: 8px 14px; border-radius: 8px; font-weight: 600; font-size: .88rem; cursor: pointer; display: inline-flex; gap: 6px; align-items: center; }
+.btn:hover { border-color: var(--fg-2); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.btn.primary:hover { filter: brightness(1.08); }
+.btn.small { padding: 5px 10px; font-size: .8rem; }
+.btn.danger { color: var(--bad); }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+input[type=text], input[type=number], input[type=email], input[type=tel], select, textarea {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; width: 100%; min-width: 0;
+}
+textarea { resize: vertical; min-height: 70px; }
+label.field { display: grid; gap: 4px; font-size: .82rem; font-weight: 600; color: var(--fg-2); }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; align-items: end; }
+
+/* Surfaces */
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 18px; min-width: 0; }
+.panel > h3 { margin-bottom: 12px; }
+.grid-2 { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 20px; }
+.grid-2.even { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 860px) { .grid-2, .grid-2.even { grid-template-columns: minmax(0, 1fr); } }
+
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px; display: grid; gap: 2px; }
+.kpi .v { font-family: var(--display); font-size: 1.75rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.kpi .d { font-size: .8rem; }
+.up { color: var(--good); } .down { color: var(--bad); }
+
+.pill { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: .74rem; font-weight: 600; white-space: nowrap; }
+.pill.good { background: var(--good-soft); color: var(--good); }
+.pill.warn { background: var(--warn-soft); color: var(--warn); }
+.pill.bad { background: var(--bad-soft); color: var(--bad); }
+.pill.info { background: var(--info-soft); color: var(--info); }
+.pill.plain { background: var(--surface-2); color: var(--fg-2); }
+
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+th { text-align: left; font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 600; padding: 8px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+td { padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+tr.clickable { cursor: pointer; }
+tr.clickable:hover td { background: var(--surface-2); }
+td.r, th.r { text-align: right; }
+
+.feed { display: grid; gap: 10px; max-height: 340px; overflow-y: auto; }
+.feed-item { display: grid; grid-template-columns: 8px 1fr auto; gap: 10px; align-items: baseline; font-size: .88rem; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); transform: translateY(-1px); }
+.dot.inv { background: var(--warn); } .dot.rev { background: var(--info); } .dot.crm { background: var(--good); }
+
+/* Chart */
+.chart svg { width: 100%; height: auto; display: block; }
+.chart .grid line { stroke: var(--line); }
+.chart text { fill: var(--muted); font: 11px var(--body); }
+
+/* Website preview */
+.browser { border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; background: var(--surface); box-shadow: var(--shadow); }
+.browser-bar { display: flex; gap: 8px; align-items: center; padding: 8px 12px; background: var(--surface-2); border-bottom: 1px solid var(--line); }
+.browser-bar i { width: 10px; height: 10px; border-radius: 50%; background: var(--line); display: block; }
+.browser-bar .url { flex: 1; min-width: 0; background: var(--surface); border-radius: 6px; padding: 3px 10px; font: 12px var(--mono); color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.site-hero { padding: 40px 28px; background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 88%, #000), var(--accent)); color: var(--on-accent); display: grid; gap: 10px; }
+.site-hero h1 { font-size: clamp(1.7rem, 4vw, 2.5rem); }
+.site-hero p { max-width: 50ch; opacity: .92; }
+.site-hero .btn { justify-self: start; background: var(--on-accent); color: var(--accent); border: 0; }
+.site-body { padding: 24px 28px; display: grid; gap: 20px; }
+.services { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; }
+.service { border: 1px solid var(--line); border-radius: 8px; padding: 12px; display: grid; gap: 2px; }
+.service b { font-weight: 600; }
+.stars { color: #e0a213; letter-spacing: 1px; }
+
+/* Chat */
+.chat { display: grid; grid-template-rows: auto 1fr auto; height: 520px; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); overflow: hidden; }
+.chat-head { padding: 10px 14px; border-bottom: 1px solid var(--line); display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.chan { display: flex; gap: 4px; margin-left: auto; }
+.chan button { border: 1px solid var(--line); background: none; border-radius: 999px; padding: 3px 10px; font-size: .76rem; cursor: pointer; }
+.chan button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.msgs { padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; background: var(--bg); }
+.msg { max-width: 80%; padding: 8px 12px; border-radius: 14px; font-size: .9rem; white-space: pre-wrap; }
+.msg.bot { background: var(--surface); border: 1px solid var(--line); align-self: flex-start; border-bottom-left-radius: 4px; }
+.msg.me { background: var(--accent); color: var(--on-accent); align-self: flex-end; border-bottom-right-radius: 4px; }
+.chat form { display: flex; gap: 8px; padding: 10px; border-top: 1px solid var(--line); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { border: 1px dashed var(--line); background: none; border-radius: 999px; padding: 4px 10px; font-size: .8rem; cursor: pointer; color: var(--fg-2); }
+.chip:hover { border-color: var(--accent); color: var(--fg); }
+
+/* CRM drawer */
+.filters { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.filters input { max-width: 260px; }
+.seg { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 5px 12px; font-size: .82rem; font-weight: 600; cursor: pointer; }
+.seg[aria-pressed="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.profile { display: grid; gap: 14px; }
+.profile dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin: 0; }
+.profile dt { font-size: .72rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.profile dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* Reviews */
+.review { border-bottom: 1px solid var(--line); padding-block: 12px; display: grid; gap: 6px; }
+.review:last-child { border-bottom: 0; }
+.review-head { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.reply { background: var(--surface-2); border-radius: 8px; padding: 10px 12px; font-size: .88rem; }
+.bars { display: grid; gap: 6px; }
+.bar-row { display: grid; grid-template-columns: 24px 1fr 32px; gap: 8px; align-items: center; font-size: .82rem; }
+.bar-track { height: 8px; background: var(--surface-2); border-radius: 4px; overflow: hidden; }
+.bar-fill { height: 100%; background: #e0a213; }
+
+/* Automations */
+.autos { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+.auto { display: grid; gap: 10px; align-content: start; }
+.flow { display: grid; gap: 4px; font-size: .86rem; }
+.flow span { display: block; padding: 6px 10px; border-radius: 6px; background: var(--surface-2); }
+.flow span b { font-size: .7rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-right: 6px; }
+.auto-foot { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; font-size: .82rem; }
+.switch { position: relative; width: 40px; height: 22px; flex: none; }
+.switch input { opacity: 0; width: 100%; height: 100%; margin: 0; position: absolute; cursor: pointer; z-index: 1; }
+.switch i { position: absolute; inset: 0; border-radius: 999px; background: var(--line); transition: background .15s; }
+.switch i::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform .15s; }
+.switch input:checked + i { background: var(--accent); }
+.switch input:checked + i::after { transform: translateX(18px); }
+.switch input:focus-visible + i { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Inventory */
+.stock-bar { height: 6px; border-radius: 3px; background: var(--surface-2); overflow: hidden; min-width: 60px; }
+.stock-bar > div { height: 100%; }
+.alert-list { display: grid; gap: 8px; }
+.alert { display: flex; justify-content: space-between; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 8px; background: var(--warn-soft); color: var(--fg); font-size: .88rem; flex-wrap: wrap; }
+.po { font: 12.5px/1.55 var(--mono); background: var(--surface-2); border-radius: 8px; padding: 12px; white-space: pre-wrap; overflow-x: auto; }
+.seg-ctl { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.seg-ctl button { border: 0; background: var(--surface); padding: 7px 12px; font-weight: 600; font-size: .85rem; cursor: pointer; }
+.seg-ctl button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
+
+/* Packages */
+.tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.tier { display: grid; gap: 10px; align-content: start; cursor: pointer; border-width: 2px; }
+.tier[aria-pressed="true"] { border-color: var(--accent); }
+.tier .price { font-family: var(--display); font-size: 1.6rem; font-weight: 700; }
+.tier ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: .88rem; color: var(--fg-2); }
+.tier .promise { font-size: .86rem; font-style: italic; }
+.addons { display: grid; gap: 8px; }
+.addon { display: flex; gap: 10px; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: .9rem; }
+.addon label { display: flex; gap: 8px; align-items: center; cursor: pointer; }
+.total { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.total .v { font-family: var(--display); font-size: 1.6rem; font-weight: 700; }
+
+/* Brand settings */
+.settings { display: grid; gap: 14px; }
+.toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--fg); color: var(--bg); padding: 10px 16px; border-radius: 8px; font-size: .88rem; font-weight: 600; z-index: 30; max-width: calc(100% - 32px); }
+.inline-confirm { display: inline-flex; gap: 6px; align-items: center; font-size: .84rem; }
+.empty { padding: 24px; text-align: center; color: var(--muted); }
+.err { color: var(--bad); font-size: .84rem; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <div class="brand">
+      <div class="logo" id="logo">T</div>
+      <div style="min-width:0">
+        <div class="brand-name" id="brandName">Business</div>
+        <div class="brand-sub" id="brandSub">Powered by your agency</div>
+      </div>
+    </div>
+    <div class="top-actions">
+      <label class="field" style="min-width:180px">
+        <span class="eyebrow">Demo business</span>
+        <select id="presetSelect" aria-label="Demo business"></select>
+      </label>
+    </div>
+  </div>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Modules"></nav>
+</header>
+
+<main id="main"></main>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+/* =====================================================================
+   CONFIG: edit this block to fit a client. Nothing else needs to change.
+   - agency: your agency's name, shown as "Powered by".
+   - currency: symbol used everywhere.
+   - packages / addons: your price list (shown in "Packages").
+   - presets: one entry per demo business. Copy one to add a new client.
+   ===================================================================== */
+const CONFIG = {
+  agency: { name: "Northlight AI", tagline: "AI growth systems for local business" },
+  currency: "€",
+  packages: [
+    { id: "starter", name: "Starter: Get Found", setup: 1500, monthly: 397,
+      items: ["Website with booking or ordering", "Google Business Profile setup", "Automatic review requests + AI replies", "CRM that saves every lead", "Missed-call text-back"],
+      promise: "More 5-star reviews and no more lost leads." },
+    { id: "growth", name: "Growth: Fill the Calendar", setup: 3000, monthly: 1197,
+      items: ["Everything in Starter", "AI receptionist on chat, Instagram, WhatsApp", "Reminders, no-show and rebooking flows", "Win-back campaigns (30/60/90 days)", "Digital loyalty programme", "Monthly growth report"],
+      promise: "More bookings every month and a customer list that grows every week." },
+    { id: "scale", name: "Scale: Done-For-You Growth", setup: 5000, monthly: 2500,
+      items: ["Everything in Growth", "Meta + Google ads management", "AI voice receptionist", "Referral programme and memberships", "Custom inventory app", "Quarterly strategy meeting"],
+      promise: "A quarterly target for new customers, written into the contract." }
+  ],
+  addons: [
+    { id: "inv", name: "Inventory app (stock in and out)", setup: 4000, monthly: 250 },
+    { id: "voice", name: "AI phone receptionist", setup: 0, monthly: 450 },
+    { id: "content", name: "Content package (12 posts + 4 videos)", setup: 0, monthly: 800 },
+    { id: "train", name: "Staff AI training workshop", setup: 900, monthly: 0 }
+  ],
+  presets: {
+    restaurant: {
+      label: "Restaurant", name: "Trattoria Verde", accent: "#2f7d5b", domain: "trattoriaverde.it",
+      headline: "Fresh pasta, wood-fired pizza, and a table waiting for you.",
+      sub: "Family-run since 1998. Book a table in 20 seconds or order for pickup.",
+      cta: "Book a table", customerWord: "guests", bookingWord: "reservation", avgTicket: 34,
+      services: [["Margherita DOP", 11], ["Tagliatelle al ragù", 15], ["Branzino al forno", 22], ["Tiramisù della casa", 7], ["Tasting menu (5 courses)", 48], ["Family pizza night (4 ppl)", 52]],
+      faqs: [
+        { k: ["hour", "open", "close", "orari"], a: "We're open Tue–Sun, 12:00–14:30 and 19:00–23:00. Closed Mondays." },
+        { k: ["vegan", "vegetarian", "gluten", "allerg", "celiac"], a: "Yes. We have vegan pizza, gluten-free pasta, and an allergen sheet for every dish. Just tell us at booking." },
+        { k: ["park"], a: "Free parking behind the restaurant, about 20 spaces." },
+        { k: ["deliver", "takeaway", "pickup", "order"], a: "You can order for pickup on our website. Ordering direct saves you the delivery-app markup." },
+        { k: ["price", "cost", "menu"], a: "Pizzas start at €9, pasta at €13. The 5-course tasting menu is €48." }
+      ],
+      movement: { in: "Delivery received", out: "Used in kitchen", waste: "Waste / spoiled" },
+      inventory: [
+        ["MOZ-01", "Mozzarella fior di latte", "kg", 14, 10, 9.5, "Caseificio Rossi"],
+        ["TOM-02", "San Marzano tomatoes", "tin", 36, 24, 2.1, "Agricola Sud"],
+        ["FLR-03", "Flour type 00", "kg", 42, 25, 0.9, "Molino Bianco"],
+        ["OIL-04", "Extra-virgin olive oil", "L", 6, 8, 11, "Frantoio Verde"],
+        ["BAS-05", "Fresh basil", "bunch", 4, 6, 1.2, "Orto Locale"],
+        ["WIN-06", "House red wine", "bottle", 48, 24, 4.8, "Cantina Colli"],
+        ["PRS-07", "Prosecco DOC", "bottle", 18, 12, 6.2, "Cantina Colli"],
+        ["BOX-08", "Pizza boxes 33cm", "pc", 120, 100, 0.35, "Packaging Nord"]
+      ],
+      reviews: [
+        [5, "Giulia M.", "Best ragù in town. Staff remembered my birthday from last year!"],
+        [4, "Tom H.", "Great pizza, a bit of a wait on Saturday night."],
+        [5, "Sara L.", "Booked through the chat at midnight, table was ready when we arrived."],
+        [2, "Marco P.", "Pickup order was 20 minutes late and the pizza was cold."],
+        [5, "Elena R.", "Gluten-free pasta that actually tastes good. Coming back."]
+      ]
+    },
+    salon: {
+      label: "Hair & beauty salon", name: "Studio Lumen", accent: "#a8456f", domain: "studiolumen.com",
+      headline: "Colour, cuts and care by stylists who listen.",
+      sub: "Book online any time. New clients get a free consultation.",
+      cta: "Book an appointment", customerWord: "clients", bookingWord: "appointment", avgTicket: 72,
+      services: [["Cut & blow-dry", 45], ["Root colour", 65], ["Full balayage", 140], ["Keratin smoothing", 160], ["Men's cut", 25], ["Bridal trial", 90]],
+      faqs: [
+        { k: ["hour", "open", "close"], a: "We're open Tue–Sat, 9:00–19:00, and until 21:00 on Thursdays." },
+        { k: ["price", "cost", "how much"], a: "Cut & blow-dry is €45, root colour from €65, full balayage from €140. Exact price after a quick consultation." },
+        { k: ["cancel", "deposit", "reschedule"], a: "You can reschedule free up to 24 hours before. Colour services need a €20 deposit, which comes off your bill." },
+        { k: ["patch", "allerg", "sensitive"], a: "We do a free patch test 48 hours before any colour for new clients." },
+        { k: ["park", "where", "address"], a: "We're at Via Roma 14, with paid parking right outside." }
+      ],
+      movement: { in: "Stock received", out: "Used / sold", waste: "Expired / damaged" },
+      inventory: [
+        ["COL-7N", "Colour tube 7N", "tube", 9, 6, 8.4, "L'Oréal Pro"],
+        ["COL-9A", "Colour tube 9A", "tube", 3, 6, 8.4, "L'Oréal Pro"],
+        ["DEV-20", "Developer 20 vol 1L", "bottle", 5, 4, 7.9, "L'Oréal Pro"],
+        ["SHP-BB", "Back-bar shampoo 5L", "can", 2, 2, 38, "Davines"],
+        ["SHP-RT", "Retail shampoo 250ml", "pc", 22, 12, 9.5, "Davines"],
+        ["MSK-RT", "Repair mask 200ml", "pc", 7, 10, 12, "Davines"],
+        ["FOIL", "Foil roll", "roll", 6, 4, 6.5, "Salon Supply"],
+        ["GLV", "Nitrile gloves (100)", "box", 4, 3, 7, "Salon Supply"]
+      ],
+      reviews: [
+        [5, "Chiara B.", "Finally a balayage that looks natural. Got a reminder text right when my roots showed!"],
+        [5, "Anna D.", "Booked on Instagram at 11pm. So easy."],
+        [3, "Luca F.", "Good cut but they ran 25 minutes late."],
+        [5, "Martina S.", "The patch test reminder was a nice touch. Lovely team."],
+        [4, "Ilaria V.", "Great colour, a bit pricey."]
+      ]
+    },
+    shop: {
+      label: "Retail shop", name: "Bottega Nord", accent: "#b2561c", domain: "bottega-nord.shop",
+      headline: "Handmade homeware and gifts from local makers.",
+      sub: "Shop online, pick up in store the same day, and earn points on every purchase.",
+      cta: "Shop the collection", customerWord: "customers", bookingWord: "pickup order", avgTicket: 41,
+      services: [["Soy candle, fig & cedar", 24], ["Stoneware mug", 18], ["Linen tea towel", 14], ["A5 notebook, recycled", 12], ["Gift box (curated)", 55], ["Ceramic vase, small", 32]],
+      faqs: [
+        { k: ["hour", "open", "close"], a: "Open Mon–Sat 10:00–19:30, Sunday 11:00–18:00." },
+        { k: ["return", "refund", "exchange"], a: "Returns within 30 days with receipt. Gift receipts get store credit." },
+        { k: ["stock", "available", "back in"], a: "Tell me the product and I'll check stock now, or add you to the back-in-stock alert." },
+        { k: ["gift", "wrap"], a: "Free gift wrapping in store, and gift boxes from €35 online." },
+        { k: ["point", "loyal", "reward"], a: "You earn 1 point per €1. 100 points is a €10 voucher." }
+      ],
+      movement: { in: "Supplier delivery", out: "Sold", waste: "Damaged / return to vendor" },
+      inventory: [
+        ["CND-FC", "Soy candle, fig & cedar", "pc", 26, 15, 8.2, "Lumière Atelier"],
+        ["MUG-ST", "Stoneware mug, sand", "pc", 11, 12, 6.5, "Ceramiche Po"],
+        ["TWL-LN", "Linen tea towel", "pc", 40, 20, 4.1, "Tessitura Alpi"],
+        ["NB-A5", "A5 notebook, recycled", "pc", 58, 30, 3.2, "Carta Viva"],
+        ["VAS-SM", "Ceramic vase, small", "pc", 5, 8, 11, "Ceramiche Po"],
+        ["GBX-01", "Gift box packaging", "pc", 30, 25, 1.4, "Packaging Nord"],
+        ["CND-LV", "Soy candle, lavender", "pc", 2, 15, 8.2, "Lumière Atelier"]
+      ],
+      reviews: [
+        [5, "Paola G.", "Got a text the lavender candle was back in stock and picked it up the same day."],
+        [5, "James K.", "Beautiful shop, the gift box was perfect."],
+        [4, "Federica N.", "Lovely things, wish they had more mugs in stock."],
+        [5, "Rita C.", "Points system actually gave me a voucher I used. Rare!"],
+        [3, "Davide T.", "Online order took 2 days to be ready."]
+      ]
+    },
+    agency: {
+      label: "Social media agency", name: "Pixel & Pine Social", accent: "#3a56c5", domain: "pixelpine.agency",
+      headline: "Content and ads that bring local businesses real customers.",
+      sub: "Book a free 20-minute strategy call. We reply within one working hour.",
+      cta: "Book a strategy call", customerWord: "clients", bookingWord: "strategy call", avgTicket: 1450,
+      services: [["Content package (12 posts)", 690], ["Reels production day", 950], ["Meta ads management", 600], ["Brand photo shoot", 750], ["Monthly analytics report", 150], ["Influencer campaign", 1800]],
+      faqs: [
+        { k: ["price", "cost", "how much", "budget"], a: "Monthly content starts at €690, ads management at €600 plus ad spend. We tailor it on the call." },
+        { k: ["contract", "commit", "cancel"], a: "3-month minimum, then month to month." },
+        { k: ["result", "case", "example", "portfolio"], a: "Our last restaurant client went from 40 to 160 direct orders a month in 90 days. I can send case studies." },
+        { k: ["hour", "open", "contact"], a: "We work Mon–Fri 9:00–18:00 and reply to DMs within one working hour." }
+      ],
+      movement: { in: "Returned to studio", out: "Checked out to shoot", waste: "Damaged / lost" },
+      inventory: [
+        ["CAM-A", "Sony FX3 camera kit", "kit", 2, 1, 4200, "Studio"],
+        ["LEN-35", "35mm f/1.4 lens", "pc", 1, 1, 1300, "Studio"],
+        ["LGT-LED", "LED panel light", "pc", 4, 2, 280, "Studio"],
+        ["MIC-WL", "Wireless mic set", "set", 1, 2, 320, "Studio"],
+        ["TRP", "Tripod", "pc", 3, 2, 150, "Studio"],
+        ["SD-128", "SD card 128GB", "pc", 9, 6, 28, "Amazon Business"]
+      ],
+      reviews: [
+        [5, "Trattoria Verde", "Direct orders up 4x in three months. They actually report on revenue, not likes."],
+        [5, "Studio Lumen", "Reels every week without us lifting a finger."],
+        [4, "Bottega Nord", "Great content, reporting could be earlier in the month."],
+        [5, "FitLab Gym", "Trial sign-ups doubled from the ads."],
+        [2, "Café Aurora", "Took a while to get the tone of voice right."]
+      ]
+    }
+  }
+};
+
+/* Automations shared by every preset; {customers} and {booking} are filled from the preset. */
+const AUTOMATIONS = [
+  { id: "reviews", name: "Review request after visit", trigger: "Visit or purchase completed", action: "Text + email with Google review link (2h later)", audience: "recent", rate: .32, metric: "reviews" },
+  { id: "missed", name: "Missed-call text-back", trigger: "Call not answered", action: "Instant text with booking link", audience: "missed", rate: .41, metric: "bookings" },
+  { id: "reminder", name: "{booking} reminders", trigger: "{booking} booked", action: "Reminder 24h and 2h before, confirm or reschedule", audience: "bookings", rate: .93, metric: "confirmed" },
+  { id: "winback", name: "Win-back: at-risk {customers}", trigger: "No visit in 45+ days", action: "Personal message + time-limited offer", audience: "atrisk", rate: .18, metric: "returned" },
+  { id: "welcome", name: "Welcome series for new {customers}", trigger: "Added to CRM", action: "3 messages over 14 days + loyalty signup", audience: "new", rate: .27, metric: "2nd visits" },
+  { id: "birthday", name: "Birthday offer", trigger: "7 days before birthday", action: "Gift or discount, valid for 30 days", audience: "birthday", rate: .38, metric: "redeemed" },
+  { id: "restock", name: "Low-stock reorder draft", trigger: "Item falls below minimum", action: "Draft purchase order to supplier", audience: "lowstock", rate: 1, metric: "orders drafted" }
+];
+
+/* ===================== Helpers ===================== */
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const cur = n => CONFIG.currency + Number(n).toLocaleString("en-GB", { maximumFractionDigits: n % 1 ? 2 : 0, minimumFractionDigits: n % 1 ? 2 : 0 });
+const fill = (s, p) => s.replace("{customers}", p.customerWord).replace("{booking}", cap(p.bookingWord));
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+const DAY = 86400000;
+function ago(ts) {
+  const d = Math.round((Date.now() - ts) / 60000);
+  if (d < 1) return "just now"; if (d < 60) return d + "m ago";
+  if (d < 1440) return Math.round(d / 60) + "h ago"; return Math.round(d / 1440) + "d ago";
+}
+function rng(seed) { let s = seed >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); }
+const store = {
+  get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+  del(k) { try { localStorage.removeItem(k); } catch {} }
+};
+function toast(msg) {
+  const t = $("#toast"); t.textContent = msg; t.hidden = false;
+  clearTimeout(toast.t); toast.t = setTimeout(() => (t.hidden = true), 2600);
+}
+
+/* ===================== Sample data ===================== */
+const FIRST = ["Giulia","Marco","Sara","Luca","Elena","Davide","Chiara","Matteo","Anna","Paolo","Francesca","Andrea","Martina","Simone","Laura","Tom","Emma","James","Sofia","Ali","Nadia","Pietro","Irene","Omar","Rita","Federico","Camilla","Leo","Bianca","Hugo"];
+const LAST = ["Rossi","Bianchi","Ferrari","Romano","Colombo","Greco","Conti","Marino","Costa","Bruno","Gallo","Rinaldi","Moretti","Barbieri","Lombardi","Fontana","Hughes","Silva","Khan","Novak"];
+const SOURCES = ["Website", "Google", "Instagram", "Walk-in", "Referral", "WhatsApp", "AI chat"];
+
+function seedState(key) {
+  const p = CONFIG.presets[key];
+  const r = rng(key.split("").reduce((a, c) => a + c.charCodeAt(0), 7) * 97);
+  const now = Date.now();
+  const customers = [];
+  const n = 64;
+  for (let i = 0; i < n; i++) {
+    // more customers join recently: gradual database growth
+    const firstDays = Math.round(Math.pow(r(), 1.6) * 360);
+    const visits = 1 + Math.floor(Math.pow(r(), 2) * 18);
+    const lastDays = Math.min(firstDays, Math.round(r() < .25 ? 45 + r() * 80 : r() * 40));
+    const spend = Math.round(visits * p.avgTicket * (.7 + r() * .7));
+    const fn = FIRST[Math.floor(r() * FIRST.length)], ln = LAST[Math.floor(r() * LAST.length)];
+    customers.push({
+      id: "C" + (1001 + i), name: fn + " " + ln,
+      phone: "+39 3" + Math.floor(10 + r() * 89) + " " + Math.floor(100000 + r() * 899999),
+      email: (fn + "." + ln).toLowerCase() + "@mail.com",
+      first: now - firstDays * DAY, last: now - lastDays * DAY, visits, spend,
+      source: SOURCES[Math.floor(r() * SOURCES.length)], birthdaySoon: r() < .06, notes: ""
+    });
+  }
+  const reviews = p.reviews.map(([stars, name, text], i) => ({
+    id: "R" + i, stars, name, text, at: now - (i * 4 + 1) * DAY,
+    reply: i % 2 === 1 ? replyFor({ stars, name }, p.name) : ""
+  }));
+  // older reviews so the rating summary has volume
+  const history = { 5: 58, 4: 21, 3: 6, 2: 3, 1: 2 };
+  const inventory = p.inventory.map(([sku, name, unit, qty, min, cost, supplier]) => ({ sku, name, unit, qty, min, cost, supplier }));
+  const moves = [];
+  inventory.slice(0, 5).forEach((it, i) => {
+    moves.push({ at: now - (i + 1) * 9 * 3600000, sku: it.sku, type: i % 2 ? "out" : "in", qty: i % 2 ? 2 : Math.max(2, Math.round(it.min / 2)), by: ["Marta", "Luca", "Owner"][i % 3], note: "" });
+  });
+  const autos = {};
+  AUTOMATIONS.forEach((a, i) => { const sent = Math.round(40 + r() * 260); autos[a.id] = { on: i !== 5, sent, converted: Math.round(sent * a.rate) }; });
+  const feed = [
+    { at: now - 25 * 60000, kind: "crm", text: `New ${p.bookingWord} from the AI chat: ${customers[3].name}` },
+    { at: now - 2 * 3600000, kind: "rev", text: `New 5-star Google review from ${p.reviews[0][1]}` },
+    { at: now - 5 * 3600000, kind: "auto", text: `Win-back campaign sent to 9 at-risk ${p.customerWord}` },
+    { at: now - 9 * 3600000, kind: "inv", text: `${moves[0].qty} ${inventory[0].unit} ${inventory[0].name}: ${p.movement.in.toLowerCase()}` }
+  ];
+  const bookings = Math.round(40 + r() * 60);
+  return { key, brand: { name: p.name, accent: p.accent, domain: p.domain }, customers, reviews, history, inventory, moves, autos, feed, bookings, missed: Math.round(6 + r() * 10), chat: null, tier: "growth", addons: ["inv"] };
+}
+
+/* ===================== State ===================== */
+let presetKey = store.get("demo:preset") || "restaurant";
+if (!CONFIG.presets[presetKey]) presetKey = Object.keys(CONFIG.presets)[0];
+let S = load(presetKey);
+let tab = "overview";
+const ui = { seg: "All", q: "", sel: null, moveType: "in", po: null, confirmReset: false };
+
+function load(k) { const s = store.get("demo:" + k); return s && s.customers ? s : seedState(k); }
+function save() { store.set("demo:" + presetKey, S); }
+const P = () => CONFIG.presets[presetKey];
+function log(kind, text) { S.feed.unshift({ at: Date.now(), kind, text }); S.feed = S.feed.slice(0, 40); }
+
+function segment(c) {
+  const d = (Date.now() - c.last) / DAY, age = (Date.now() - c.first) / DAY;
+  if (d > 45) return "At risk";
+  if (age <= 30) return "New";
+  if (c.visits >= 10 || c.spend >= P().avgTicket * 12) return "VIP";
+  return "Regular";
+}
+const SEG_PILL = { "At risk": "bad", New: "info", VIP: "good", Regular: "plain" };
+
+/* ===================== Shell ===================== */
+const TABS = [
+  ["overview", "Overview"], ["website", "Website"], ["chat", "AI Receptionist"], ["crm", "CRM"],
+  ["reviews", "Reviews"], ["automations", "Automations"], ["inventory", "Inventory"], ["packages", "Packages"], ["settings", "Brand settings"]
+];
+function renderShell() {
+  const p = P();
+  document.documentElement.style.setProperty("--accent", S.brand.accent);
+  $("#logo").textContent = (S.brand.name.trim()[0] || "?").toUpperCase();
+  $("#brandName").textContent = S.brand.name;
+  $("#brandSub").textContent = p.label + " · Powered by " + CONFIG.agency.name;
+  const sel = $("#presetSelect");
+  sel.innerHTML = Object.entries(CONFIG.presets).map(([k, v]) => `<option value="${k}" ${k === presetKey ? "selected" : ""}>${esc(v.label)}</option>`).join("");
+  $("#tabs").innerHTML = TABS.map(([id, l]) => `<button class="tab" role="tab" aria-selected="${id === tab}" data-tab="${id}">${l}</button>`).join("");
+}
+function render() {
+  renderShell();
+  const fn = VIEWS[tab]; $("#main").innerHTML = fn();
+  if (AFTER[tab]) AFTER[tab]();
+  try { history.replaceState(null, "", "#" + tab); } catch {}
+}
+
+/* ===================== Views ===================== */
+const VIEWS = {};
+const AFTER = {};
+
+VIEWS.overview = () => {
+  const p = P(), cs = S.customers;
+  const repeat = Math.round(cs.filter(c => c.visits >= 2).length / cs.length * 100);
+  const { avg, total } = ratingStats();
+  const newMonth = cs.filter(c => Date.now() - c.first <= 30 * DAY).length;
+  const atRisk = cs.filter(c => segment(c) === "At risk").length;
+  const low = S.inventory.filter(i => i.qty <= i.min).length;
+  // only flows that bring a customer back count as revenue (not reminders or stock orders)
+  const autoRevenue = ["missed", "winback", "welcome", "birthday"].reduce((a, id) => a + S.autos[id].converted, 0) * p.avgTicket;
+  return `
+  <div class="section-head"><div><span class="eyebrow">Overview · last 30 days</span><h2>Good morning, ${esc(S.brand.name)}</h2>
+  <p>Everything your package runs for you, in one place. Numbers are sample data that update as you use the demo.</p></div></div>
+  <div class="kpis">
+    ${kpi(`${cap(p.customerWord)} in database`, cs.length, `<span class="up">+${newMonth} this month</span>`)}
+    ${kpi("Repeat rate", repeat + "%", `${cs.filter(c => c.visits >= 2).length} came back 2+ times`)}
+    ${kpi("Google rating", avg.toFixed(1) + " ★", `${total} reviews`)}
+    ${kpi(cap(p.bookingWord) + "s", S.bookings, `<span class="up">${S.missed} saved from missed calls</span>`)}
+    ${kpi("Revenue from automations", cur(autoRevenue), "estimated, all time")}
+    ${kpi("Needs attention", atRisk + low, `${atRisk} at-risk ${p.customerWord} · ${low} low-stock items`)}
+  </div>
+  <div class="grid-2">
+    <div class="panel chart"><h3>Customer database growth</h3><p class="muted" style="margin:-6px 0 10px;font-size:.85rem">Total ${p.customerWord} in the CRM, last 12 weeks</p>${growthChart()}</div>
+    <div class="panel"><h3>Live activity</h3><div class="feed">${S.feed.map(f => `<div class="feed-item"><span class="dot ${f.kind}"></span><span>${esc(f.text)}</span><span class="muted" style="font-size:.78rem">${ago(f.at)}</span></div>`).join("")}</div></div>
+  </div>`;
+};
+const kpi = (l, v, d) => `<div class="kpi"><span class="eyebrow">${l}</span><span class="v">${v}</span><span class="d muted">${d}</span></div>`;
+
+function growthChart() {
+  const W = 600, H = 220, pl = 40, pr = 14, pt = 12, pb = 28;
+  const weeks = 12, now = Date.now();
+  const pts = [];
+  for (let w = weeks; w >= 0; w--) { const t = now - w * 7 * DAY; pts.push(S.customers.filter(c => c.first <= t).length); }
+  const min = Math.floor(Math.min(...pts) * .9 / 5) * 5, max = Math.ceil(Math.max(...pts) / 5) * 5 || 5;
+  const x = i => pl + i * (W - pl - pr) / weeks, y = v => pt + (1 - (v - min) / (max - min || 1)) * (H - pt - pb);
+  const line = pts.map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join("");
+  const ticks = [0, 1, 2, 3].map(i => Math.round(min + (max - min) * i / 3));
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Database grew from ${pts[0]} to ${pts[weeks]}">
+    <g class="grid">${ticks.map(t => `<line x1="${pl}" x2="${W - pr}" y1="${y(t)}" y2="${y(t)}"/><text x="${pl - 8}" y="${y(t) + 4}" text-anchor="end">${t}</text>`).join("")}</g>
+    <path d="${line}L${x(weeks)},${H - pb}L${x(0)},${H - pb}Z" fill="var(--accent)" fill-opacity=".12"/>
+    <path d="${line}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/>
+    <circle cx="${x(weeks)}" cy="${y(pts[weeks])}" r="5" fill="var(--accent)"/>
+    <text x="${x(weeks) - 8}" y="${y(pts[weeks]) - 10}" text-anchor="end" style="fill:var(--fg);font-weight:700">${pts[weeks]}</text>
+    ${[0, 4, 8, 12].map(i => `<text x="${x(i)}" y="${H - 8}" text-anchor="middle">${i === 12 ? "Now" : "−" + (12 - i) + "w"}</text>`).join("")}
+  </svg>`;
+}
+
+VIEWS.website = () => {
+  const p = P(), { avg, total } = ratingStats();
+  return `
+  <div class="section-head"><div><span class="eyebrow">Module A · Website & booking</span><h2>The client's website</h2>
+  <p>A fast mobile site with booking built in. Every form submission goes straight into the CRM and starts the welcome automation. Try it.</p></div></div>
+  <div class="browser">
+    <div class="browser-bar"><i></i><i></i><i></i><span class="url">https://${esc(S.brand.domain)}</span></div>
+    <div class="site-hero"><span class="eyebrow" style="color:inherit;opacity:.8">${esc(S.brand.name)}</span><h1>${esc(p.headline)}</h1><p>${esc(p.sub)}</p>
+      <a class="btn" href="#book">${esc(p.cta)}</a>
+      <span style="font-size:.88rem"><span class="stars" aria-hidden="true">★★★★★</span> ${avg.toFixed(1)} from ${total} Google reviews</span></div>
+    <div class="site-body">
+      <div><h3 style="margin-bottom:10px">${presetKey === "agency" ? "Services" : "Popular"}</h3>
+      <div class="services">${p.services.map(([n, pr]) => `<div class="service"><b>${esc(n)}</b><span class="muted num">${cur(pr)}</span></div>`).join("")}</div></div>
+      <form id="book" class="panel" style="display:grid;gap:12px">
+        <h3>${esc(p.cta)}</h3>
+        <div class="form-grid">
+          <label class="field">Name<input id="bk-name" type="text" required placeholder="Your name"></label>
+          <label class="field">Phone<input id="bk-phone" type="tel" required placeholder="+39 ..."></label>
+          <label class="field">Service<select id="bk-svc">${p.services.map(([n]) => `<option>${esc(n)}</option>`).join("")}</select></label>
+          <label class="field">When<input id="bk-when" type="text" placeholder="Fri 19:30"></label>
+        </div>
+        <div><button class="btn primary" type="submit">Confirm ${esc(p.bookingWord)}</button></div>
+        <p class="muted" style="font-size:.82rem">Demo: this adds the person to the CRM and logs the automations it triggers.</p>
+      </form>
+    </div>
+  </div>`;
+};
+AFTER.website = () => {
+  $("#book").addEventListener("submit", e => {
+    e.preventDefault();
+    const name = $("#bk-name").value.trim(), phone = $("#bk-phone").value.trim();
+    if (!name || !phone) return;
+    const c = addCustomer(name, phone, "Website");
+    S.bookings++;
+    log("crm", `New ${P().bookingWord} on the website: ${c.name} (${$("#bk-svc").value}${$("#bk-when").value ? ", " + $("#bk-when").value : ""})`);
+    log("auto", `Reminder scheduled and welcome series started for ${c.name}`);
+    save(); toast(`${cap(P().bookingWord)} confirmed. ${c.name} is now in the CRM.`); render();
+  });
+};
+
+function addCustomer(name, phone, source) {
+  const ex = S.customers.find(c => c.phone && c.phone.replace(/\s/g, "") === phone.replace(/\s/g, ""));
+  if (ex) { ex.visits++; ex.last = Date.now(); return ex; }
+  const c = { id: "C" + (1001 + S.customers.length), name, phone, email: "", first: Date.now(), last: Date.now(), visits: 1, spend: 0, source, birthdaySoon: false, notes: "" };
+  S.customers.unshift(c); return c;
+}
+
+/* ---- AI receptionist ---- */
+VIEWS.chat = () => {
+  const p = P();
+  if (!S.chat) S.chat = { chan: "WhatsApp", step: null, data: {}, msgs: [{ who: "bot", text: `Hi! I'm the ${S.brand.name} assistant. I can answer questions or book your ${p.bookingWord}. How can I help?` }] };
+  const samples = [...p.faqs.slice(0, 3).map(f => f.k[0]), "book"].map(k => ({ hour: "What are your opening hours?", price: "How much does it cost?", vegan: "Do you have vegan options?", cancel: "What's your cancellation policy?", return: "Can I return something?", contract: "Is there a contract?", result: "Do you have case studies?", book: `I'd like to book a ${p.bookingWord}` }[k] || `Question about ${k}`));
+  return `
+  <div class="section-head"><div><span class="eyebrow">Module B · AI front desk</span><h2>AI receptionist</h2>
+  <p>Answers FAQs and takes ${p.bookingWord}s 24/7 on WhatsApp, Instagram and the website. In the live product this runs on a language model trained on the client's info. This demo uses the FAQ list in CONFIG.</p></div></div>
+  <div class="grid-2">
+    <div class="chat">
+      <div class="chat-head"><div class="logo" style="width:28px;height:28px;font-size:.85rem">${esc((S.brand.name[0] || "?").toUpperCase())}</div><b>${esc(S.brand.name)}</b>
+        <div class="chan">${["WhatsApp", "Instagram", "Website"].map(c => `<button type="button" data-chan="${c}" aria-pressed="${S.chat.chan === c}">${c}</button>`).join("")}</div></div>
+      <div class="msgs" id="msgs">${S.chat.msgs.map(m => `<div class="msg ${m.who}">${esc(m.text)}</div>`).join("")}</div>
+      <form id="chatForm"><input id="chatIn" type="text" autocomplete="off" placeholder="Type a message…" aria-label="Message"><button class="btn primary" type="submit">Send</button></form>
+    </div>
+    <div class="panel" style="display:grid;gap:14px;align-content:start">
+      <h3>Try asking</h3>
+      <div class="chips">${samples.map(s => `<button class="chip" type="button" data-say="${esc(s)}">${esc(s)}</button>`).join("")}</div>
+      <div><span class="eyebrow">What it knows</span><ul style="margin:6px 0 0;padding-left:18px;font-size:.88rem;color:var(--fg-2);display:grid;gap:4px">${p.faqs.map(f => `<li>${esc(f.a)}</li>`).join("")}</ul></div>
+      <button class="btn small" type="button" id="chatReset">Clear conversation</button>
+    </div>
+  </div>`;
+};
+AFTER.chat = () => {
+  const m = $("#msgs"); m.scrollTop = m.scrollHeight;
+  $("#chatForm").addEventListener("submit", e => { e.preventDefault(); const v = $("#chatIn").value.trim(); if (v) say(v); });
+  $("#chatIn").focus();
+};
+function say(text) {
+  S.chat.msgs.push({ who: "me", text });
+  S.chat.msgs.push({ who: "bot", text: botReply(text) });
+  save(); render();
+}
+function botReply(t) {
+  const p = P(), low = t.toLowerCase(), c = S.chat;
+  if (c.step === "when") { c.data.when = t; c.step = "name"; return "Perfect. What name should I put it under?"; }
+  if (c.step === "name") { c.data.name = t; c.step = "phone"; return `Thanks ${t.split(" ")[0]}! And a phone number for the reminder?`; }
+  if (c.step === "phone") {
+    const cust = addCustomer(c.data.name, t, "AI chat (" + c.chan + ")"), when = c.data.when; S.bookings++;
+    log("crm", `New ${p.bookingWord} from the AI chat on ${c.chan}: ${cust.name}, ${when}`);
+    c.step = null; c.data = {};
+    return `Done! ${cust.name.split(" ")[0]}, you're booked for ${when}. You'll get a reminder 24 hours before. See you soon!`;
+  }
+  if (/book|reserv|appointment|table|call|prenot/.test(low)) { c.step = "when"; return `Happy to book your ${p.bookingWord}. What day and time work for you?`; }
+  const f = p.faqs.find(f => f.k.some(k => low.includes(k)));
+  if (f) return f.a + `\n\nWould you like to book a ${p.bookingWord}?`;
+  if (/hi|hello|ciao|hey/.test(low)) return `Hi! Ask me anything about ${S.brand.name}, or say "book" to make a ${p.bookingWord}.`;
+  log("crm", `AI chat passed a question to the team: "${t.slice(0, 60)}"`);
+  return "Good question. I've passed it to the team and someone will reply here shortly. Can I help with anything else meanwhile?";
+}
+
+/* ---- CRM ---- */
+VIEWS.crm = () => {
+  const p = P();
+  const segs = ["All", "New", "Regular", "VIP", "At risk"];
+  const counts = Object.fromEntries(segs.map(s => [s, s === "All" ? S.customers.length : S.customers.filter(c => segment(c) === s).length]));
+  const q = ui.q.toLowerCase();
+  const rows = S.customers.filter(c => (ui.seg === "All" || segment(c) === ui.seg) && (!q || (c.name + c.phone + c.email + c.source).toLowerCase().includes(q)))
+    .sort((a, b) => b.last - a.last);
+  const sel = S.customers.find(c => c.id === ui.sel);
+  return `
+  <div class="section-head"><div><span class="eyebrow">Module C · CRM & customer database</span><h2>${cap(p.customerWord)}</h2>
+  <p>One list built from the website, AI chat, POS and walk-ins. ${cap(p.customerWord)} are put into segments automatically, so each campaign reaches the right people.</p></div>
+  <button class="btn" type="button" id="exportCsv">Copy as CSV</button></div>
+  <div class="filters">
+    <input type="text" id="crmQ" placeholder="Search name, phone, source…" value="${esc(ui.q)}" aria-label="Search">
+    ${segs.map(s => `<button class="seg" type="button" data-seg="${s}" aria-pressed="${ui.seg === s}">${s} <span class="num muted">${counts[s]}</span></button>`).join("")}
+  </div>
+  <div class="grid-2">
+    <div class="panel table-wrap" style="padding:0">
+      <table><thead><tr><th>Name</th><th>Segment</th><th class="r">Visits</th><th class="r">Spent</th><th>Last visit</th><th>Source</th></tr></thead>
+      <tbody>${rows.slice(0, 80).map(c => `<tr class="clickable" data-cust="${c.id}" tabindex="0"><td><b>${esc(c.name)}</b></td><td><span class="pill ${SEG_PILL[segment(c)]}">${segment(c)}</span></td><td class="r num">${c.visits}</td><td class="r num">${cur(c.spend)}</td><td class="num">${ago(c.last)}</td><td class="muted">${esc(c.source)}</td></tr>`).join("") || `<tr><td colspan="6" class="empty">No ${p.customerWord} match this filter.</td></tr>`}</tbody></table>
+    </div>
+    <div class="panel">${sel ? profile(sel) : `<div class="empty">Select a row to see the profile, add notes, or send a message.</div>`}</div>
+  </div>`;
+};
+function profile(c) {
+  const seg = segment(c), p = P();
+  return `<div class="profile">
+    <div><span class="pill ${SEG_PILL[seg]}">${seg}</span><h3 style="margin-top:6px">${esc(c.name)}</h3><p class="muted mono">${esc(c.phone)}${c.email ? " · " + esc(c.email) : ""}</p></div>
+    <dl><div><dt>Visits</dt><dd>${c.visits}</dd></div><div><dt>Lifetime spend</dt><dd>${cur(c.spend)}</dd></div><div><dt>Avg ticket</dt><dd>${cur(Math.round(c.spend / c.visits) || 0)}</dd></div>
+    <div><dt>Customer since</dt><dd>${new Date(c.first).toLocaleDateString("en-GB", { month: "short", year: "numeric" })}</dd></div><div><dt>Last visit</dt><dd>${ago(c.last)}</dd></div><div><dt>Source</dt><dd>${esc(c.source)}</dd></div></dl>
+    <label class="field">Notes<textarea id="custNotes" placeholder="Preferences, allergies, favourite staff…">${esc(c.notes)}</textarea></label>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn small" type="button" id="saveNotes">Save notes</button>
+      <button class="btn small" type="button" id="logVisit">Log a visit (${cur(p.avgTicket)})</button>
+      <button class="btn small primary" type="button" id="sendMsg">${seg === "At risk" ? "Send win-back offer" : "Send review request"}</button>
+    </div></div>`;
+}
+AFTER.crm = () => {
+  const q = $("#crmQ"); q.addEventListener("input", () => { ui.q = q.value; const pos = q.selectionStart; render(); const n = $("#crmQ"); n.focus(); n.setSelectionRange(pos, pos); });
+};
+
+/* ---- Reviews ---- */
+function ratingStats() {
+  const h = { ...S.history }; S.reviews.forEach(r => (h[r.stars] = (h[r.stars] || 0) + 1));
+  const total = Object.values(h).reduce((a, b) => a + b, 0);
+  const avg = Object.entries(h).reduce((a, [s, n]) => a + s * n, 0) / (total || 1);
+  return { h, total, avg };
+}
+function replyFor(r, biz) {
+  const first = r.name.split(" ")[0];
+  if (r.stars >= 4) return `Thank you so much, ${first}! We're really glad you enjoyed it. See you again soon at ${biz}.`;
+  if (r.stars === 3) return `Thanks for the honest feedback, ${first}. We're working on exactly this, and we'd love the chance to give you a 5-star experience next time.`;
+  return `${first}, we're sorry, this isn't the experience we want for anyone. We'd like to make it right: please message us and the manager will contact you personally. – ${biz}`;
+}
+VIEWS.reviews = () => {
+  const { h, total, avg } = ratingStats();
+  const recent = S.customers.filter(c => Date.now() - c.last < 7 * DAY).length;
+  const unreplied = S.reviews.filter(r => !r.reply).length;
+  return `
+  <div class="section-head"><div><span class="eyebrow">Module D · Google review management</span><h2>Reviews & reputation</h2>
+  <p>Review requests go out automatically after every visit. Replies are drafted by AI and published after one click to approve.</p></div>
+  <button class="btn primary" type="button" id="sendReq">Request reviews from ${recent} recent ${P().customerWord}</button></div>
+  <div class="kpis">${kpi("Average rating", avg.toFixed(2) + " ★", "Google Business Profile")}${kpi("Total reviews", total, `<span class="up">+${S.reviews.length} in the last 30 days</span>`)}${kpi("Awaiting reply", unreplied, unreplied ? "drafts ready" : "all answered")}${kpi("Reply rate", Math.round((S.reviews.length - unreplied) / S.reviews.length * 100) + "%", "target 100%")}</div>
+  <div class="grid-2">
+    <div class="panel"><h3>Latest reviews</h3>${S.reviews.map(r => `
+      <div class="review"><div class="review-head"><b>${esc(r.name)}</b><span class="stars" aria-label="${r.stars} stars">${"★".repeat(r.stars)}<span style="opacity:.25">${"★".repeat(5 - r.stars)}</span></span><span class="muted" style="font-size:.8rem">${ago(r.at)}</span>${r.stars <= 2 ? `<span class="pill bad">Needs attention</span>` : ""}</div>
+      <p>${esc(r.text)}</p>
+      ${r.reply ? `<div class="reply"><span class="eyebrow">Owner reply</span><br>${esc(r.reply)}</div>` :
+        r.draft != null ? `<textarea id="draft-${r.id}">${esc(r.draft)}</textarea><div style="display:flex;gap:8px"><button class="btn small primary" type="button" data-publish="${r.id}">Publish reply</button><button class="btn small" type="button" data-discard="${r.id}">Discard</button></div>` :
+        `<div><button class="btn small" type="button" data-draft="${r.id}">Draft AI reply</button></div>`}
+      </div>`).join("")}</div>
+    <div class="panel"><h3>Rating breakdown</h3><div class="bars">${[5, 4, 3, 2, 1].map(s => `<div class="bar-row"><span>${s}★</span><div class="bar-track"><div class="bar-fill" style="width:${(h[s] || 0) / total * 100}%"></div></div><span class="num muted r">${h[s] || 0}</span></div>`).join("")}</div>
+      <p class="muted" style="margin-top:14px;font-size:.85rem">Unhappy ${P().customerWord} get a private feedback form alongside the review link, so you can fix problems quickly. Every customer is still offered the public review link, in line with Google's rules.</p></div>
+  </div>`;
+};
+
+/* ---- Automations ---- */
+function audienceCount(a) {
+  const cs = S.customers;
+  return { recent: cs.filter(c => Date.now() - c.last < 7 * DAY).length, missed: S.missed, bookings: S.bookings, atrisk: cs.filter(c => segment(c) === "At risk").length,
+    new: cs.filter(c => segment(c) === "New").length, birthday: cs.filter(c => c.birthdaySoon).length, lowstock: S.inventory.filter(i => i.qty <= i.min).length }[a.audience] || 0;
+}
+VIEWS.automations = () => {
+  const p = P();
+  return `
+  <div class="section-head"><div><span class="eyebrow">Module E · Automations</span><h2>Automations</h2>
+  <p>Flows that run in the background and turn one-time ${p.customerWord} into regulars. Switch them on or off, or press "Run now" to see one fire.</p></div></div>
+  <div class="autos">${AUTOMATIONS.map(a => { const st = S.autos[a.id]; const n = audienceCount(a); return `
+    <div class="panel auto">
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:start"><h3>${esc(fill(a.name, p))}</h3>
+      <span class="switch"><input type="checkbox" data-auto="${a.id}" ${st.on ? "checked" : ""} aria-label="Turn on ${esc(fill(a.name, p))}"><i></i></span></div>
+      <div class="flow"><span><b>When</b>${esc(fill(a.trigger, p))}</span><span><b>Then</b>${esc(fill(a.action, p))}</span></div>
+      <div class="auto-foot"><span class="num"><b>${st.sent}</b> sent · <b>${st.converted}</b> ${a.metric}</span>
+      <button class="btn small" type="button" data-run="${a.id}" ${!st.on || !n ? "disabled" : ""}>Run now (${n})</button></div>
+    </div>`; }).join("")}</div>`;
+};
+
+/* ---- Inventory ---- */
+VIEWS.inventory = () => {
+  const p = P(), mv = p.movement;
+  const low = S.inventory.filter(i => i.qty <= i.min);
+  const value = S.inventory.reduce((a, i) => a + i.qty * i.cost, 0);
+  const today = S.moves.filter(m => Date.now() - m.at < DAY);
+  return `
+  <div class="section-head"><div><span class="eyebrow">Module H · Inventory app</span><h2>Stock in & out</h2>
+  <p>Every item that comes in or goes out is logged with who did it and when. Low stock triggers a draft purchase order automatically. In the live product this is a phone app with barcode scanning.</p></div></div>
+  <div class="kpis">${kpi("Stock value", cur(Math.round(value)), "at cost")}${kpi("Items tracked", S.inventory.length, "SKUs")}${kpi("Below minimum", low.length, low.length ? `<span class="down">reorder needed</span>` : "all good")}${kpi("Movements today", today.length, `${today.filter(m => m.type === "in").length} in · ${today.filter(m => m.type !== "in").length} out`)}</div>
+  <div class="grid-2">
+    <form class="panel" id="moveForm" style="display:grid;gap:12px;align-content:start">
+      <h3>Record a movement</h3>
+      <div class="seg-ctl" role="group" aria-label="Movement type">${Object.entries(mv).map(([k, l]) => `<button type="button" data-mtype="${k}" aria-pressed="${ui.moveType === k}">${esc(l)}</button>`).join("")}</div>
+      <div class="form-grid">
+        <label class="field" style="grid-column:1/-1">Item<select id="mv-sku">${S.inventory.map(i => `<option value="${i.sku}">${esc(i.name)} (${i.qty} ${esc(i.unit)})</option>`).join("")}</select></label>
+        <label class="field">Quantity<input id="mv-qty" type="number" min="1" step="1" value="1"></label>
+        <label class="field">Staff<select id="mv-by"><option>Owner</option><option>Marta</option><option>Luca</option></select></label>
+        <label class="field" style="grid-column:1/-1">Note<input id="mv-note" type="text" placeholder="Invoice no., reason, table…"></label>
+      </div>
+      <p class="err" id="mv-err" hidden></p>
+      <div><button class="btn primary" type="submit">Save movement</button></div>
+    </form>
+    <div class="panel" style="display:grid;gap:12px;align-content:start">
+      <h3>Reorder alerts</h3>
+      ${low.length ? `<div class="alert-list">${low.map(i => `<div class="alert"><span><b>${esc(i.name)}</b> · ${i.qty} left (min ${i.min})</span><button class="btn small" type="button" data-po="${i.sku}">Draft order</button></div>`).join("")}</div>` : `<p class="muted">Nothing below minimum.</p>`}
+      ${ui.po ? `<div class="po" id="poText">${esc(ui.po)}</div><div><button class="btn small" type="button" id="copyPo">Copy order</button></div>` : ""}
+    </div>
+  </div>
+  <div class="panel table-wrap" style="padding:0"><table><thead><tr><th>SKU</th><th>Item</th><th class="r">In stock</th><th class="r">Min</th><th>Level</th><th class="r">Unit cost</th><th>Supplier</th><th>Status</th></tr></thead><tbody>
+    ${S.inventory.map(i => { const pct = Math.min(100, i.qty / (i.min * 2) * 100); const st = i.qty === 0 ? ["Out", "bad"] : i.qty <= i.min ? ["Low", "warn"] : ["OK", "good"]; return `<tr><td class="mono">${esc(i.sku)}</td><td>${esc(i.name)}</td><td class="r num"><b>${i.qty}</b> ${esc(i.unit)}</td><td class="r num muted">${i.min}</td><td><div class="stock-bar"><div style="width:${pct}%;background:var(--${st[1]})"></div></div></td><td class="r num">${cur(i.cost)}</td><td class="muted">${esc(i.supplier)}</td><td><span class="pill ${st[1]}">${st[0]}</span></td></tr>`; }).join("")}
+  </tbody></table></div>
+  <div class="panel table-wrap" style="padding:0"><table><thead><tr><th>When</th><th>Type</th><th>Item</th><th class="r">Qty</th><th>By</th><th>Note</th></tr></thead><tbody>
+    ${S.moves.slice(0, 25).map(m => { const it = S.inventory.find(i => i.sku === m.sku) || { name: m.sku, unit: "" }; return `<tr><td class="num">${ago(m.at)}</td><td><span class="pill ${m.type === "in" ? "good" : m.type === "waste" ? "bad" : "info"}">${esc(mv[m.type])}</span></td><td>${esc(it.name)}</td><td class="r num">${m.type === "in" ? "+" : "−"}${m.qty} ${esc(it.unit)}</td><td>${esc(m.by)}</td><td class="muted">${esc(m.note)}</td></tr>`; }).join("")}
+  </tbody></table></div>`;
+};
+AFTER.inventory = () => {
+  $("#moveForm").addEventListener("submit", e => {
+    e.preventDefault();
+    const it = S.inventory.find(i => i.sku === $("#mv-sku").value), qty = Math.floor(+$("#mv-qty").value), err = $("#mv-err");
+    if (!(qty > 0)) { err.textContent = "Enter a quantity of 1 or more."; err.hidden = false; return; }
+    if (ui.moveType !== "in" && qty > it.qty) { err.textContent = `Only ${it.qty} ${it.unit} in stock. Check the quantity, or record the delivery first.`; err.hidden = false; return; }
+    const wasLow = it.qty <= it.min;
+    it.qty += ui.moveType === "in" ? qty : -qty;
+    S.moves.unshift({ at: Date.now(), sku: it.sku, type: ui.moveType, qty, by: $("#mv-by").value, note: $("#mv-note").value.trim() });
+    log("inv", `${qty} ${it.unit} ${it.name}: ${P().movement[ui.moveType].toLowerCase()}`);
+    if (!wasLow && it.qty <= it.min) { log("inv", `Low stock: ${it.name} (${it.qty} left). Purchase order drafted.`); S.autos.restock.sent++; S.autos.restock.converted++; }
+    save(); toast("Movement saved"); render();
+  });
+};
+function draftPO(it) {
+  const qty = Math.max(it.min * 2 - it.qty, 1);
+  return `To: ${it.supplier}\nFrom: ${S.brand.name}\nDate: ${new Date().toLocaleDateString("en-GB")}\n\nPurchase order\n${it.sku}  ${it.name}\nQuantity: ${qty} ${it.unit}\nUnit cost: ${cur(it.cost)}\nTotal: ${cur(Math.round(qty * it.cost * 100) / 100)}\n\nPlease confirm delivery date. Thank you!`;
+}
+
+/* ---- Packages / proposal ---- */
+VIEWS.packages = () => {
+  const t = CONFIG.packages.find(x => x.id === S.tier) || CONFIG.packages[0];
+  const ads = CONFIG.addons.filter(a => S.addons.includes(a.id) && !(a.id === "inv" && t.id === "scale"));
+  const setup = t.setup + ads.reduce((a, x) => a + x.setup, 0), monthly = t.monthly + ads.reduce((a, x) => a + x.monthly, 0);
+  return `
+  <div class="section-head"><div><span class="eyebrow">Proposal builder</span><h2>Packages for ${esc(S.brand.name)}</h2>
+  <p>Pick a package and add-ons to build a quote on the spot during a sales meeting. Prices come from CONFIG.</p></div></div>
+  <div class="tiers">${CONFIG.packages.map(x => `<div class="panel tier" role="button" tabindex="0" data-tier="${x.id}" aria-pressed="${x.id === t.id}">
+    <span class="eyebrow">${x.id === "growth" ? "Most popular" : "&nbsp;"}</span><h3>${esc(x.name)}</h3>
+    <div><span class="price num">${cur(x.monthly)}</span><span class="muted">/month</span><div class="muted num" style="font-size:.85rem">${cur(x.setup)} one-time setup</div></div>
+    <ul>${x.items.map(i => `<li>${esc(i)}</li>`).join("")}</ul><p class="promise">${esc(x.promise)}</p></div>`).join("")}</div>
+  <div class="grid-2">
+    <div class="panel"><h3>Add-ons</h3><div class="addons">${CONFIG.addons.map(a => { const incl = a.id === "inv" && t.id === "scale"; return `<div class="addon"><label><input type="checkbox" data-addon="${a.id}" ${S.addons.includes(a.id) || incl ? "checked" : ""} ${incl ? "disabled" : ""}> ${esc(a.name)}${incl ? ` <span class="pill good">Included</span>` : ""}</label><span class="num muted">${a.setup ? cur(a.setup) + " setup" : ""}${a.setup && a.monthly ? " + " : ""}${a.monthly ? cur(a.monthly) + "/mo" : ""}</span></div>`; }).join("")}</div></div>
+    <div class="panel" style="display:grid;gap:12px;align-content:start"><h3>Quote</h3>
+      <div class="total"><span>One-time setup</span><span class="v num">${cur(setup)}</span></div>
+      <div class="total"><span>Monthly</span><span class="v num">${cur(monthly)}</span></div>
+      <div class="total muted"><span>First year total</span><span class="num">${cur(setup + monthly * 12)}</span></div>
+      <p class="muted" style="font-size:.85rem">Break-even: about <b class="num">${Math.ceil(monthly / P().avgTicket)}</b> extra ${P().customerWord} a month at an average ticket of ${cur(P().avgTicket)}.</p>
+      <div><button class="btn primary" type="button" id="copyQuote">Copy proposal text</button></div>
+    </div>
+  </div>`;
+};
+function quoteText() {
+  const t = CONFIG.packages.find(x => x.id === S.tier);
+  const ads = CONFIG.addons.filter(a => S.addons.includes(a.id) && !(a.id === "inv" && t.id === "scale"));
+  const setup = t.setup + ads.reduce((a, x) => a + x.setup, 0), monthly = t.monthly + ads.reduce((a, x) => a + x.monthly, 0);
+  return `Proposal for ${S.brand.name}\nfrom ${CONFIG.agency.name}\n\n${t.name}\n${t.items.map(i => "• " + i).join("\n")}\n${ads.length ? "\nAdd-ons\n" + ads.map(a => "• " + a.name).join("\n") + "\n" : ""}\nSetup: ${cur(setup)}\nMonthly: ${cur(monthly)}\n\n${t.promise}`;
+}
+
+/* ---- Brand settings ---- */
+VIEWS.settings = () => {
+  const p = P();
+  return `
+  <div class="section-head"><div><span class="eyebrow">White-label</span><h2>Brand settings</h2>
+  <p>Rebrand the demo for a prospect in under a minute, before the meeting. For permanent changes (services, FAQs, inventory, prices), edit the CONFIG block at the top of the script.</p></div></div>
+  <div class="grid-2 even">
+    <form class="panel settings" id="brandForm">
+      <h3>This demo</h3>
+      <label class="field">Business name<input id="st-name" type="text" value="${esc(S.brand.name)}"></label>
+      <label class="field">Website domain<input id="st-domain" type="text" value="${esc(S.brand.domain)}"></label>
+      <label class="field">Brand colour<input id="st-accent" type="color" value="${esc(S.brand.accent)}" style="height:40px;padding:4px;width:100%"></label>
+      <div><button class="btn primary" type="submit">Apply branding</button></div>
+    </form>
+    <div class="panel settings">
+      <h3>Reset</h3>
+      <p class="muted">Restore the sample ${p.customerWord}, reviews and stock for the ${esc(p.label.toLowerCase())} demo. Your changes to this demo are lost.</p>
+      <div>${ui.confirmReset ? `<span class="inline-confirm">Reset this demo? <button class="btn small danger" type="button" id="resetYes">Yes, reset</button><button class="btn small" type="button" id="resetNo">Cancel</button></span>` : `<button class="btn danger" type="button" id="resetAsk">Reset demo data</button>`}</div>
+      <h3 style="margin-top:8px">Saved in this browser</h3>
+      <p class="muted" style="font-size:.88rem">Everything you do here is stored on this device only. Nothing is sent anywhere.</p>
+    </div>
+  </div>`;
+};
+AFTER.settings = () => {
+  $("#brandForm").addEventListener("submit", e => {
+    e.preventDefault();
+    S.brand.name = $("#st-name").value.trim() || P().name;
+    S.brand.domain = $("#st-domain").value.trim() || P().domain;
+    S.brand.accent = $("#st-accent").value;
+    save(); toast("Branding applied"); render();
+  });
+};
+
+/* ===================== Events (delegated) ===================== */
+async function copy(text) {
+  try { await navigator.clipboard.writeText(text); toast("Copied"); }
+  catch { toast("Copy blocked by the browser. Select the text and copy it manually."); }
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest("button, [data-tier], tr[data-cust]"); if (!b) return;
+  const d = b.dataset;
+  if (d.tab) { tab = d.tab; ui.po = null; ui.confirmReset = false; render(); window.scrollTo(0, 0); return; }
+  if (d.chan) { S.chat.chan = d.chan; save(); render(); return; }
+  if (d.say) { say(d.say); return; }
+  if (b.id === "chatReset") { S.chat = null; save(); render(); return; }
+  if (d.seg) { ui.seg = d.seg; render(); return; }
+  if (d.cust) { ui.sel = d.cust; render(); return; }
+  if (b.id === "exportCsv") { copy(["id,name,phone,email,segment,visits,spend,last_visit,source", ...S.customers.map(c => [c.id, c.name, c.phone, c.email, segment(c), c.visits, c.spend, new Date(c.last).toISOString().slice(0, 10), c.source].map(v => `"${String(v).replace(/"/g, '""')}"`).join(","))].join("\n")); return; }
+  const c = S.customers.find(x => x.id === ui.sel);
+  if (b.id === "saveNotes" && c) { c.notes = $("#custNotes").value; save(); toast("Notes saved"); return; }
+  if (b.id === "logVisit" && c) { c.visits++; c.spend += P().avgTicket; c.last = Date.now(); log("crm", `Visit logged for ${c.name}`); save(); render(); return; }
+  if (b.id === "sendMsg" && c) { const wb = segment(c) === "At risk"; log("auto", `${wb ? "Win-back offer" : "Review request"} sent to ${c.name}`); S.autos[wb ? "winback" : "reviews"].sent++; save(); toast(`${wb ? "Win-back offer" : "Review request"} queued for ${c.name} (demo, nothing is sent)`); render(); return; }
+  if (b.id === "sendReq") { const n = S.customers.filter(x => Date.now() - x.last < 7 * DAY).length; S.autos.reviews.sent += n; log("rev", `Review requests sent to ${n} recent ${P().customerWord}`); save(); toast(`${n} review requests queued (demo)`); render(); return; }
+  if (d.draft) { const r = S.reviews.find(x => x.id === d.draft); r.draft = replyFor(r, S.brand.name); save(); render(); return; }
+  if (d.publish) { const r = S.reviews.find(x => x.id === d.publish); r.reply = $("#draft-" + r.id).value.trim(); delete r.draft; log("rev", `Reply published to ${r.name}'s review`); save(); render(); return; }
+  if (d.discard) { const r = S.reviews.find(x => x.id === d.discard); delete r.draft; save(); render(); return; }
+  if (d.run) { const a = AUTOMATIONS.find(x => x.id === d.run), n = audienceCount(a), st = S.autos[a.id], conv = Math.max(1, Math.round(n * a.rate)); st.sent += n; st.converted += conv; log("auto", `${fill(a.name, P())}: sent to ${n}, ${conv} ${a.metric}`); save(); toast(`${fill(a.name, P())} ran for ${n}`); render(); return; }
+  if (d.mtype) { ui.moveType = d.mtype; render(); return; }
+  if (d.po) { ui.po = draftPO(S.inventory.find(i => i.sku === d.po)); render(); return; }
+  if (b.id === "copyPo") { copy(ui.po); return; }
+  if (d.tier) { S.tier = d.tier; save(); render(); return; }
+  if (b.id === "copyQuote") { copy(quoteText()); return; }
+  if (b.id === "resetAsk") { ui.confirmReset = true; render(); return; }
+  if (b.id === "resetNo") { ui.confirmReset = false; render(); return; }
+  if (b.id === "resetYes") { store.del("demo:" + presetKey); S = seedState(presetKey); ui.confirmReset = false; ui.sel = null; toast("Demo data reset"); save(); render(); return; }
+});
+document.addEventListener("change", e => {
+  const t = e.target;
+  if (t.id === "presetSelect") { presetKey = t.value; store.set("demo:preset", presetKey); S = load(presetKey); ui.sel = null; ui.po = null; ui.seg = "All"; ui.q = ""; render(); return; }
+  if (t.dataset.auto) { S.autos[t.dataset.auto].on = t.checked; log("auto", `${fill(AUTOMATIONS.find(a => a.id === t.dataset.auto).name, P())} turned ${t.checked ? "on" : "off"}`); save(); render(); return; }
+  if (t.dataset.addon) { S.addons = t.checked ? [...new Set([...S.addons, t.dataset.addon])] : S.addons.filter(x => x !== t.dataset.addon); save(); render(); return; }
+});
+document.addEventListener("keydown", e => {
+  if ((e.key === "Enter" || e.key === " ") && e.target.matches("tr[data-cust], [data-tier]")) { e.preventDefault(); e.target.click(); }
+});
+
+/* ===================== Boot ===================== */
+const h = (location.hash || "").slice(1);
+if (TABS.some(([id]) => id === h)) tab = h;
+render();
+</script>
