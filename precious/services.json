@@ -1,0 +1,18 @@
+{
+  "currency": "EUR",
+  "note": "From Precious's price list. 'from' = starting price, final price depends on style/length.",
+  "services": [
+    { "id": "haircut",          "name": "Haircut",                  "price": 15,                 "for": ["men", "women"] },
+    { "id": "kids-haircut",     "name": "Children's haircut",       "price": 10,                 "for": ["kids"] },
+    { "id": "colour-cut",       "name": "Colouring & haircut",      "price": 25, "from": true,   "for": ["men", "women"] },
+    { "id": "braids",           "name": "Braids",                   "price": 25, "from": true,   "for": ["men", "women", "kids"] },
+    { "id": "lashes",           "name": "Eyelash extensions",       "price": 20, "from": true,   "for": ["women"] },
+    { "id": "shave",            "name": "Shave",                    "price": 7,                  "for": ["men"] },
+    { "id": "wash",             "name": "Hair wash",                "price": 7,                  "for": ["men", "women"] },
+    { "id": "retouch",          "name": "Hair retouch",             "price": 15,                 "for": ["men", "women"] }
+  ],
+  "styles": {
+    "women": ["Faux locs", "Knotless braids (small / medium / large / jumbo)", "Triangle-part box braids", "Braids with beads", "Boho / goddess bob braids", "Senegalese & rope twists", "Cornrow half-up with curly ponytail", "Kids Dutch braids", "Tapered natural cut with design", "Lashes: classic / hybrid / volume"],
+    "men": ["Box braids with fade", "Top knot & man bun braids", "Triangle & square-part plaits", "Plaits with beads", "Freestyle & stitch cornrows", "Feed-in cornrows", "Interlocked locs", "Sponge twists", "Waves", "Fades & line designs"]
+  }
+}
