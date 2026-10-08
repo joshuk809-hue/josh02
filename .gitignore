@@ -6,3 +6,7 @@ service-account*.json
 wallet/build/apple/*.pkpass
 wallet/build/google/save-links.txt
 node_modules/
+
+# graphify: machine-specific interpreter and scan-root paths
+graphify-out/.graphify_python
+graphify-out/.graphify_root

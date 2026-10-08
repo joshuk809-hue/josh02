@@ -1,0 +1,92 @@
+{
+  "app.js": {
+    "mtime": 1791459375.858818,
+    "seen": 1791462148.291046,
+    "ast_hash": "d62477527041b4ed661241398008aa65",
+    "semantic_hash": "d62477527041b4ed661241398008aa65"
+  },
+  "mobile/app.js": {
+    "mtime": 1791459375.858818,
+    "seen": 1791462148.2910519,
+    "ast_hash": "eb2946a4de05afda5b82d165c2b3b13f",
+    "semantic_hash": "eb2946a4de05afda5b82d165c2b3b13f"
+  },
+  "mobile/sw.js": {
+    "mtime": 1791459375.8624885,
+    "seen": 1791462148.2910876,
+    "ast_hash": "4fd0bb53083344b4d1af08df56d9e76a",
+    "semantic_hash": "4fd0bb53083344b4d1af08df56d9e76a"
+  },
+  "tools/build-mobile-icons.js": {
+    "mtime": 1791459375.8641539,
+    "seen": 1791462148.2910905,
+    "ast_hash": "d1cada0e454ff2c03e1e90ff61f516f8",
+    "semantic_hash": "d1cada0e454ff2c03e1e90ff61f516f8"
+  },
+  "tools/build-wallet-passes.js": {
+    "mtime": 1791459375.8670146,
+    "seen": 1791462148.291092,
+    "ast_hash": "55ef53c9f40c6299bfe3f665b75982fd",
+    "semantic_hash": "55ef53c9f40c6299bfe3f665b75982fd"
+  },
+  "tools/make-fidelity-qr.js": {
+    "mtime": 1791459375.8670146,
+    "seen": 1791462148.2910933,
+    "ast_hash": "320c5e7c637051d9f2423927e9cb0786",
+    "semantic_hash": "320c5e7c637051d9f2423927e9cb0786"
+  },
+  "wallet/tiers.js": {
+    "mtime": 1791459375.9414005,
+    "seen": 1791462148.2910943,
+    "ast_hash": "e93241d6923bcaa93cc0cd7ed5cc148f",
+    "semantic_hash": "e93241d6923bcaa93cc0cd7ed5cc148f"
+  },
+  "README.md": {
+    "mtime": 1791459375.8548179,
+    "seen": 1791462148.291095,
+    "ast_hash": "216947d27bb23e2e80672e3995495cb3",
+    "semantic_hash": "216947d27bb23e2e80672e3995495cb3"
+  },
+  "index.html": {
+    "mtime": 1791459375.858818,
+    "seen": 1791462148.2910962,
+    "ast_hash": "7c0ce9cb0690d1c4cbf0641f8885f20a",
+    "semantic_hash": "7c0ce9cb0690d1c4cbf0641f8885f20a"
+  },
+  "mobile/index.html": {
+    "mtime": 1791459375.8624885,
+    "seen": 1791462148.2910974,
+    "ast_hash": "009709f96e7d57402a2d5eff21815b17",
+    "semantic_hash": "009709f96e7d57402a2d5eff21815b17"
+  },
+  "qr/fidelity-poster.html": {
+    "mtime": 1791459375.8624885,
+    "seen": 1791462148.291098,
+    "ast_hash": "ec20ec792eb5d58386e715b11b4559ab",
+    "semantic_hash": "ec20ec792eb5d58386e715b11b4559ab"
+  },
+  "wallet/design/art.html": {
+    "mtime": 1791459375.941122,
+    "seen": 1791462148.2910993,
+    "ast_hash": "7ba5ad205ed29faa5294c98adc592bc5",
+    "semantic_hash": "7ba5ad205ed29faa5294c98adc592bc5"
+  },
+  "wallet/design/fonts/Cinzel-OFL.txt": {
+    "mtime": 1791459375.9413385,
+    "seen": 1791462148.2911003,
+    "ast_hash": "672325c494ce30fac7e57f687aa3c160",
+    "semantic_hash": "672325c494ce30fac7e57f687aa3c160"
+  },
+  "wallet/design/fonts/CormorantGaramond-OFL.txt": {
+    "mtime": 1791459375.9414005,
+    "seen": 1791462148.2911012,
+    "ast_hash": "5d62c6e8fab3ca14d32005a18c8b9f90",
+    "semantic_hash": "5d62c6e8fab3ca14d32005a18c8b9f90"
+  },
+  "wallet/index.html": {
+    "mtime": 1791459375.9414005,
+    "seen": 1791462148.291102,
+    "ast_hash": "03f95287351a8272a34d33dca6f2cb82",
+    "semantic_hash": "03f95287351a8272a34d33dca6f2cb82"
+  }
+}

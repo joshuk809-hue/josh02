@@ -1,0 +1,11 @@
+# Third-party skills vendored for Claude Code, not part of the app
+.claude/
+# Third-party minified libraries
+vendor/
+# graphify's own output
+graphify-out/
+# Generated card art, icons and exports (no code structure; one subagent each)
+*.png
+*.jpg
+*.svg
+*.pdf
