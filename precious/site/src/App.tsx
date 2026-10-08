@@ -22,7 +22,7 @@ export default function App() {
     try { localStorage.setItem('lang', l) } catch { /* storage blocked */ }
   }
 
-  if (route.startsWith('#/studio')) return <Studio />
+  if (route === '#studio') return <Studio />
   return (
     <LangCtx.Provider value={{ lang, t: DICTS[lang], setLang }}>
       <main style={{ overflowX: 'clip', background: '#0C0C0C' }}>

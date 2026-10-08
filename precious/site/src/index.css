@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root { color-scheme: dark; }
 html, body, #root { background: #0C0C0C; }
 body { font-family: 'Kanit', sans-serif; color: #F3EBDD; -webkit-font-smoothing: antialiased; }
 

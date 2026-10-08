@@ -88,3 +88,34 @@ export function dueFollowUps(s: State, now = new Date()): Due[] {
   }
   return out
 }
+
+// Example data for trying the studio. Every client note says "Example" so it's never mistaken for real clients.
+export function demoState(now = new Date()): State {
+  const s = emptyState()
+  const at = (days: number, h: number, m = 0) => {
+    const d = new Date(now); d.setDate(d.getDate() + days); d.setHours(h, m, 0, 0); return d.toISOString()
+  }
+  const people: [string, string, Lang, Client['gender']][] = [
+    ['Amara Okafor', '+39 347 000 0001', 'it', 'women'],
+    ['Lucas Moreau', '+33 6 00 00 00 02', 'fr', 'men'],
+    ['Sofia Rossi', '+39 348 000 0003', 'it', 'women'],
+    ['Daniel Weber', '+49 151 0000 0004', 'de', 'men'],
+    ['Grace Mensah', '+39 349 000 0005', 'en', 'women'],
+    ['Lucía García', '+34 600 000 006', 'es', 'women'],
+  ]
+  s.clients = people.map(([name, phone, lang, gender], i) => ({
+    id: `ex${i}`, name, phone, lang, gender, consent: i !== 5, createdAt: at(-200, 9),
+    notes: ['Example · knotless medium, sensitive scalp', 'Example · likes a skin fade', 'Example · lashes every 3 weeks', 'Example · cornrows with beads', 'Example · jumbo braids, brings own hair', 'Example · said STOP to reminders'][i],
+  }))
+  s.appointments = [
+    { id: 'a1', clientId: 'ex0', serviceId: 'braids', at: at(0, 10), status: 'booked' },
+    { id: 'a2', clientId: 'ex1', serviceId: 'haircut', at: at(0, 14, 30), status: 'booked' },
+    { id: 'a3', clientId: 'ex3', serviceId: 'braids', at: at(1, 11), status: 'booked' },
+    { id: 'a4', clientId: 'ex2', serviceId: 'lashes', at: at(-2, 16), status: 'done' },
+    { id: 'a5', clientId: 'ex4', serviceId: 'braids', at: at(-45, 10), status: 'done' },
+    { id: 'a6', clientId: 'ex5', serviceId: 'haircut', at: at(-40, 12), status: 'done' },
+  ]
+  s.sent = [{ clientId: 'ex4', kind: 'thanks', apptId: 'a5', at: at(-44, 12) }]
+  s.stock = s.stock.map((i) => (i.name.startsWith('Edge') ? { ...i, qty: 1 } : i))
+  return s
+}

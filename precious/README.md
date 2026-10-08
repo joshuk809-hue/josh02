@@ -3,7 +3,7 @@
 `site/` is one app with two parts:
 
 - **The website** (`/`): logo, prices for women and men, styles, reviews and social links, in IT · EN · DE · FR · ES. Every "Book" button opens WhatsApp with a ready-made message in the visitor's language.
-- **Precious Studio** (`/#/studio`): her private tools. Bookmark it on her phone.
+- **Precious Studio** (`/#studio`): her private tools. Bookmark it on her phone.
   - **Agenda**: appointments by day, a one-tap WhatsApp confirmation, and buttons for done, no-show and cancel.
   - **Clients**: phone, language, notes and WhatsApp consent.
   - **Stock**: +/− counters, low-stock alerts and a shopping list she can copy.

@@ -4,7 +4,7 @@ import { CalendarDays, Check, Copy, Download, MessageCircle, Minus, Package, Plu
 import { SERVICES } from '../data'
 import { DICTS, LANGS, type Lang } from '../i18n'
 import { waLink } from '../config'
-import { dueFollowUps, load, save, uid, RULES, type Appointment, type Client, type State, type StockItem } from './store'
+import { demoState, dueFollowUps, emptyState, load, save, uid, RULES, type Appointment, type Client, type State, type StockItem } from './store'
 import { AUTO_REPLIES, CONFIRM, FOLLOW } from './templates'
 
 const TABS = [
@@ -23,6 +23,25 @@ const input = 'w-full rounded-xl border border-white/10 bg-white/[0.04] px-3 py-
 const btn = 'inline-flex items-center justify-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-transform duration-150 active:scale-[0.97]'
 const gold = `${btn} bg-[#D4A857] text-[#1A1206] hover:bg-[#E2BC72]`
 const ghost = `${btn} border border-white/15 text-[#E9D6B0] hover:bg-white/5`
+
+// Two taps instead of a confirm() dialog: first tap arms, second tap within 3s acts.
+function ConfirmButton({ onConfirm, label, children }: { onConfirm: () => void; label: string; children: ReactNode }) {
+  const [armed, setArmed] = useState(false)
+  useEffect(() => {
+    if (!armed) return
+    const t = setTimeout(() => setArmed(false), 3000)
+    return () => clearTimeout(t)
+  }, [armed])
+  return (
+    <button
+      className={armed ? `${btn} bg-[#B4552D] text-white` : ghost}
+      aria-label={armed ? `Tap again to ${label.toLowerCase()}` : label}
+      onClick={() => (armed ? (setArmed(false), onConfirm()) : setArmed(true))}
+    >
+      {armed ? `Tap again to ${label.toLowerCase()}` : children}
+    </button>
+  )
+}
 
 function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
   return <div className={`rounded-3xl border border-white/10 bg-white/[0.03] p-4 sm:p-5 ${className}`}>{children}</div>
@@ -44,7 +63,7 @@ export default function Studio() {
             <p className="text-sm font-semibold uppercase tracking-widest text-[#D4A857]">Precious Studio</p>
             <p className="text-xs text-white/50">Saved on this device</p>
           </div>
-          <a href="#/" className={ghost}>Website</a>
+          <a href="#top" className={ghost}>Website</a>
         </div>
         <nav className="mx-auto flex max-w-5xl gap-1 overflow-x-auto px-3 pb-3">
           {TABS.map(([id, label, Icon]) => (
@@ -127,7 +146,12 @@ function Agenda({ s, update }: P) {
         </div>
       </Card>
       <div className="grid gap-4">
-        {days.size === 0 && <Card><p className="text-white/60">No upcoming appointments. Add one on the left.</p></Card>}
+        {days.size === 0 && (
+          <Card>
+            <p className="mb-3 text-white/60">No upcoming appointments. Add one on the left, or load example clients to see how everything works.</p>
+            {s.clients.length === 0 && <button className={ghost} onClick={() => update(() => demoState())}>Load example data</button>}
+          </Card>
+        )}
         {[...days].map(([day, list]) => (
           <Card key={day}>
             <h3 className="mb-3 text-sm uppercase tracking-widest text-[#D4A857]">{day}</h3>
@@ -177,10 +201,8 @@ function Clients({ s, update }: P) {
     )
     setEdit(blankClient())
   }
-  const remove = (id: string) => {
-    if (!confirm('Delete this client and their appointments?')) return
+  const remove = (id: string) =>
     update((d) => ({ ...d, clients: d.clients.filter((c) => c.id !== id), appointments: d.appointments.filter((a) => a.clientId !== id), sent: d.sent.filter((x) => x.clientId !== id) }))
-  }
 
   return (
     <div className="grid gap-5 md:grid-cols-[340px_1fr]">
@@ -221,7 +243,7 @@ function Clients({ s, update }: P) {
               </div>
               {c.phone && <a className={ghost} target="_blank" rel="noopener noreferrer" href={waLink('', c.phone)}><MessageCircle size={15} /> Chat</a>}
               <button className={ghost} onClick={() => setEdit(c)}>Edit</button>
-              <button className={ghost} aria-label="Delete" onClick={() => remove(c.id)}><Trash2 size={15} /></button>
+              <ConfirmButton label="Delete" onConfirm={() => remove(c.id)}><Trash2 size={15} /></ConfirmButton>
             </Card>
           )
         })}
@@ -265,7 +287,7 @@ function Stock({ s, update }: P) {
                 <input className={`${input.replace("w-full ", "")} w-20 text-center tabular-nums`} type="number" min={0} value={i.qty} onChange={(e) => setQty(i.id, Number(e.target.value))} aria-label={`${i.name} quantity`} />
                 <span className="w-14 text-sm text-white/50">{i.unit}</span>
                 <button className={ghost} aria-label="Add one" onClick={() => setQty(i.id, i.qty + 1)}><Plus size={15} /></button>
-                <button className={ghost} aria-label="Delete" onClick={() => confirm(`Delete ${i.name}?`) && update((d) => ({ ...d, stock: d.stock.filter((x) => x.id !== i.id) }))}><Trash2 size={15} /></button>
+                <ConfirmButton label="Delete" onConfirm={() => update((d) => ({ ...d, stock: d.stock.filter((x) => x.id !== i.id) }))}><Trash2 size={15} /></ConfirmButton>
               </li>
             ))}
           </ul>
@@ -338,14 +360,17 @@ function Settings({ s, setS }: { s: State; setS: (s: State) => void }) {
     a.download = `precious-studio-${new Date().toISOString().slice(0, 10)}.json`
     a.click()
   }
+  const [pending, setPending] = useState<State | null>(null)
+  const [error, setError] = useState('')
   const importData = (file?: File) => {
     if (!file) return
+    setError('')
     file.text().then((t) => {
       try {
         const d = JSON.parse(t) as State
         if (!Array.isArray(d.clients) || !Array.isArray(d.stock)) throw new Error('bad file')
-        if (confirm('Replace all studio data on this device with this backup?')) setS(d)
-      } catch { alert('That file is not a Precious Studio backup.') }
+        setPending(d)
+      } catch { setError('That file is not a Precious Studio backup. Choose the .json file you downloaded from this page.') }
     })
   }
   return (
@@ -375,7 +400,16 @@ function Settings({ s, setS }: { s: State; setS: (s: State) => void }) {
             <Upload size={15} /> Restore backup
             <input type="file" accept="application/json" className="hidden" onChange={(e) => importData(e.target.files?.[0])} />
           </label>
+          <ConfirmButton label="Clear all data" onConfirm={() => setS(emptyState())}><Trash2 size={15} /> Clear all data</ConfirmButton>
         </div>
+        {pending && (
+          <div className="mt-4 flex flex-wrap items-center gap-2 rounded-2xl bg-white/[0.04] p-3 text-sm">
+            <span className="flex-1">Backup has {pending.clients.length} clients and {pending.appointments.length} appointments. It replaces everything on this device.</span>
+            <button className={gold} onClick={() => { setS(pending); setPending(null) }}>Replace data</button>
+            <button className={ghost} onClick={() => setPending(null)}>Cancel</button>
+          </div>
+        )}
+        {error && <p className="mt-3 text-sm text-[#E2BC72]">{error}</p>}
       </Card>
     </div>
   )
