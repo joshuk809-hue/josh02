@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Precious Logo Options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Kanit:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --olive:#1F2419; --olive2:#2A3122; --cream:#EFE6D6; --sage:#9DA77E; --gold:#C9A96E; --ink:#171A13; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--olive); color:var(--cream); font-family:Kanit,sans-serif; font-weight:300; padding:40px 16px 64px; }
+  header { max-width:1100px; margin:0 auto 32px; }
+  h1 { font-family:"Cormorant Garamond",serif; font-weight:500; font-size:clamp(2rem,5vw,3.2rem); }
+  header p { color:var(--sage); margin-top:6px; }
+  .grid { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,500px),1fr)); gap:20px; }
+  .card { border-radius:28px; overflow:hidden; background:var(--olive2); border:1px solid #ffffff14; }
+  .pair { display:grid; grid-template-columns:1fr 1fr; }
+  .pair div { aspect-ratio:1; display:grid; place-items:center; padding:18px; }
+  .dark { background:var(--olive); } .light { background:var(--cream); }
+  .pair svg { width:100%; height:auto; }
+  .meta { padding:18px 22px 22px; }
+  .meta b { font-weight:500; letter-spacing:.08em; text-transform:uppercase; font-size:.85rem; color:var(--gold); }
+  .meta h2 { font-family:"Cormorant Garamond",serif; font-weight:500; font-size:1.6rem; margin:4px 0 6px; }
+  .meta p { color:#EFE6D6b3; font-size:.95rem; line-height:1.5; }
+  .light { --fg:var(--ink); --ac:#5E6B45; } .dark { --fg:var(--cream); --ac:var(--sage); }
+  .fg { fill:var(--fg); } .ac { fill:var(--ac); } .sfg { stroke:var(--fg); } .sac { stroke:var(--ac); }
+  .serif { font-family:"Cormorant Garamond",serif; } .sans { font-family:Kanit,sans-serif; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Precious: four logo directions</h1>
+  <p>Each shown on dark olive and on cream. Pick one, or mix parts (e.g. mark from 2, wordmark from 4).</p>
+</header>
+
+<div class="grid">
+
+  <!-- 1. Botanical monogram -->
+  <section class="card">
+    <div class="pair">
+      <div class="dark"><svg viewBox="0 0 240 240"><use href="#l1"/></svg></div>
+      <div class="light"><svg viewBox="0 0 240 240"><use href="#l1"/></svg></div>
+    </div>
+    <div class="meta"><b>01 · Botanical</b><h2>Leaf monogram</h2>
+      <p>A serif “P” with a sprouting leaf, the closest to the Luméra reference. Calm, natural, premium; works for skincare add-ons later.</p></div>
+  </section>
+
+  <!-- 2. Gem comb -->
+  <section class="card">
+    <div class="pair">
+      <div class="dark"><svg viewBox="0 0 240 240"><use href="#l2"/></svg></div>
+      <div class="light"><svg viewBox="0 0 240 240"><use href="#l2"/></svg></div>
+    </div>
+    <div class="meta"><b>02 · Gem</b><h2>Precious stone comb</h2>
+      <p>A cut gemstone whose lower facets become comb teeth: “precious” plus hair in one mark. Bold and memorable as an app icon.</p></div>
+  </section>
+
+  <!-- 3. Profile curl -->
+  <section class="card">
+    <div class="pair">
+      <div class="dark"><svg viewBox="0 0 240 240"><use href="#l3"/></svg></div>
+      <div class="light"><svg viewBox="0 0 240 240"><use href="#l3"/></svg></div>
+    </div>
+    <div class="meta"><b>03 · Portrait</b><h2>Flowing curl</h2>
+      <p>A fine-line profile whose hair sweeps back into a soft curl. Elegant and personal; reads clearly as a hair salon.</p></div>
+  </section>
+
+  <!-- 4. Editorial seal -->
+  <section class="card">
+    <div class="pair">
+      <div class="dark"><svg viewBox="0 0 240 240"><use href="#l4"/></svg></div>
+      <div class="light"><svg viewBox="0 0 240 240"><use href="#l4"/></svg></div>
+    </div>
+    <div class="meta"><b>04 · Editorial</b><h2>Scissor seal</h2>
+      <p>An italic wordmark inside a round seal, with open scissors forming the top. Boutique, works well on stickers, cards and Instagram.</p></div>
+  </section>
+
+</div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- 1 -->
+    <g id="l1">
+      <circle cx="120" cy="88" r="56" fill="none" class="sac" stroke-width="1.2"/>
+      <text x="120" y="118" text-anchor="middle" class="serif fg" font-size="92" font-weight="500">P</text>
+      <path d="M134 52 C150 34 170 34 176 30 C172 50 160 64 138 62 Z" class="ac"/>
+      <path d="M134 60 C146 50 158 44 170 36" fill="none" class="sfg" stroke-width="1" opacity=".5"/>
+      <text x="120" y="182" text-anchor="middle" class="serif fg" font-size="30" letter-spacing="6">PRECIOUS</text>
+      <text x="120" y="204" text-anchor="middle" class="sans ac" font-size="9.5" letter-spacing="4.5">HAIR · BEAUTY · STUDIO</text>
+    </g>
+    <!-- 2 -->
+    <g id="l2" fill="none" stroke-linejoin="round">
+      <path d="M86 52 H154 L176 76 L120 132 L64 76 Z" class="sfg" stroke-width="2.4"/>
+      <path d="M64 76 H176 M86 52 L102 76 L120 52 L138 76 L154 52" class="sfg" stroke-width="1.4"/>
+      <path d="M102 76 L120 132 L138 76" class="sac" stroke-width="1.4"/>
+      <path d="M84 96 v14 M93 105 v14 M102 114 v14 M138 114 v14 M147 105 v14 M156 96 v14" class="sac" stroke-width="2.4" stroke-linecap="round"/>
+      <text x="120" y="178" text-anchor="middle" class="sans fg" stroke="none" font-size="27" font-weight="500" letter-spacing="7">PRECIOUS</text>
+      <text x="120" y="200" text-anchor="middle" class="sans ac" stroke="none" font-size="9.5" letter-spacing="5">HAIR STUDIO</text>
+    </g>
+    <!-- 3 -->
+    <g id="l3" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M108 140 C100 128 96 120 98 112 L90 104 L98 98 C96 90 96 84 100 78 C106 62 122 52 140 54 C160 56 172 72 170 92 C168 112 152 120 140 112 C130 106 132 90 144 90 C152 90 154 100 148 104"
+            class="sfg" stroke-width="2.6"/>
+      <path d="M140 54 C166 40 186 56 182 84 C178 112 160 136 132 144" class="sac" stroke-width="1.6"/>
+      <path d="M108 140 L112 150" class="sfg" stroke-width="2.6"/>
+      <text x="120" y="186" text-anchor="middle" class="serif fg" font-size="34" font-style="italic" font-weight="500">Precious</text>
+      <text x="120" y="206" text-anchor="middle" class="sans ac" font-size="9.5" letter-spacing="5">HAIR &amp; BEAUTY</text>
+    </g>
+    <!-- 4 -->
+    <g id="l4">
+      <circle cx="120" cy="120" r="96" fill="none" class="sfg" stroke-width="1.4"/>
+      <circle cx="120" cy="120" r="88" fill="none" class="sac" stroke-width=".8"/>
+      <g fill="none" class="sac" stroke-width="2" stroke-linecap="round">
+        <circle cx="108" cy="56" r="7"/><circle cx="132" cy="56" r="7"/>
+        <path d="M112 61 L130 90 M128 61 L110 90"/>
+      </g>
+      <text x="120" y="134" text-anchor="middle" class="serif fg" font-size="44" font-style="italic" font-weight="500">precious</text>
+      <path d="M78 148 H162" class="sac" stroke-width="1" stroke="currentColor"/>
+      <text x="120" y="166" text-anchor="middle" class="sans fg" font-size="10" letter-spacing="5">SALON</text>
+      <text x="120" y="186" text-anchor="middle" class="sans ac" font-size="8.5" letter-spacing="3.5">EST · 2026</text>
+    </g>
+  </defs>
+</svg>
+</body>
+</html>
