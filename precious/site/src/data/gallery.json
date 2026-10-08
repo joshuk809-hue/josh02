@@ -1,0 +1,215 @@
+{
+ "_note": "Set own:true for photos of Precious's real work. own:false photos are placeholders taken from reference PDFs (other stylists' work) and must be replaced before going live.",
+ "items": [
+  {
+   "src": "gallery/m-barber-cuts.webp",
+   "title": "Fades, waves & twists",
+   "for": "men",
+   "own": false
+  },
+  {
+   "src": "gallery/m-braided-ponytail-undercut.webp",
+   "title": "Braided ponytail & undercut",
+   "for": "men",
+   "own": false
+  },
+  {
+   "src": "gallery/m-braided-top-knot-fade.webp",
+   "title": "Braided top knot & fade",
+   "for": "men",
+   "own": false
+  },
+  {
+   "src": "gallery/m-cornrow-man-bun.webp",
+   "title": "Cornrow man bun",
+   "for": "men",
+   "own": false
+  },
+  {
+   "src": "gallery/m-cornrows-bun.webp",
+   "title": "Cornrows & bun",
+   "for": "men",
+   "own": false
+  },
+  {
+   "src": "gallery/m-cross-cornrows.webp",
+   "title": "Cross cornrows",
+   "for": "men",
+   "own": false
+  },
+  {
+   "src": "gallery/m-freestyle-cornrows.webp",
+   "title": "Freestyle cornrows",
+   "for": "men",
+   "own": false
+  },
+  {
+   "src": "gallery/m-interlocked-locs.webp",
+   "title": "Interlocked locs",
+   "for": "men",
+   "own": false
+  },
+  {
+   "src": "gallery/m-plaits-bun.webp",
+   "title": "Plaits & bun",
+   "for": "men",
+   "own": false
+  },
+  {
+   "src": "gallery/m-plaits-pattern-beads.webp",
+   "title": "Pattern plaits with beads",
+   "for": "men",
+   "own": false
+  },
+  {
+   "src": "gallery/m-short-plaits-clear-beads.webp",
+   "title": "Short plaits, clear beads",
+   "for": "men",
+   "own": false
+  },
+  {
+   "src": "gallery/m-side-swirl-cornrows.webp",
+   "title": "Side swirl cornrows",
+   "for": "men",
+   "own": false
+  },
+  {
+   "src": "gallery/m-square-plaits-wood-beads.webp",
+   "title": "Square plaits, wood beads",
+   "for": "men",
+   "own": false
+  },
+  {
+   "src": "gallery/m-star-cornrows.webp",
+   "title": "Star cornrows",
+   "for": "men",
+   "own": false
+  },
+  {
+   "src": "gallery/m-stitch-cornrows.webp",
+   "title": "Stitch cornrows",
+   "for": "men",
+   "own": false
+  },
+  {
+   "src": "gallery/m-swirl-cornrows.webp",
+   "title": "Swirl cornrows",
+   "for": "men",
+   "own": false
+  },
+  {
+   "src": "gallery/m-triangle-plaits-beads.webp",
+   "title": "Triangle plaits with beads",
+   "for": "men",
+   "own": false
+  },
+  {
+   "src": "gallery/m-triangle-plaits.webp",
+   "title": "Triangle plaits",
+   "for": "men",
+   "own": false
+  },
+  {
+   "src": "gallery/m-wavy-feed-in-cornrows.webp",
+   "title": "Wavy feed-in cornrows",
+   "for": "men",
+   "own": false
+  },
+  {
+   "src": "gallery/w-blonde-tapered-cut.webp",
+   "title": "Blonde tapered cut",
+   "for": "women",
+   "own": false
+  },
+  {
+   "src": "gallery/w-boho-bob-braids.webp",
+   "title": "Boho bob braids",
+   "for": "women",
+   "own": false
+  },
+  {
+   "src": "gallery/w-cornrow-curly-ponytail.webp",
+   "title": "Cornrows & curly ponytail",
+   "for": "women",
+   "own": false
+  },
+  {
+   "src": "gallery/w-faux-locs.webp",
+   "title": "Faux locs",
+   "for": "women",
+   "own": false
+  },
+  {
+   "src": "gallery/w-jumbo-knotless-beads.webp",
+   "title": "Jumbo knotless with beads",
+   "for": "women",
+   "own": false
+  },
+  {
+   "src": "gallery/w-kids-dutch-braids.webp",
+   "title": "Kids Dutch braids",
+   "for": "women",
+   "own": false
+  },
+  {
+   "src": "gallery/w-knotless-copper.webp",
+   "title": "Knotless braids",
+   "for": "women",
+   "own": false
+  },
+  {
+   "src": "gallery/w-large-box-braids.webp",
+   "title": "Large box braids",
+   "for": "women",
+   "own": false
+  },
+  {
+   "src": "gallery/w-large-knotless-ombre.webp",
+   "title": "Large knotless ombré",
+   "for": "women",
+   "own": false
+  },
+  {
+   "src": "gallery/w-lashes.webp",
+   "title": "Lash extensions",
+   "for": "women",
+   "own": false
+  },
+  {
+   "src": "gallery/w-rope-twists.webp",
+   "title": "Rope twists",
+   "for": "women",
+   "own": false
+  },
+  {
+   "src": "gallery/w-senegalese-twists.webp",
+   "title": "Senegalese twists",
+   "for": "women",
+   "own": false
+  },
+  {
+   "src": "gallery/w-small-box-braids.webp",
+   "title": "Small box braids",
+   "for": "women",
+   "own": false
+  },
+  {
+   "src": "gallery/w-square-plaits.webp",
+   "title": "Square-part plaits",
+   "for": "men",
+   "own": false
+  },
+  {
+   "src": "gallery/w-tapered-cut-design.webp",
+   "title": "Tapered cut with design",
+   "for": "women",
+   "own": false
+  },
+  {
+   "src": "gallery/w-triangle-box-braids.webp",
+   "title": "Triangle-part box braids",
+   "for": "women",
+   "own": false
+  }
+ ]
+}
