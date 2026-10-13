@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { motion } from 'framer-motion'
-import { CalendarDays, Check, Copy, Download, MessageCircle, Minus, Package, Plus, Send, Trash2, Upload, Users, X } from 'lucide-react'
+import { BarChart3, Camera, CalendarDays, Check, Copy, Download, MessageCircle, Minus, Package, PackageCheck, Plus, ScanLine, Send, Trash2, Undo2, Upload, Users, X } from 'lucide-react'
 import { SERVICES } from '../data'
 import { DICTS, LANGS, type Lang } from '../i18n'
 import { waLink } from '../config'
-import { demoState, dueFollowUps, emptyState, load, save, uid, RULES, type Appointment, type Client, type State, type StockItem } from './store'
+import { adjustStock, completeAppointment, demoState, dueFollowUps, emptyState, findByBarcode, load, PRESETS, reopenAppointment, restock, save, uid, usageReport, RULES, type Appointment, type Client, type State, type StockItem } from './store'
 import { AUTO_REPLIES, CONFIRM, FOLLOW } from './templates'
 
 const TABS = [
@@ -143,6 +143,10 @@ function Agenda({ s, update }: P) {
   }
   const setStatus = (id: string, status: Appointment['status']) =>
     update((d) => ({ ...d, appointments: d.appointments.map((a) => (a.id === id ? { ...a, status } : a)) }))
+  const [doneId, setDoneId] = useState<string | null>(null)
+  const markDone = (id: string) => { update((d) => completeAppointment(d, id)); setDoneId(id) }
+  const doneAppt = s.appointments.find((a) => a.id === doneId && a.status === 'done')
+  const itemName = (id: string) => s.stock.find((i) => i.id === id)
 
   return (
     <div className="grid gap-5 md:grid-cols-[340px_1fr]">
@@ -171,7 +175,21 @@ function Agenda({ s, update }: P) {
           <button className={gold} onClick={add}><Plus size={16} /> Add</button>
         </div>
       </Card>
-      <div className="grid gap-4">
+      <div className="grid content-start gap-4">
+        {doneAppt && (
+          <Card className="border-[#D4A857]/40">
+            <div className="flex flex-wrap items-center gap-3">
+              <p role="status" className="flex-1 text-sm">
+                <b>{clients.get(doneAppt.clientId)?.name}</b> done.{' '}
+                {doneAppt.usedStock?.length
+                  ? <>Stock updated: {doneAppt.usedStock.map((u) => `−${u.qty} ${itemName(u.itemId)?.unit ?? ''} ${itemName(u.itemId)?.name ?? ''}`).join(', ')}.</>
+                  : <>Nothing taken from stock (set it up in Stock → Used per service).</>}
+              </p>
+              <button className={ghost} onClick={() => { update((d) => reopenAppointment(d, doneAppt.id)); setDoneId(null) }}><Undo2 size={15} /> Undo</button>
+              <button className={ghost} aria-label="Dismiss" onClick={() => setDoneId(null)}><X size={15} /></button>
+            </div>
+          </Card>
+        )}
         {days.size === 0 && (
           <Card>
             <p className="mb-3 text-white/60">No upcoming appointments. Add one on the left, or load example clients to see how everything works.</p>
@@ -198,7 +216,7 @@ function Agenda({ s, update }: P) {
                       </a>
                     )}
                     <button className={ghost} onClick={() => setMoving({ id: a.id, at: localInput(a.at) })}>Move</button>
-                    <button className={gold} onClick={() => setStatus(a.id, 'done')}><Check size={15} /> Done</button>
+                    <button className={gold} onClick={() => markDone(a.id)}><Check size={15} /> Done</button>
                     <button className={ghost} onClick={() => setStatus(a.id, 'no-show')}>No-show</button>
                     <button className={ghost} aria-label="Cancel" onClick={() => setStatus(a.id, 'cancelled')}><X size={15} /></button>
                     {moving?.id === a.id && (
@@ -292,10 +310,13 @@ function Clients({ s, update }: P) {
 }
 
 /* ---------- Stock ---------- */
+const num = (v: string) => (v === '' ? 0 : Number(v) || 0)
+const blankProduct = { name: '', category: 'Hair', qty: 0, unit: 'pcs', min: 1, barcode: '' }
+
 function Stock({ s, update }: P) {
-  const [f, setF] = useState({ name: '', category: 'Hair', qty: 0, unit: 'pcs', min: 1 })
+  const [f, setF] = useState(blankProduct)
   const low = s.stock.filter((i) => i.qty <= i.min)
-  const setQty = (id: string, qty: number) => update((d) => ({ ...d, stock: d.stock.map((i) => (i.id === id ? { ...i, qty: Math.max(0, qty || 0) } : i)) }))
+  const setQty = (id: string, qty: number) => update((d) => adjustStock(d, id, Math.max(0, qty) - (d.stock.find((i) => i.id === id)?.qty ?? 0), 'set'))
   const add = () => {
     const name = f.name.trim()
     if (!name) return
@@ -303,17 +324,21 @@ function Stock({ s, update }: P) {
     update((d) => {
       const same = d.stock.find((i) => i.name.toLowerCase() === name.toLowerCase())
       // Re-adding a product you already have tops it up instead of creating a duplicate
-      if (same) return { ...d, stock: d.stock.map((i) => (i === same ? { ...i, qty: i.qty + Math.max(0, f.qty) } : i)) }
-      return { ...d, stock: [...d.stock, { ...f, id: uid(), name, category, qty: Math.max(0, f.qty), min: Math.max(0, f.min) } as StockItem] }
+      if (same) return adjustStock(f.barcode ? { ...d, stock: d.stock.map((i) => (i === same ? { ...i, barcode: f.barcode } : i)) } : d, same.id, Math.max(0, f.qty), 'restock')
+      const item: StockItem = { id: uid(), name, category, unit: f.unit.trim() || 'pcs', qty: Math.max(0, f.qty), min: Math.max(0, f.min), ...(f.barcode ? { barcode: f.barcode } : {}) }
+      return { ...d, stock: [...d.stock, item] }
     })
-    setF({ ...f, name: '', qty: 0 })
+    setF(blankProduct)
   }
   const [copied, setCopied] = useState(false)
   const shopping = low.map((i) => `• ${i.name}: have ${i.qty} ${i.unit}, need ${Math.max(i.min * 2 - i.qty, 1)} more`).join('\n')
   const cats = [...new Set(s.stock.map((i) => i.category))]
+  const [panel, setPanel] = useState<'none' | 'delivery' | 'recipes'>('none')
 
   return (
     <div className="grid gap-5">
+      <ScanBar s={s} update={update} onNew={(barcode) => { setF({ ...blankProduct, barcode }); document.getElementById('product-name')?.focus() }} />
+
       {low.length > 0 && (
         <Card className="border-[#B4552D]/50 bg-[#B4552D]/10">
           <div className="flex flex-wrap items-center gap-3">
@@ -322,36 +347,238 @@ function Stock({ s, update }: P) {
           </div>
         </Card>
       )}
+
+      <div className="flex flex-wrap gap-2">
+        <button className={panel === 'delivery' ? gold : ghost} onClick={() => setPanel(panel === 'delivery' ? 'none' : 'delivery')}><PackageCheck size={15} /> Delivery arrived</button>
+        <button className={panel === 'recipes' ? gold : ghost} onClick={() => setPanel(panel === 'recipes' ? 'none' : 'recipes')}><Package size={15} /> Used per service</button>
+      </div>
+      {panel === 'delivery' && <Delivery s={s} update={update} onDone={() => setPanel('none')} />}
+      {panel === 'recipes' && <Recipes s={s} update={update} />}
+
       {cats.map((cat) => (
         <Card key={cat}>
           <h3 className="mb-3 text-sm uppercase tracking-widest text-[#D4A857]">{cat}</h3>
           <ul className="grid gap-2">
             {s.stock.filter((i) => i.category === cat).map((i) => (
               <li key={i.id} className={`flex flex-wrap items-center gap-2 rounded-2xl p-3 ${i.qty <= i.min ? 'bg-[#B4552D]/15' : 'bg-white/[0.03]'}`}>
-                <span className="flex-1 min-w-[150px]">{i.name} <span className="text-xs text-white/40">min {i.min}</span></span>
-                <button className={ghost} aria-label="Use one" onClick={() => setQty(i.id, i.qty - 1)}><Minus size={15} /></button>
-                <input className={`${input.replace("w-full ", "")} w-20 text-center tabular-nums`} type="number" min={0} value={i.qty} onChange={(e) => setQty(i.id, Number(e.target.value))} aria-label={`${i.name} quantity`} />
+                <span className="flex-1 min-w-[150px]">
+                  {i.name} <span className="text-xs text-white/40">min {i.min}</span>
+                  {i.barcode && <ScanLine size={13} className="ml-1 inline text-white/40" aria-label="Has barcode" />}
+                </span>
+                <button className={ghost} aria-label="Use one" onClick={() => update((d) => adjustStock(d, i.id, -1, 'use'))}><Minus size={15} /></button>
+                <input className={`${input.replace("w-full ", "")} w-20 text-center tabular-nums`} type="number" min={0} step="any" value={i.qty} onChange={(e) => setQty(i.id, num(e.target.value))} aria-label={`${i.name} quantity`} />
                 <span className="w-14 text-sm text-white/50">{i.unit}</span>
-                <button className={ghost} aria-label="Add one" onClick={() => setQty(i.id, i.qty + 1)}><Plus size={15} /></button>
+                <button className={ghost} aria-label="Add one" onClick={() => update((d) => adjustStock(d, i.id, 1, 'restock'))}><Plus size={15} /></button>
                 <ConfirmButton label="Delete" onConfirm={() => update((d) => ({ ...d, stock: d.stock.filter((x) => x.id !== i.id) }))}><Trash2 size={15} /></ConfirmButton>
               </li>
             ))}
           </ul>
         </Card>
       ))}
+
       <Card>
         <h3 className="mb-3 font-semibold">Add product</h3>
+        <div className="mb-3 flex flex-wrap gap-1.5">
+          {PRESETS.filter((p) => !s.stock.some((i) => i.name === p.name)).map((p) => (
+            <button key={p.name} className="rounded-full border border-white/15 px-3 py-1.5 text-xs text-white/75 transition-colors hover:border-[#D4A857] hover:text-[#E9D6B0]" onClick={() => setF({ ...blankProduct, ...p, barcode: f.barcode })}>
+              + {p.name}
+            </button>
+          ))}
+        </div>
         <div className="grid gap-2 sm:grid-cols-[2fr_1fr_80px_90px_80px_auto]">
-          <input className={input} placeholder="Product" value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} />
+          <input id="product-name" className={input} placeholder="Product" value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} />
           <input className={input} placeholder="Category" list="cats" value={f.category} onChange={(e) => setF({ ...f, category: e.target.value })} />
           <datalist id="cats">{cats.map((c) => <option key={c} value={c} />)}</datalist>
-          <input className={input} type="number" min={0} aria-label="Quantity" value={f.qty} onChange={(e) => setF({ ...f, qty: Number(e.target.value) })} />
+          <input className={input} type="number" min={0} aria-label="Quantity" value={f.qty} onChange={(e) => setF({ ...f, qty: num(e.target.value) })} />
           <input className={input} placeholder="Unit" value={f.unit} onChange={(e) => setF({ ...f, unit: e.target.value })} />
-          <input className={input} type="number" min={0} aria-label="Minimum" title="Warn me at" value={f.min} onChange={(e) => setF({ ...f, min: Number(e.target.value) })} />
+          <input className={input} type="number" min={0} aria-label="Minimum" title="Warn me at" value={f.min} onChange={(e) => setF({ ...f, min: num(e.target.value) })} />
           <button className={gold} onClick={add}><Plus size={16} /> Add</button>
         </div>
+        {f.barcode && <p className="mt-2 text-sm text-white/60">Barcode <span className="tabular-nums">{f.barcode}</span> will be saved with this product.</p>}
       </Card>
+
+      <UsageCard s={s} />
     </div>
+  )
+}
+
+// Scan with the camera (Android Chrome), a Bluetooth/USB scanner, or type the barcode and press Enter.
+function ScanBar({ s, update, onNew }: P & { onNew: (barcode: string) => void }) {
+  const [mode, setMode] = useState<'use' | 'restock'>('use')
+  const [code, setCode] = useState('')
+  const [msg, setMsg] = useState<{ text: string; unknown?: string } | null>(null)
+  const [link, setLink] = useState('')
+  const [camera, setCamera] = useState(false)
+  const canCamera = typeof window !== 'undefined' && 'BarcodeDetector' in window
+
+  const handle = (raw: string) => {
+    const c = raw.trim()
+    if (!c) return
+    const item = findByBarcode(s, c)
+    if (item) {
+      const delta = mode === 'use' ? -1 : 1
+      update((d) => adjustStock(d, item.id, delta, mode === 'use' ? 'use' : 'restock'))
+      setMsg({ text: `${item.name}: ${delta > 0 ? '+1' : '−1'} → ${Math.max(0, item.qty + delta)} ${item.unit}` })
+    } else {
+      setMsg({ text: `New barcode ${c}. Link it to a product you have, or add it as a new one.`, unknown: c })
+    }
+    setCode('')
+  }
+
+  return (
+    <Card>
+      <div className="flex flex-wrap items-center gap-2">
+        <div className="flex rounded-full bg-white/[0.05] p-1 text-sm">
+          {(['use', 'restock'] as const).map((m) => (
+            <button key={m} onClick={() => setMode(m)} aria-pressed={mode === m} className={`rounded-full px-3 py-1.5 transition-colors ${mode === m ? 'bg-[#D4A857] text-[#1A1206]' : 'text-white/70'}`}>
+              {m === 'use' ? 'Scan = used one' : 'Scan = arrived one'}
+            </button>
+          ))}
+        </div>
+        <form className="flex flex-1 min-w-[220px] gap-2" onSubmit={(e) => { e.preventDefault(); handle(code) }}>
+          <input className={input} inputMode="numeric" placeholder="Scan or type a barcode, then Enter" aria-label="Barcode" value={code} onChange={(e) => setCode(e.target.value)} />
+        </form>
+        {canCamera && <button className={ghost} onClick={() => setCamera(true)}><Camera size={15} /> Camera</button>}
+      </div>
+      {msg && (
+        <div role="status" className="mt-3 flex flex-wrap items-center gap-2 text-sm text-white/80">
+          <span className="flex-1">{msg.text}</span>
+          {msg.unknown && (
+            <>
+              <select className={`${input.replace('w-full ', '')} w-auto`} aria-label="Link barcode to" value={link} onChange={(e) => setLink(e.target.value)}>
+                <option value="">Choose product…</option>
+                {s.stock.filter((i) => !i.barcode).map((i) => <option key={i.id} value={i.id}>{i.name}</option>)}
+              </select>
+              <button className={ghost} disabled={!link} onClick={() => { update((d) => ({ ...d, stock: d.stock.map((i) => (i.id === link ? { ...i, barcode: msg.unknown } : i)) })); setMsg({ text: 'Barcode linked. Scan again to count it.' }); setLink('') }}>Link</button>
+              <button className={ghost} onClick={() => { onNew(msg.unknown!); setMsg(null) }}>Add as new</button>
+            </>
+          )}
+        </div>
+      )}
+      {camera && <CameraScan onCode={(c) => { setCamera(false); handle(c) }} onClose={() => setCamera(false)} />}
+    </Card>
+  )
+}
+
+type Detector = { detect: (v: HTMLVideoElement) => Promise<{ rawValue: string }[]> }
+
+function CameraScan({ onCode, onClose }: { onCode: (c: string) => void; onClose: () => void }) {
+  const [err, setErr] = useState('')
+  const cb = useRef(onCode) // keep the camera running across parent re-renders
+  cb.current = onCode
+  useEffect(() => {
+    let stream: MediaStream | undefined
+    let raf = 0
+    const video = document.getElementById('scan-video') as HTMLVideoElement
+    const Ctor = (window as unknown as { BarcodeDetector: new (o: object) => Detector }).BarcodeDetector
+    const detector = new Ctor({ formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128'] })
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }).then((st) => {
+      stream = st; video.srcObject = st; video.play()
+      const tick = async () => {
+        const found = await detector.detect(video).catch(() => [])
+        if (found[0]) return cb.current(found[0].rawValue)
+        raf = requestAnimationFrame(tick)
+      }
+      tick()
+    }, () => setErr('The camera is blocked. Allow camera access for this site, or type the barcode instead.'))
+    return () => { cancelAnimationFrame(raf); stream?.getTracks().forEach((t) => t.stop()) }
+  }, [])
+  return (
+    <div className="mt-3 grid gap-2">
+      <video id="scan-video" className="aspect-video w-full rounded-2xl bg-black object-cover" muted playsInline />
+      {err && <p className="text-sm text-[#E2BC72]">{err}</p>}
+      <button className={ghost} onClick={onClose}>Close camera</button>
+    </div>
+  )
+}
+
+function Delivery({ s, update, onDone }: P & { onDone: () => void }) {
+  const [got, setGot] = useState<Record<string, number>>({})
+  const items = [...s.stock].sort((a, b) => Number(b.qty <= b.min) - Number(a.qty <= a.min) || a.name.localeCompare(b.name))
+  const count = Object.values(got).filter((n) => n > 0).length
+  return (
+    <Card>
+      <h3 className="mb-1 font-semibold">Delivery arrived</h3>
+      <p className="mb-3 text-sm text-white/60">Type how much arrived for each product, then save once. Low items are at the top.</p>
+      <ul className="grid gap-1.5">
+        {items.map((i) => (
+          <li key={i.id} className="flex items-center gap-2">
+            <span className={`flex-1 text-sm ${i.qty <= i.min ? 'text-[#E2BC72]' : ''}`}>{i.name} <span className="text-white/40">· have {i.qty}</span></span>
+            <span className="text-sm text-white/50">+</span>
+            <input className={`${input.replace('w-full ', '')} w-20 text-center tabular-nums`} type="number" min={0} aria-label={`${i.name} arrived`} value={got[i.id] ?? ''} onChange={(e) => setGot({ ...got, [i.id]: num(e.target.value) })} />
+            <span className="w-14 text-sm text-white/50">{i.unit}</span>
+          </li>
+        ))}
+      </ul>
+      <button className={`${gold} mt-4`} disabled={!count} onClick={() => { update((d) => restock(d, got)); setGot({}); onDone() }}>
+        <PackageCheck size={15} /> Add {count || ''} product{count === 1 ? '' : 's'} to stock
+      </button>
+    </Card>
+  )
+}
+
+function Recipes({ s, update }: P) {
+  const setLines = (svc: string, lines: State['recipes'][string]) => update((d) => ({ ...d, recipes: { ...d.recipes, [svc]: lines } }))
+  return (
+    <Card>
+      <h3 className="mb-1 font-semibold">Used per service</h3>
+      <p className="mb-4 text-sm text-white/60">What one appointment uses. When you tap Done in the Agenda, these are taken out of stock automatically.</p>
+      <div className="grid items-start gap-4 sm:grid-cols-2">
+        {SERVICES.map((svc) => {
+          const lines = s.recipes[svc.id] ?? []
+          return (
+            <div key={svc.id} className="rounded-2xl bg-white/[0.03] p-3">
+              <p className="mb-2 text-sm font-medium text-[#E9D6B0]">{svcName(svc.id)}</p>
+              {lines.map((l, idx) => (
+                <div key={idx} className="mb-1.5 flex items-center gap-1.5">
+                  <select className={`${input.replace('w-full ', '')} min-w-0 flex-1 py-1.5 text-sm`} aria-label={`${svcName(svc.id)} product`} value={l.itemId} onChange={(e) => setLines(svc.id, lines.map((x, j) => (j === idx ? { ...x, itemId: e.target.value } : x)))}>
+                    {s.stock.map((i) => <option key={i.id} value={i.id}>{i.name}</option>)}
+                  </select>
+                  <input className={`${input.replace('w-full ', '')} w-20 py-1.5 text-center text-sm tabular-nums`} type="number" min={0} step="any" aria-label={`${svcName(svc.id)} amount`} value={l.qty} onChange={(e) => setLines(svc.id, lines.map((x, j) => (j === idx ? { ...x, qty: num(e.target.value) } : x)))} />
+                  <button className="rounded-full p-1.5 text-white/50 hover:text-white" aria-label="Remove" onClick={() => setLines(svc.id, lines.filter((_, j) => j !== idx))}><X size={14} /></button>
+                </div>
+              ))}
+              {s.stock[0] && <button className="text-xs text-[#D4A857] hover:underline" onClick={() => setLines(svc.id, [...lines, { itemId: s.stock[0].id, qty: 1 }])}>+ Add product</button>}
+            </div>
+          )
+        })}
+      </div>
+    </Card>
+  )
+}
+
+function UsageCard({ s }: { s: State }) {
+  const rows = usageReport(s)
+  return (
+    <Card>
+      <h3 className="mb-1 flex items-center gap-2 font-semibold"><BarChart3 size={16} /> Last 30 days</h3>
+      <p className="mb-3 text-sm text-white/60">What you used and when it runs out at this pace. Order what runs out within two weeks.</p>
+      {rows.length === 0 ? (
+        <p className="text-sm text-white/50">Usage appears here as you mark appointments Done or tap −.</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm tabular-nums">
+            <thead className="text-left text-white/50">
+              <tr><th className="py-1.5 font-normal">Product</th><th className="py-1.5 text-right font-normal">Used</th><th className="py-1.5 text-right font-normal">Per week</th><th className="py-1.5 text-right font-normal">Runs out</th></tr>
+            </thead>
+            <tbody>
+              {rows.map((r) => (
+                <tr key={r.item.id} className="border-t border-white/10">
+                  <td className="py-2 pr-2">{r.item.name}</td>
+                  <td className="py-2 text-right">{r.used} {r.item.unit}</td>
+                  <td className="py-2 text-right">{r.perWeek}</td>
+                  <td className="py-2 text-right">
+                    <span className={`rounded-full px-2 py-0.5 ${r.daysLeft !== null && r.daysLeft <= 14 ? 'bg-[#B4552D] text-white' : 'text-white/70'}`}>
+                      {r.daysLeft === 0 ? 'now' : `~${r.daysLeft} days`}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </Card>
   )
 }
 

@@ -5,7 +5,7 @@ const assert = require('node:assert/strict')
 const BASE = (process.env.BASE || 'http://localhost:4173/') + '#studio'
 
 const results = []
-const check = async (name, fn) => { try { await fn(); results.push(['PASS', name]) } catch (e) { results.push(['FAIL', `${name} — ${e.message.split('\n')[0]}`]) } }
+const check = async (name, fn) => { try { await fn(); results.push(['PASS', name]) } catch (e) { results.push(['FAIL', `${name} — ${e.message.replace(/\n+/g, ' ').slice(0, 300)}`]) } }
 const local = (d) => new Date(+d - d.getTimezoneOffset() * 6e4).toISOString().slice(0, 16)
 const at = (days, h, m = 0) => { const d = new Date(); d.setDate(d.getDate() + days); d.setHours(h, m, 0, 0); return d }
 
@@ -142,6 +142,83 @@ const at = (days, h, m = 0) => { const d = new Date(); d.setDate(d.getDate() + d
     await row('Hair foam').getByRole('button', { name: /Tap again/ }).click(); await p.waitForTimeout(100)
     assert.equal(await row('Hair foam').count(), 0)
   })
+
+  /* ---------- automatic deduction, delivery, barcodes, presets, report ---------- */
+  const p2 = await ctx.newPage(); p2.on('pageerror', (e) => errors.push(e.message))
+  await p2.goto(BASE); await p2.evaluate(() => localStorage.clear()); await p2.reload(); await p2.waitForTimeout(300)
+  await p2.getByRole('button', { name: 'Load example data' }).click(); await p2.waitForTimeout(200)
+  const stockOf = (id) => p2.evaluate((id) => JSON.parse(localStorage.getItem('precious-studio-v1')).stock.find((i) => i.id === id).qty, id)
+
+  await check('Done on braids takes hair, edge control, mousse, beads out of stock', async () => {
+    const before = await stockOf('hair-1b')
+    await p2.locator('li').filter({ hasText: 'Amara Okafor' }).getByRole('button', { name: 'Done', exact: true }).click(); await p2.waitForTimeout(150)
+    assert.equal(await stockOf('hair-1b'), before - 3)
+    assert.match(await p2.getByRole('status').first().innerText(), /Stock updated: −3 packs Braiding hair \(black, 1B\)/)
+  })
+  await check('Undo puts the appointment and the stock back', async () => {
+    await p2.getByRole('button', { name: 'Undo' }).click(); await p2.waitForTimeout(150)
+    assert.equal(await stockOf('hair-1b'), 20)
+    assert.ok(await p2.locator('li').filter({ hasText: 'Amara Okafor' }).isVisible())
+  })
+  await p2.getByRole('button', { name: /Stock/ }).click(); await p2.waitForTimeout(150)
+  await check('usage report shows the last 30 days, soonest run-out first', async () => {
+    const rows = await p2.locator('table tbody tr').allInnerTexts()
+    assert.ok(rows.length >= 3, rows.join(' | '))
+    assert.match(rows[0], /Braiding hair \(black, 1B\)\s+15 packs/)
+  })
+  await check('Used per service: change braids to 2 packs and it is used on Done', async () => {
+    await p2.getByRole('button', { name: 'Used per service' }).click()
+    await p2.locator('input[aria-label="Braids amount"]').first().fill('2')
+    await p2.getByRole('button', { name: /Agenda/ }).click()
+    await p2.locator('li').filter({ hasText: 'Daniel Weber' }).getByRole('button', { name: 'Done', exact: true }).click(); await p2.waitForTimeout(150)
+    assert.equal(await stockOf('hair-1b'), 18)
+    await p2.getByRole('button', { name: /Stock/ }).click(); await p2.waitForTimeout(150)
+  })
+  await check('Delivery arrived: several products added in one save', async () => {
+    await p2.getByRole('button', { name: 'Delivery arrived' }).click()
+    const [e0, m0] = [await stockOf('edge'), await stockOf('mousse')]
+    await p2.locator('input[aria-label="Edge control arrived"]').fill('5')
+    await p2.locator('input[aria-label="Mousse arrived"]').fill('6')
+    await p2.getByRole('button', { name: /Add 2 products to stock/ }).click(); await p2.waitForTimeout(150)
+    assert.equal(await stockOf('edge'), +(e0 + 5).toFixed(2))
+    assert.equal(await stockOf('mousse'), +(m0 + 6).toFixed(2))
+  })
+  const scan = async (code) => { await p2.fill('input[aria-label="Barcode"]', code); await p2.press('input[aria-label="Barcode"]', 'Enter'); await p2.waitForTimeout(150) }
+  await check('scanner: known barcode in "used" mode takes one off', async () => {
+    const m0 = await stockOf('mousse')
+    await scan('8009876543210') // Mousse
+    assert.equal(await stockOf('mousse'), +(m0 - 1).toFixed(2))
+    assert.match(await p2.getByRole('status').first().innerText(), /Mousse: −1/)
+  })
+  await check('scanner: "arrived" mode adds one', async () => {
+    await p2.getByRole('button', { name: 'Scan = arrived one' }).click()
+    const m0 = await stockOf('mousse')
+    await scan('8009876543210')
+    assert.equal(await stockOf('mousse'), +(m0 + 1).toFixed(2))
+  })
+  await check('scanner: unknown barcode can be linked to a product, then counts', async () => {
+    await scan('4006381333931')
+    await p2.locator('select[aria-label="Link barcode to"]').selectOption({ label: 'Shampoo' })
+    await p2.getByRole('button', { name: 'Link', exact: true }).click(); await p2.waitForTimeout(100)
+    const before = await stockOf('shampoo')
+    await scan('4006381333931')
+    assert.equal(await stockOf('shampoo'), before + 1)
+  })
+  await check('scanner: unknown barcode → "Add as new" keeps the code for the new product', async () => {
+    await scan('5012345678900')
+    await p2.getByRole('button', { name: 'Add as new' }).click()
+    await p2.fill('#product-name', 'Argan oil')
+    await p2.getByRole('button', { name: 'Add', exact: true }).click(); await p2.waitForTimeout(100)
+    const bc = await p2.evaluate(() => JSON.parse(localStorage.getItem('precious-studio-v1')).stock.find((i) => i.name === 'Argan oil').barcode)
+    assert.equal(bc, '5012345678900')
+  })
+  await check('preset chip fills name, category, unit and minimum', async () => {
+    await p2.getByRole('button', { name: '+ Braid spray' }).click()
+    assert.equal(await p2.inputValue('#product-name'), 'Braid spray')
+    assert.equal(await p2.inputValue('input[placeholder="Category"]'), 'Care')
+    assert.equal(await p2.inputValue('input[placeholder="Unit"]'), 'bottles')
+  })
+
   await check('no JS errors', async () => assert.deepEqual(errors, []))
 
   await b.close()

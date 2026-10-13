@@ -7,7 +7,13 @@
 - **Precious Studio** (`/#studio`): her private tools. Bookmark it on her phone.
   - **Agenda**: appointments by day, a one-tap WhatsApp confirmation, and buttons for done, no-show and cancel.
   - **Clients**: phone, language, notes and WhatsApp consent.
-  - **Stock**: +/− counters, low-stock alerts and a shopping list she can copy.
+  - **Stock**:
+    - **Automatic per service**: "Used per service" says what one appointment uses (e.g. braids: 3 packs of hair, 0.25 mousse, 10 beads). Tapping **Done** in the Agenda takes it out of stock, and **Undo** puts it back.
+    - **Scanner**: scan a product's barcode with the phone camera (Chrome on Android), a Bluetooth/USB scanner, or type it, to count one used or one arrived. An unknown barcode can be linked to a product or saved with a new one.
+    - **Delivery arrived**: type what came in for every product, then save once.
+    - **Quick add**: one-tap presets for common salon supplies, and re-adding an existing product tops it up.
+    - **Last 30 days**: what was used, per week, and roughly when each product runs out.
+    - Low-stock alerts and a shopping list she can copy.
   - **Follow-ups**: thank-you and review requests, rebook reminders and win-back messages, sent in each client's language. They follow strict rules so clients aren't pestered:
     - only clients who agreed
     - at most one message every 14 days
@@ -15,9 +21,18 @@
     - every reminder offers STOP
   - **Replies & backup**: away and greeting texts in 5 languages for WhatsApp Business, plus backup and restore.
 
+## Business details (shown on the site)
+
+Precious Beauty di Omoruyi Precious · Via Paleocapa 8/B, 24122 Bergamo (BG) · P.IVA 04902180167 · +39 371 578 0893
+
+- **Footer**: legal name, address and P.IVA on every page, as Italian law requires for business websites (art. 35 DPR 633/72), plus a privacy link (`#privacy`, Italian and English).
+- **Google**: `index.html` carries `HairSalon` structured data (name, address, phone, VAT, prices) and Open Graph tags. The "Get directions" button opens Google Maps.
+- **Fonts**: served from the site itself, so no visitor data goes to Google Fonts.
+- **Same details everywhere**: use these exact details, spelled the same way, on the Google Business Profile, Instagram and Facebook. Google ranks local businesses better when the name, address and phone match everywhere.
+
 ## Before going live
 
-1. Edit `site/src/config.ts`: Instagram, TikTok and Google review link. The WhatsApp number, +39 371 578 0893, is already set.
+1. Edit `site/src/config.ts`: Instagram, TikTok and Google review link (from her Google Business Profile → "Ask for reviews"). Add opening hours there and to `openingHours` in the `index.html` structured data once confirmed. The WhatsApp number, +39 371 578 0893, is already set.
 2. Replace the photos. The photos in `site/public/gallery/` come from the reference PDFs and show **other stylists' work**, some with their watermarks. They carry a "Sample photo" badge on the site.
    - To replace them, put her own photos in `site/public/gallery/`, then list each one in `site/src/data/gallery.json` with `"own": true`.
    - Keep the `.webp` format, about 800px wide.

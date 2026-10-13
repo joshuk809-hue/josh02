@@ -36,12 +36,13 @@ const html = `<!doctype html><html><head><meta charset="utf-8">
                -webkit-mask: radial-gradient(circle at 50% 50%, #000 58%, transparent 71%); mask: radial-gradient(circle at 50% 50%, #000 58%, transparent 71%) }
   .gold { background: linear-gradient(180deg, #F2DBA6 0%, #C99A4E 55%, #8A6224 100%); -webkit-background-clip: text; background-clip: text; color: transparent }
   .back .inner { position: absolute; inset: 5mm; display: flex; align-items: center; gap: 5mm } /* 2mm bleed + 3mm safe zone */
-  .back .left { flex: 1; display: flex; flex-direction: column; gap: 2.2mm }
+  .back .left { flex: 1; display: flex; flex-direction: column; gap: 1.8mm }
   .back .disc { width: 13mm; height: 13mm; border-radius: 50%; box-shadow: 0 0 0 .25mm rgba(242,219,166,.45) }
   .back h1 { font-family: Cinzel, serif; font-weight: 600; font-size: 13pt; letter-spacing: .6pt; line-height: 1 }
   .back .role { font-size: 5.6pt; letter-spacing: 1.6pt; text-transform: uppercase; color: rgba(233,214,176,.75) }
   .back .rule { width: 18mm; height: .25mm; background: linear-gradient(90deg, #C99A4E, transparent) }
   .back .phone { font-size: 9pt; letter-spacing: .6pt; font-weight: 400 }
+  .back .addr { font-size: 5.6pt; letter-spacing: .5pt; color: rgba(233,214,176,.8) }
   .back .svc { font-size: 5pt; letter-spacing: .8pt; white-space: nowrap; text-transform: uppercase; color: rgba(233,214,176,.6) }
   .back .right { width: 24mm; display: flex; flex-direction: column; align-items: center; gap: 1.6mm }
   .qr { width: 21mm; height: 21mm }
@@ -57,6 +58,7 @@ const html = `<!doctype html><html><head><meta charset="utf-8">
     <p class="role">Hair Salon · African Braider</p>
     <div class="rule"></div>
     <p class="phone gold">${PHONE}</p>
+    <p class="addr">Via Paleocapa 8/B · 24122 Bergamo</p>
     <p class="svc">Braids · Cornrows · Locs · Cuts · Lashes</p>
   </div>
   <div class="right">${qr}<p class="tap">${nfc} Tap or scan</p></div>

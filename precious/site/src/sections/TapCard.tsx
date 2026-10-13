@@ -1,7 +1,7 @@
-import { MessageCircle, UserPlus, Sparkles } from 'lucide-react'
+import { MapPin, MessageCircle, UserPlus, Sparkles } from 'lucide-react'
 import FadeIn from '../components/FadeIn'
 import GlossyLogo from '../components/GlossyLogo'
-import { BUSINESS, waLink } from '../config'
+import { BUSINESS, mapsUrl, waLink } from '../config'
 import { useT, type Lang } from '../i18n'
 
 // Opened by tapping the NFC business card (or scanning its QR code): save the contact, then ask for info.
@@ -16,7 +16,6 @@ const COPY: Record<Lang, { save: string; ask: string; site: string; hint: string
 export default function TapCard() {
   const { lang } = useT()
   const c = COPY[lang]
-  const pretty = '+' + BUSINESS.whatsapp.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})$/, '$1 $2 $3 $4')
   const pill = 'flex w-full items-center justify-center gap-2 rounded-full px-6 py-4 text-sm font-medium uppercase tracking-widest transition-transform duration-150 active:scale-[0.98]'
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#0C0C0C] px-6 py-12">
@@ -43,7 +42,10 @@ export default function TapCard() {
             <Sparkles size={18} aria-hidden /> {c.site}
           </a>
         </FadeIn>
-        <p className="select-all font-light tabular-nums tracking-wider text-[#E9D6B0]/60">{pretty}</p>
+        <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm font-light text-[#E9D6B0]/70 hover:text-[#E9D6B0]">
+          <MapPin size={15} aria-hidden /> {BUSINESS.street}, {BUSINESS.city}
+        </a>
+        <p className="-mt-5 select-all font-light tabular-nums tracking-wider text-[#E9D6B0]/60">{BUSINESS.phoneDisplay}</p>
       </div>
     </div>
   )

@@ -12,10 +12,12 @@ async function check(name, fn) {
 ;(async () => {
   const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' }).catch(() => chromium.launch())
   const errors = []
+  const external = []
   const page = async (w = 1280, h = 900) => {
     const p = await b.newPage({ viewport: { width: w, height: h } })
     p.on('pageerror', (e) => errors.push(e.message))
     p.on('console', (m) => m.type() === 'error' && errors.push(m.text()))
+    p.on('request', (r) => !r.url().startsWith(BASE.replace(/\/$/, '')) && external.push(r.url()))
     return p
   }
 
@@ -70,6 +72,25 @@ async function check(name, fn) {
   })
   await check('placeholder photos are labelled "Foto di esempio"', async () => {
     assert.ok((await p.locator('#styles').getByText('Foto di esempio').count()) >= 9)
+  })
+  await check('business details: legal name, address, P.IVA in footer', async () => {
+    const f = await p.locator('footer').innerText()
+    for (const x of ['Precious Beauty di Omoruyi Precious', 'Via Paleocapa 8/B', '24122 Bergamo (BG)', 'P.IVA 04902180167', '+39 371 578 0893']) assert.ok(f.includes(x), x)
+  })
+  await check('directions link opens Google Maps for the salon', async () => {
+    const href = decodeURIComponent(await p.locator('a[href*="google.com/maps"]').first().getAttribute('href'))
+    assert.ok(href.includes('Via Paleocapa 8/B, 24122 Bergamo'))
+  })
+  await check('structured data: HairSalon with address, phone, VAT', async () => {
+    const j = JSON.parse(await p.locator('script[type="application/ld+json"]').textContent())
+    assert.equal(j['@type'], 'HairSalon'); assert.equal(j.vatID, 'IT04902180167')
+    assert.equal(j.telephone, '+393715780893'); assert.equal(j.address.postalCode, '24122')
+  })
+  await check('privacy page opens in Italian with the data controller', async () => {
+    await p.locator('a[href="#privacy"]').click(); await p.waitForTimeout(300)
+    assert.ok(await p.getByRole('heading', { name: 'Informativa privacy' }).isVisible())
+    assert.ok((await p.locator('article').innerText()).includes('P.IVA 04902180167'))
+    await p.goto(BASE); await p.waitForTimeout(300)
   })
   await check('all images load (no broken src)', async () => {
     await p.evaluate(async () => { for (let y = 0; y < document.body.scrollHeight; y += 600) { scrollTo(0, y); await new Promise((r) => setTimeout(r, 40)) } })
@@ -173,6 +194,7 @@ async function check(name, fn) {
     await m.close()
   })
 
+  await check('no requests to Google Fonts (fonts are self-hosted)', async () => assert.deepEqual(external.filter((u) => u.includes('fonts.g')), []))
   await check('no JS errors on any page', async () => assert.deepEqual(errors, []))
   await b.close()
   for (const [r, n] of results) console.log(`${r}  ${n}`)

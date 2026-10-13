@@ -7,6 +7,7 @@ import Styles from './sections/Styles'
 import Social from './sections/Social'
 import Studio from './studio/Studio'
 import TapCard from './sections/TapCard'
+import Privacy from './sections/Privacy'
 import { DICTS, LangCtx, initialLang, type Lang } from './i18n'
 
 export default function App() {
@@ -18,6 +19,7 @@ export default function App() {
     return () => window.removeEventListener('hashchange', on)
   }, [])
   useEffect(() => { document.documentElement.lang = lang }, [lang])
+  useEffect(() => { if (['#card', '#privacy', '#studio', '#top'].includes(route)) window.scrollTo(0, 0) }, [route])
   const setLang = (l: Lang) => {
     setLangState(l)
     try { localStorage.setItem('lang', l) } catch { /* storage blocked */ }
@@ -26,7 +28,7 @@ export default function App() {
   if (route === '#studio') return <Studio />
   return (
     <LangCtx.Provider value={{ lang, t: DICTS[lang], setLang }}>
-      {route === '#card' ? <TapCard /> : (
+      {route === '#card' ? <TapCard /> : route === '#privacy' ? <Privacy /> : (
       <main style={{ overflowX: 'clip', background: '#0C0C0C' }}>
         <Hero />
         <Marquee />
