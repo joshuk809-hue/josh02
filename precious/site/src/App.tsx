@@ -6,6 +6,7 @@ import Prices from './sections/Prices'
 import Styles from './sections/Styles'
 import Social from './sections/Social'
 import Studio from './studio/Studio'
+import TapCard from './sections/TapCard'
 import { DICTS, LangCtx, initialLang, type Lang } from './i18n'
 
 export default function App() {
@@ -25,6 +26,7 @@ export default function App() {
   if (route === '#studio') return <Studio />
   return (
     <LangCtx.Provider value={{ lang, t: DICTS[lang], setLang }}>
+      {route === '#card' ? <TapCard /> : (
       <main style={{ overflowX: 'clip', background: '#0C0C0C' }}>
         <Hero />
         <Marquee />
@@ -33,6 +35,7 @@ export default function App() {
         <Styles />
         <Social />
       </main>
+      )}
     </LangCtx.Provider>
   )
 }

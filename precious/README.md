@@ -3,6 +3,7 @@
 `site/` is one app with two parts:
 
 - **The website** (`/`): logo, prices for women and men, styles, reviews and social links, in IT · EN · DE · FR · ES. Every "Book" button opens WhatsApp with a ready-made message in the visitor's language.
+- **Card tap page** (`/#card`): opened by the NFC business card. Save the contact, or ask for info on WhatsApp. See `nfc-card/README.md`.
 - **Precious Studio** (`/#studio`): her private tools. Bookmark it on her phone.
   - **Agenda**: appointments by day, a one-tap WhatsApp confirmation, and buttons for done, no-show and cancel.
   - **Clients**: phone, language, notes and WhatsApp consent.
@@ -16,7 +17,7 @@
 
 ## Before going live
 
-1. Edit `site/src/config.ts`: her WhatsApp number, Instagram, TikTok and Google review link.
+1. Edit `site/src/config.ts`: Instagram, TikTok and Google review link. The WhatsApp number, +39 371 578 0893, is already set.
 2. Replace the photos. The photos in `site/public/gallery/` come from the reference PDFs and show **other stylists' work**, some with their watermarks. They carry a "Sample photo" badge on the site.
    - To replace them, put her own photos in `site/public/gallery/`, then list each one in `site/src/data/gallery.json` with `"own": true`.
    - Keep the `.webp` format, about 800px wide.
@@ -34,6 +35,9 @@ npm install
 npm run dev        # local preview
 npm run build      # static site in dist/; host on Vercel, Netlify or any static host
 node --experimental-strip-types src/studio/store.test.ts   # follow-up rule checks
+npm run preview &                                          # then, with Playwright installed:
+NODE_PATH=$(npm root -g) node scripts/smoke.cjs            # website + studio end-to-end
+NODE_PATH=$(npm root -g) node scripts/studio.cjs           # calendar + stock
 ```
 
 ## Limits to know

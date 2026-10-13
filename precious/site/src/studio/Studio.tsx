@@ -17,6 +17,8 @@ const TABS = [
 type Tab = (typeof TABS)[number][0]
 
 const svcName = (id: string, lang: Lang = 'en') => DICTS[lang].services[id] ?? id
+// Clipboard can be refused (old browsers, embedded views); report instead of failing silently.
+const copyText = (t: string) => (navigator.clipboard ? navigator.clipboard.writeText(t).then(() => true, () => false) : Promise.resolve(false))
 const fmtDay = (d: Date) => d.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' })
 const fmtTime = (d: Date) => d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
 const input = 'w-full rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2.5 text-[15px] outline-none transition-colors focus:border-[#D4A857]'
@@ -97,10 +99,33 @@ function Agenda({ s, update }: P) {
   const upcoming = s.appointments
     .filter((a) => a.status === 'booked')
     .sort((a, b) => +new Date(a.at) - +new Date(b.at))
-  const days = new Map<string, Appointment[]>()
+  const days = new Map<string, Appointment[]>() // keyed by local date, so years never merge
   for (const a of upcoming) {
-    const k = fmtDay(new Date(a.at))
+    const k = new Date(a.at).toDateString()
     days.set(k, [...(days.get(k) ?? []), a])
+  }
+  const today = new Date().toDateString()
+  const tomorrow = new Date(Date.now() + 86_400_000).toDateString()
+  const dayLabel = (k: string) => {
+    const d = new Date(k)
+    const sameYear = d.getFullYear() === new Date().getFullYear()
+    const base = d.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short', ...(sameYear ? {} : { year: 'numeric' }) })
+    return k === today ? `Today · ${base}` : k === tomorrow ? `Tomorrow · ${base}` : base
+  }
+  const isPast = (k: string) => new Date(k) < new Date(today)
+  // Another booked appointment starting within an hour of this time
+  const clashWith = (iso: string, skipId?: string) =>
+    s.appointments.find((a) => a.status === 'booked' && a.id !== skipId && Math.abs(+new Date(a.at) - +new Date(iso)) < 3_600_000)
+  const clash = f.at ? clashWith(new Date(f.at).toISOString()) : undefined
+  const [moving, setMoving] = useState<{ id: string; at: string } | null>(null)
+  const move = () => {
+    if (!moving?.at) return
+    update((d) => ({ ...d, appointments: d.appointments.map((a) => (a.id === moving.id ? { ...a, at: new Date(moving.at).toISOString() } : a)) }))
+    setMoving(null)
+  }
+  const localInput = (iso: string) => {
+    const d = new Date(iso)
+    return new Date(+d - d.getTimezoneOffset() * 60_000).toISOString().slice(0, 16)
   }
 
   const add = () => {
@@ -141,7 +166,8 @@ function Agenda({ s, update }: P) {
           <select className={input} value={f.serviceId} onChange={(e) => setF({ ...f, serviceId: e.target.value })}>
             {SERVICES.map((x) => <option key={x.id} value={x.id}>{svcName(x.id)} · {x.from ? 'from ' : ''}{x.price}€</option>)}
           </select>
-          <input className={input} type="datetime-local" value={f.at} onChange={(e) => setF({ ...f, at: e.target.value })} />
+          <input className={input} type="datetime-local" aria-label="Date and time" value={f.at} onChange={(e) => setF({ ...f, at: e.target.value })} />
+          {clash && <p role="status" className="text-sm text-[#E2BC72]">Heads up: {clients.get(clash.clientId)?.name ?? 'someone'} is booked at {fmtTime(new Date(clash.at))}.</p>}
           <button className={gold} onClick={add}><Plus size={16} /> Add</button>
         </div>
       </Card>
@@ -153,8 +179,11 @@ function Agenda({ s, update }: P) {
           </Card>
         )}
         {[...days].map(([day, list]) => (
-          <Card key={day}>
-            <h3 className="mb-3 text-sm uppercase tracking-widest text-[#D4A857]">{day}</h3>
+          <Card key={day} className={isPast(day) ? 'border-[#B4552D]/50' : ''}>
+            <h3 className="mb-3 text-sm uppercase tracking-widest text-[#D4A857]">
+              {dayLabel(day)}
+              {isPast(day) && <span className="ml-2 rounded-full bg-[#B4552D] px-2 py-0.5 text-[11px] normal-case tracking-normal text-white">Past · mark done or no-show</span>}
+            </h3>
             <ul className="grid gap-2">
               {list.map((a) => {
                 const c = clients.get(a.clientId)
@@ -168,9 +197,18 @@ function Agenda({ s, update }: P) {
                         <MessageCircle size={15} /> Confirm
                       </a>
                     )}
+                    <button className={ghost} onClick={() => setMoving({ id: a.id, at: localInput(a.at) })}>Move</button>
                     <button className={gold} onClick={() => setStatus(a.id, 'done')}><Check size={15} /> Done</button>
                     <button className={ghost} onClick={() => setStatus(a.id, 'no-show')}>No-show</button>
                     <button className={ghost} aria-label="Cancel" onClick={() => setStatus(a.id, 'cancelled')}><X size={15} /></button>
+                    {moving?.id === a.id && (
+                      <div className="flex w-full flex-wrap items-center gap-2 pt-1">
+                        <input className={`${input.replace('w-full ', '')} flex-1 min-w-[200px]`} type="datetime-local" aria-label="New date and time" value={moving.at} onChange={(e) => setMoving({ ...moving, at: e.target.value })} />
+                        <button className={gold} onClick={move}>Save new time</button>
+                        <button className={ghost} onClick={() => setMoving(null)}>Keep</button>
+                        {moving.at && clashWith(new Date(moving.at).toISOString(), a.id) && <p role="status" className="w-full text-sm text-[#E2BC72]">Heads up: that time overlaps another booking.</p>}
+                      </div>
+                    )}
                   </li>
                 )
               })}
@@ -257,12 +295,20 @@ function Clients({ s, update }: P) {
 function Stock({ s, update }: P) {
   const [f, setF] = useState({ name: '', category: 'Hair', qty: 0, unit: 'pcs', min: 1 })
   const low = s.stock.filter((i) => i.qty <= i.min)
-  const setQty = (id: string, qty: number) => update((d) => ({ ...d, stock: d.stock.map((i) => (i.id === id ? { ...i, qty: Math.max(0, qty) } : i)) }))
+  const setQty = (id: string, qty: number) => update((d) => ({ ...d, stock: d.stock.map((i) => (i.id === id ? { ...i, qty: Math.max(0, qty || 0) } : i)) }))
   const add = () => {
-    if (!f.name.trim()) return
-    update((d) => ({ ...d, stock: [...d.stock, { ...f, id: uid(), name: f.name.trim() } as StockItem] }))
+    const name = f.name.trim()
+    if (!name) return
+    const category = f.category.trim() || 'Other'
+    update((d) => {
+      const same = d.stock.find((i) => i.name.toLowerCase() === name.toLowerCase())
+      // Re-adding a product you already have tops it up instead of creating a duplicate
+      if (same) return { ...d, stock: d.stock.map((i) => (i === same ? { ...i, qty: i.qty + Math.max(0, f.qty) } : i)) }
+      return { ...d, stock: [...d.stock, { ...f, id: uid(), name, category, qty: Math.max(0, f.qty), min: Math.max(0, f.min) } as StockItem] }
+    })
     setF({ ...f, name: '', qty: 0 })
   }
+  const [copied, setCopied] = useState(false)
   const shopping = low.map((i) => `• ${i.name}: have ${i.qty} ${i.unit}, need ${Math.max(i.min * 2 - i.qty, 1)} more`).join('\n')
   const cats = [...new Set(s.stock.map((i) => i.category))]
 
@@ -272,7 +318,7 @@ function Stock({ s, update }: P) {
         <Card className="border-[#B4552D]/50 bg-[#B4552D]/10">
           <div className="flex flex-wrap items-center gap-3">
             <p className="flex-1"><b>{low.length} item{low.length > 1 ? 's' : ''} running low:</b> {low.map((i) => i.name).join(', ')}</p>
-            <button className={gold} onClick={() => navigator.clipboard?.writeText(shopping)}><Copy size={15} /> Copy shopping list</button>
+            <button className={gold} onClick={() => copyText(shopping).then(setCopied).then(() => setTimeout(() => setCopied(false), 1500))}><Copy size={15} /> {copied ? 'Copied' : 'Copy shopping list'}</button>
           </div>
         </Card>
       )}
@@ -353,7 +399,7 @@ function FollowUps({ s, update }: P) {
 /* ---------- Replies & backup ---------- */
 function Settings({ s, setS }: { s: State; setS: (s: State) => void }) {
   const [copied, setCopied] = useState('')
-  const copy = (t: string, k: string) => { navigator.clipboard?.writeText(t); setCopied(k); setTimeout(() => setCopied(''), 1500) }
+  const copy = (t: string, k: string) => copyText(t).then((ok) => { setCopied(ok ? k : `${k}:fail`); setTimeout(() => setCopied(''), 1500) })
   const exportData = () => {
     const a = document.createElement('a')
     a.href = URL.createObjectURL(new Blob([JSON.stringify(s, null, 1)], { type: 'application/json' }))
@@ -385,7 +431,7 @@ function Settings({ s, setS }: { s: State; setS: (s: State) => void }) {
           <div key={r.title} className="mb-4">
             <div className="mb-2 flex items-center gap-2">
               <h3 className="flex-1 text-sm uppercase tracking-widest text-[#D4A857]">{r.title}</h3>
-              <button className={ghost} onClick={() => copy(r.text, r.title)}><Copy size={15} /> {copied === r.title ? 'Copied' : 'Copy'}</button>
+              <button className={ghost} onClick={() => copy(r.text, r.title)}><Copy size={15} /> {copied === r.title ? 'Copied' : copied === `${r.title}:fail` ? 'Select the text to copy' : 'Copy'}</button>
             </div>
             <p className="whitespace-pre-line rounded-2xl bg-white/[0.04] p-3 text-sm text-white/80">{r.text}</p>
           </div>
