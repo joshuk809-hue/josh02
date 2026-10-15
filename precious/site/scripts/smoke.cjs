@@ -70,8 +70,9 @@ async function check(name, fn) {
     assert.equal(await p.locator('#styles img').count(), 9)
     assert.equal(await p.locator('#styles a[href*="wa.me"]').count(), 3)
   })
-  await check('placeholder photos are labelled "Foto di esempio"', async () => {
-    assert.ok((await p.locator('#styles').getByText('Foto di esempio').count()) >= 9)
+  await check('no sample photos (other stylists\' work) on the page', async () => {
+    const srcs = await p.locator('img').evaluateAll((els) => els.map((e) => e.getAttribute('src')))
+    assert.ok(!srcs.some((s) => s && s.includes('gallery/')), srcs.join(' '))
   })
   await check('business details: legal name, address, P.IVA in footer', async () => {
     const f = await p.locator('footer').innerText()

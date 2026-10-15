@@ -7,7 +7,8 @@ export type GalleryItem = { src: string; title: string; for: Gender; own: boolea
 
 export const SERVICES = servicesJson.services as Service[]
 export const STYLES = servicesJson.styles as Record<Gender, string[]>
-export const GALLERY = galleryJson.items as GalleryItem[]
+// Only photos of Precious's own work (own: true) are ever shown.
+export const GALLERY = (galleryJson.items as GalleryItem[]).filter((g) => g.own)
 
-export const byFile = (name: string) => GALLERY.find((g) => g.src.endsWith(name + '.webp'))!
+export const byFile = (name: string): GalleryItem | undefined => GALLERY.find((g) => g.src.endsWith(name + '.webp'))
 export const servicesFor = (g: Gender) => SERVICES.filter((s) => s.for.includes(g) || (g === 'women' && s.for.includes('kids')))

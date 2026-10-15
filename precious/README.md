@@ -32,13 +32,13 @@ Precious Beauty di Omoruyi Precious · Via Paleocapa 8/B, 24122 Bergamo (BG) · 
 
 ## Going live
 
-Follow **`DEPLOY.md`**: the legal and security checklist plus Vercel steps. `npm run release` refuses to build until the sample photos and placeholder links are replaced.
+Follow **`DEPLOY.md`**: the legal and security checklist plus the Cloudflare Pages steps. `npm run release` refuses to build if a photo not marked `"own": true` or a placeholder link sneaks back in.
 
 ## Before going live
 
 1. Edit `site/src/config.ts`: Instagram, TikTok and Google review link (from her Google Business Profile → "Ask for reviews"). Add opening hours there and to `openingHours` in the `index.html` structured data once confirmed. The WhatsApp number, +39 371 578 0893, is already set.
-2. Replace the photos. The photos in `site/public/gallery/` come from the reference PDFs and show **other stylists' work**, some with their watermarks. They carry a "Sample photo" badge on the site.
-   - To replace them, put her own photos in `site/public/gallery/`, then list each one in `site/src/data/gallery.json` with `"own": true`.
+2. Add her photos. The site shows only photos marked `"own": true`; until there are some, the style cards show the logo. The old samples (other stylists' work) are in `precious/reference-photos/`, for inspiration only.
+   - To add them, put her own photos in `site/public/gallery/`, then list each one in `site/src/data/gallery.json` with `"own": true`.
    - Keep the `.webp` format, about 800px wide.
 3. Change prices in `site/src/data/services.json`. The website and the studio both read from it.
 
@@ -52,7 +52,7 @@ Add photos to `public/gallery/` and `gallery.json`, then rebuild and redeploy. T
 cd precious/site
 npm install
 npm run dev        # local preview
-npm run build      # static site in dist/; host on Vercel, Netlify or any static host
+npm run build      # static site in dist/; host on Cloudflare Pages or any static host
 node --experimental-strip-types src/studio/store.test.ts   # follow-up rule checks
 npm run build:all && npm run preview &                     # then, with Playwright installed:
 NODE_PATH=$(npm root -g) node scripts/smoke.cjs            # website + studio end-to-end

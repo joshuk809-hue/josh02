@@ -18,6 +18,7 @@ export default function About() {
     <section id="about" className="relative flex min-h-screen flex-col items-center justify-center gap-16 sm:gap-20 md:gap-24 overflow-hidden px-5 sm:px-8 md:px-10 py-20">
       {corners.map((c) => {
         const g = byFile(c.f)
+        if (!g) return null
         return (
           <FadeIn key={c.f} delay={c.d} x={c.x} y={0} duration={0.9} className={`absolute ${c.cls} opacity-70 md:opacity-100`}>
             <img src={g.src} alt={g.title} loading="lazy" className="aspect-square w-full rounded-full object-cover ring-2 ring-[#D4A857]/60" />

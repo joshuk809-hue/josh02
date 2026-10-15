@@ -17,58 +17,44 @@ A checklist to put the site online the legal way in Italy and the EU. It's based
 | Security headers | `vercel.json`: HTTPS enforced (HSTS), a strict content security policy, no framing (blocks clickjacking), no MIME sniffing, a privacy-friendly referrer policy, and camera access only for the stock scanner |
 | Launch guard | `npm run release` **refuses to build** while the site still has other stylists' photos or placeholder links |
 
-## 2. Before going live: three things to fix (the build blocks until they're done)
+## 2. Before going live
 
-1. **Replace all 35 sample photos.** They're other stylists' work, and some carry their watermarks. Publishing them is copyright infringement, which is the most likely way to get sued.
-   - Use only photos Precious took of her own work.
-   - Get every client in a photo to sign `legal/liberatoria-foto.md` **before** posting it. A parent signs for children.
-   - Put the photos in `site/public/gallery/` as `.webp`, about 800px wide, and set `"own": true` for each in `site/src/data/gallery.json`.
-2. **Fill in the real links** in `site/src/config.ts`: Instagram, TikTok, and the Google review link (from the Google Business Profile, under "Ask for reviews").
-3. **Opening hours.** Not legally required, but Google expects them. Send them over and I'll add them to the site and the structured data.
+Nothing blocks the launch any more. The site only ever shows photos marked `"own": true`, so until her photos arrive the style cards show the logo.
 
-## 3. Domain
+1. **Her photos (after launch).** Use only photos of her own work, never other stylists' (copyright). Every client in a photo signs `legal/liberatoria-foto.md` **before** it goes up; a parent signs for children. Put them in `site/public/gallery/` as `.webp`, about 800px wide, and list each in `site/src/data/gallery.json` with `"own": true`. The old samples are in `precious/reference-photos/` for inspiration only.
+2. **Links** (set in `site/src/config.ts`): Instagram and TikTok point to her videos. The Google review button opens her Maps listing until the real review link exists (step 5).
+3. **Opening hours.** Not legally required, but Google expects them.
 
-- Buy the domain **in Precious's name** (or the business's), e.g. `preciousbeauty.it`, from an Italian or EU registrar such as Register.it, Aruba or OVH. A `.it` domain needs an EU resident or business as the holder, which she is.
-- Turn on two-factor login at the registrar.
+## 3. Domain: `preciousbeauty.it` (available on 15/10/2026)
 
-## 4. Deploy on Vercel (about 15 minutes)
+- Register it **in Precious's name** (or the business's, with her P.IVA so she gets an invoice) at **Aruba**: €3.99 + VAT the first year, €11.99 + VAT a year after. A `.it` domain needs an EU resident or business as holder, which she is.
+- Turn on two-factor login at the registrar. Don't buy Aruba's hosting or email add-ons; they aren't needed.
 
-> **Status:** project `precious-beauty` is created and linked to the repo (root `precious/site`). A preview of the `staging` branch is live and protected; the production build is blocked by the launch guard until step 2 is done. The free Hobby plan is non-commercial only, so upgrade the team to **Pro** before the live launch.
+## 4. Hosting: Cloudflare Pages (€0)
 
-1. Create a **Vercel** account at vercel.com with her email, and turn on two-factor login.
-2. **Add New → Project**, then import the GitHub repository `joshuk809-hue/josh02`.
-3. Settings:
-   - **Root Directory:** `precious/site`
-   - Framework: Vite (detected automatically). The build command (`npm run release`) and output folder (`dist`) come from `vercel.json`.
-4. Click **Deploy**. If the build stops with "Not ready to go live", do step 2 first.
-5. **Settings → Domains**: add `preciousbeauty.it` and `www.preciousbeauty.it`, then copy the DNS records Vercel shows into the registrar. HTTPS certificates are automatic.
-6. In Vercel, also:
-   - **Deployment Protection**: keep it on for preview deployments.
-   - **Do not** enable Vercel Web Analytics or Speed Insights. They would need a mention in the privacy notice, and the site doesn't need them.
-   - The Vercel Data Processing Addendum covers Vercel's role in the privacy notice. It's part of their terms; download a copy and keep it with the business papers.
+Vercel's free plan is for non-commercial use only and Pro costs $20 a month, so both live projects run on Cloudflare Pages (free; its terms don't restrict business use). The studio sits behind Cloudflare Access (free up to 50 users). The Vercel project `precious-beauty` was only a test: pause or delete it once Cloudflare is live.
+
+1. Create a free Cloudflare account and turn on two-factor login.
+2. **Workers & Pages → Create → Pages → Connect to Git** → `joshuk809-hue/josh02`. Make two projects from the same repo, both with production branch `claude/qr-fidelity-crm-tracker-qyy6hp`, root directory `precious/site` and output `dist`:
+
+   | Project | Build command | Who can open it |
+   | --- | --- | --- |
+   | `precious-beauty` | `npm run release` | Everyone (on the domain) |
+   | `pb-studio-<random>` | `npm run build:studio` | Precious and you, via Access |
+
+3. Website project → **Custom domains** → add `preciousbeauty.it` and `www.preciousbeauty.it`, then set the DNS records Cloudflare shows at Aruba. HTTPS is automatic.
+4. Studio → **Zero Trust → Access → Applications → Add → Self-hosted**: domains `pb-studio-<random>.pages.dev` and `*.pb-studio-<random>.pages.dev`. Policy **Allow → Emails**: Precious's email and yours. Login method: **One-time PIN**. Then, in the Pages project, **Settings → Access policy**: enable it for previews too.
+5. **Maintenance copy:** push to the `staging` branch. Each project builds a preview at `staging.<project>.pages.dev`. Test with example data; her real studio data stays on her phone.
+6. Security headers come from `public/_headers` (same rules as `vercel.json`). Don't turn on Cloudflare Web Analytics; it would need a mention in the privacy notice. Cloudflare's Data Processing Addendum is part of its terms: download a copy and keep it with the business papers.
 7. After it's live:
-   - Open `https://<domain>/#card` and write that link onto the NFC chip of the business card (see `nfc-card/README.md`).
+   - Open `https://preciousbeauty.it/#card` and write that link onto the NFC chip of the business card (see `nfc-card/README.md`).
    - Check the headers at securityheaders.com; it should score **A**.
    - Test the structured data with Google's Rich Results Test (search for it); it should find a "HairSalon".
 
-## 4b. The private studio (Cloudflare Pages + Access, free)
-
-The website build leaves the studio out. The studio is built and hosted on its own:
-
-1. Cloudflare dashboard → **Workers & Pages → Create → Pages → Connect to Git** → `joshuk809-hue/josh02`, production branch `claude/qr-fidelity-crm-tracker-qyy6hp`.
-   - **Root directory:** `precious/site`
-   - **Build command:** `npm run build:studio`
-   - **Output:** `dist`
-   - Project name: something unguessable, e.g. `pb-studio-<random>`.
-2. **Zero Trust → Access → Applications → Add → Self-hosted**: domain `<project>.pages.dev`, plus `*.<project>.pages.dev` for previews. Policy: **Allow** → **Emails** = Precious's email + yours. Login method: **One-time PIN**.
-3. In the Pages project, **Settings → Access policy**: enable it for preview deployments too.
-4. **Maintenance copy:** push to the `staging` branch. Cloudflare builds a preview at `staging.<project>.pages.dev`, behind the same login. Load example data there to test; her real data stays on her phone.
-5. Security headers come from `public/_headers` (same rules as `vercel.json`, plus `noindex`).
-
- (free, the biggest boost for local customers)
+## 5. Google Business Profile (free, the biggest boost for local customers)
 
 - Create or claim it at google.com/business with **exactly** these details: `Precious Beauty` · `Via Paleocapa 8/B, 24122 Bergamo BG` · `+39 371 578 0893`, category "Parrucchiere" (add "Treccine africane"), the website domain, and opening hours.
-- Then copy the "Ask for reviews" link into `config.ts` and redeploy.
+- Then copy the "Ask for reviews" link (`https://g.page/r/...`) into `reviewUrl` in `config.ts` and push; the site and the studio's thank-you messages pick it up.
 - **Never** buy reviews or write fake ones. It's illegal under the Codice del Consumo, and since 2023 the AGCM can fine for it.
 
 ## 6. Her own obligations as data controller (simple, but required)
@@ -86,6 +72,6 @@ GDPR applies to her client data even though it's stored on her own phone.
 
 ## 7. Updating later
 
-- **New photos or prices:** edit the files, commit, and Vercel redeploys automatically. Keep signed consent forms for every new photo.
+- **New photos or prices:** edit the files, commit, and Cloudflare redeploys automatically. Keep signed consent forms for every new photo.
 - **New tracking tools:** if you ever add analytics, ads or embedded videos, update `#privacy` **and** add a cookie consent banner before going live.
 - **Privacy notice changes:** change the date in `site/src/sections/Privacy.tsx` whenever the notice changes.

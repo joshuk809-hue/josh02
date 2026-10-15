@@ -27,6 +27,7 @@ export default function Marquee() {
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+  if (!GALLERY.length) return null
   return (
     <section ref={ref} className="flex flex-col gap-3 overflow-hidden bg-[#0C0C0C] pt-24 sm:pt-32 md:pt-40 pb-10">
       <Row items={women} x={offset - 200 - 420 * 4} />

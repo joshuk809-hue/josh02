@@ -12,11 +12,12 @@ const CARDS = [
   ['tapered-cut-design', 'lashes', 'interlocked-locs'],
 ].map((c) => c.map(byFile))
 
-function Img({ g, h, sample }: { g: GalleryItem; h?: string; sample: string }) {
+function Img({ g, h, sample }: { g?: GalleryItem; h?: string; sample: string }) {
   return (
     <div className="relative overflow-hidden rounded-[40px] sm:rounded-[50px] md:rounded-[60px]" style={h ? { height: h } : { height: '100%' }}>
-      <img src={g.src} alt={g.title} loading="lazy" className="h-full w-full object-cover" />
-      {!g.own && <span className="absolute bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-black/60 px-3 py-1 text-[10px] uppercase tracking-widest text-white/80">{sample}</span>}
+      {g ? <img src={g.src} alt={g.title} loading="lazy" className="h-full w-full object-cover" />
+        : <div className="flex h-full w-full items-center justify-center bg-black ring-1 ring-inset ring-[#D4A857]/25">{!h && <img src="brand/logo-disc.webp" alt="" loading="lazy" className="w-3/5 max-w-[260px]" />}</div>}
+      {g && !g.own && <span className="absolute bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-black/60 px-3 py-1 text-[10px] uppercase tracking-widest text-white/80">{sample}</span>}
     </div>
   )
 }
