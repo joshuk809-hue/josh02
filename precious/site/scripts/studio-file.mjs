@@ -13,6 +13,6 @@ const js = readFileSync(d + 'assets/' + a.find((f) => f.endsWith('.js')), 'utf8'
 const css = readFileSync(d + 'assets/' + a.find((f) => f.endsWith('.css')), 'utf8')
 const logo = 'data:image/webp;base64,' + readFileSync('public/brand/logo-disc.webp').toString('base64')
 html = html.replace('</head>', `<style>${css}</style></head>`).replace('</body>', `<script type="module">${js.replaceAll('brand/logo-disc.webp', logo)}</script></body>`)
-  .replaceAll('href="brand/favicon.png"', `href="${logo}"`)
+  .replaceAll('href="brand/favicon.png"', `href="${logo}"`).replace(/<link rel="manifest"[^>]*>/, '')
 rmSync(d, { recursive: true }); mkdirSync(d)
 writeFileSync(d + 'Precious-Studio.html', html)
