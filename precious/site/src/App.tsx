@@ -1,14 +1,18 @@
-import { useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import Hero from './sections/Hero'
 import Marquee from './sections/Marquee'
 import About from './sections/About'
 import Prices from './sections/Prices'
 import Styles from './sections/Styles'
 import Social from './sections/Social'
-import Studio from './studio/Studio'
 import TapCard from './sections/TapCard'
 import Privacy from './sections/Privacy'
 import { DICTS, LangCtx, initialLang, type Lang } from './i18n'
+
+// Which app this build is. Unset = the public website only (the studio code is left out of the bundle).
+// 'studio' = owner tools only (deployed separately, behind a login). 'all' = both, for local dev and tests.
+const APP = import.meta.env.VITE_APP
+const Studio = APP === 'studio' || APP === 'all' ? lazy(() => import('./studio/Studio')) : null
 
 export default function App() {
   const [lang, setLangState] = useState<Lang>(initialLang)
@@ -25,7 +29,7 @@ export default function App() {
     try { localStorage.setItem('lang', l) } catch { /* storage blocked */ }
   }
 
-  if (route === '#studio') return <Studio />
+  if (Studio && (APP === 'studio' || route === '#studio')) return <Suspense fallback={null}><Studio /></Suspense>
   return (
     <LangCtx.Provider value={{ lang, t: DICTS[lang], setLang }}>
       {route === '#card' ? <TapCard /> : route === '#privacy' ? <Privacy /> : (

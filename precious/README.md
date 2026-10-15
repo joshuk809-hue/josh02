@@ -1,10 +1,10 @@
 # Precious Beauty: website and studio tools
 
-`site/` is one app with two parts:
+`site/` is one codebase built two ways. `npm run build` makes the **public website** (the studio code is left out). `npm run build:studio` makes the **studio** on its own, deployed separately behind a login. `npm run build:all` makes both, for local testing.
 
 - **The website** (`/`): logo, prices for women and men, styles, reviews and social links, in IT · EN · DE · FR · ES. Every "Book" button opens WhatsApp with a ready-made message in the visitor's language.
 - **Card tap page** (`/#card`): opened by the NFC business card. Save the contact, or ask for info on WhatsApp. See `nfc-card/README.md`.
-- **Precious Studio** (`/#studio`): her private tools. Bookmark it on her phone.
+- **Precious Studio** (separate private address, see `DEPLOY.md`): her private tools. Bookmark it on her phone.
   - **Agenda**: appointments by day, a one-tap WhatsApp confirmation, and buttons for done, no-show and cancel.
   - **Clients**: phone, language, notes and WhatsApp consent.
   - **Stock**:
@@ -54,7 +54,7 @@ npm install
 npm run dev        # local preview
 npm run build      # static site in dist/; host on Vercel, Netlify or any static host
 node --experimental-strip-types src/studio/store.test.ts   # follow-up rule checks
-npm run preview &                                          # then, with Playwright installed:
+npm run build:all && npm run preview &                     # then, with Playwright installed:
 NODE_PATH=$(npm root -g) node scripts/smoke.cjs            # website + studio end-to-end
 NODE_PATH=$(npm root -g) node scripts/studio.cjs           # calendar + stock
 ```

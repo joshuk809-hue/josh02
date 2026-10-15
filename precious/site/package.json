@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "release": "node scripts/prelaunch.mjs && npm run build"
+    "release": "node scripts/prelaunch.mjs && npm run build",
+    "build:studio": "VITE_APP=studio npm run build",
+    "build:all": "VITE_APP=all npm run build"
   },
   "dependencies": {
     "@fontsource/kanit": "^5.3.0",
