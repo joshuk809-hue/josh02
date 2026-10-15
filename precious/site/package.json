@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "release": "node scripts/prelaunch.mjs && npm run build",
     "build:studio": "VITE_APP=studio npm run build",
-    "build:all": "VITE_APP=all npm run build"
+    "build:all": "VITE_APP=all npm run build",
+    "studio:file": "node scripts/studio-file.mjs"
   },
   "dependencies": {
     "@fontsource/kanit": "^5.3.0",
