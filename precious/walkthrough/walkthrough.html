@@ -1,0 +1,290 @@
+<title>Precious Beauty Walkthrough</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;800&display=swap" rel="stylesheet">
+<style>
+/* Layout: left = story text + controls, right = phone that acts out each step. One dark brand look (black + gold), by design. */
+:root {
+  color-scheme: dark;
+  --bg: #0C0C0C; --panel: #151310; --line: rgba(233,214,176,.14);
+  --fg: #F3EBDD; --muted: rgba(243,235,221,.66); --gold: #D4A857; --gold-hi: #F2DBA6;
+  --ok: #7FBF8E; --warn: #E2BC72; --stop: #D9734E;
+  --wa: #0B141A; --wa-in: #202C33; --wa-out: #005C4B;
+  --display: 'Kanit', system-ui, sans-serif; --body: 'Kanit', system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 300 16px/1.55 var(--body); }
+.wrap { max-width: 1080px; margin: 0 auto; padding-inline: 16px; padding-block: 28px 56px; }
+header { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+header img { width: 52px; height: 52px; border-radius: 50%; box-shadow: 0 0 24px rgba(212,168,87,.25); }
+header h1 { margin: 0; font: 800 clamp(1.5rem, 4vw, 2.2rem)/1 var(--display); text-transform: uppercase; letter-spacing: .01em;
+  background: linear-gradient(180deg, #8A6A3A, var(--gold-hi)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+header p { margin: 2px 0 0; color: var(--muted); font-size: .95rem; }
+.grow { flex: 1; min-width: 200px; }
+.lang { display: flex; gap: 4px; background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 4px; }
+.lang button, .tabs button { font: inherit; cursor: pointer; border: 0; background: none; color: var(--muted); border-radius: 999px; padding: 6px 12px; }
+.lang button[aria-pressed="true"] { background: var(--gold); color: #1A1206; font-weight: 500; }
+
+.tabs { display: flex; gap: 6px; margin: 26px 0 18px; overflow-x: auto; padding-bottom: 2px; }
+.tabs button { border: 1px solid var(--line); padding: 10px 16px; white-space: nowrap; font-size: .95rem; }
+.tabs button[aria-selected="true"] { border-color: var(--gold); color: var(--fg); background: rgba(212,168,87,.1); }
+.tabs b { color: var(--gold); font-weight: 500; margin-right: 6px; }
+
+.stage { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 28px; align-items: start; }
+@media (max-width: 760px) { .stage { grid-template-columns: 1fr; } .phone { margin: 0 auto; } }
+
+.story { min-width: 0; }
+.progress { display: flex; gap: 6px; margin-bottom: 18px; }
+.progress span { flex: 1; height: 4px; border-radius: 4px; background: var(--line); transition: background .3s; }
+.progress span.on { background: var(--gold); }
+.step-n { font-size: .8rem; letter-spacing: .14em; text-transform: uppercase; color: var(--gold); }
+.story h2 { font: 600 clamp(1.35rem, 3vw, 1.8rem)/1.2 var(--display); margin: 6px 0 12px; text-wrap: balance; }
+.story p { margin: 0 0 12px; max-width: 60ch; color: var(--muted); }
+.story p strong { color: var(--fg); font-weight: 500; }
+.say { border-left: 2px solid var(--gold); padding: 10px 14px; margin: 16px 0; background: rgba(212,168,87,.06); border-radius: 0 12px 12px 0; }
+.say small { display: block; font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); margin-bottom: 2px; }
+.say span { color: var(--fg); }
+.status { display: inline-flex; align-items: center; gap: 8px; font-size: .9rem; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); margin-top: 4px; }
+.status i { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.status.ok { color: var(--ok); } .status.warn { color: var(--warn); } .status.stop { color: var(--stop); }
+.nav { display: flex; gap: 10px; margin-top: 22px; }
+.btn { font: 500 .95rem var(--body); cursor: pointer; border-radius: 999px; padding: 11px 22px; border: 1px solid var(--line); background: none; color: var(--fg); transition: transform .12s; }
+.btn:active { transform: scale(.97); }
+.btn.gold { border: 0; color: #1A1206; background: linear-gradient(123deg, #6B4A16 7%, #D4A857 37%, #F2DBA6 72%, #A9772E 100%); }
+.btn:disabled { opacity: .35; cursor: default; }
+button:focus-visible { outline: 2px solid var(--gold-hi); outline-offset: 2px; }
+
+/* Phone */
+.phone { width: 300px; max-width: 100%; height: 600px; border-radius: 44px; padding: 12px; background: #050505; border: 1px solid #2a2620;
+  box-shadow: 0 30px 60px rgba(0,0,0,.6), inset 0 0 0 2px #1b1814; position: relative; }
+.phone::before { content: ''; position: absolute; top: 18px; left: 50%; width: 90px; height: 22px; margin-left: -45px; background: #000; border-radius: 20px; z-index: 3; }
+.screen { width: 100%; height: 100%; border-radius: 34px; overflow: hidden; background: var(--bg); position: relative; }
+.screen > div { position: absolute; inset: 0; padding: 52px 16px 16px; display: flex; flex-direction: column; gap: 10px; animation: in .35s ease-out; }
+@keyframes in { from { opacity: 0; transform: translateY(8px); } }
+@media (prefers-reduced-motion: reduce) { .screen > div, .pulse, .tapdot { animation: none !important; } }
+.app-h { display: flex; align-items: center; gap: 8px; font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); }
+.app-h img { width: 26px; height: 26px; border-radius: 50%; }
+.card { background: rgba(255,255,255,.04); border: 1px solid var(--line); border-radius: 16px; padding: 10px 12px; font-size: .85rem; }
+.card .t { color: var(--gold-hi); font-weight: 500; }
+.pill { display: block; text-align: center; border-radius: 999px; padding: 10px; font-size: .78rem; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; }
+.pill.g { color: #1A1206; background: linear-gradient(123deg, #6B4A16 7%, #D4A857 37%, #F2DBA6 72%, #A9772E 100%); }
+.pill.o { border: 1.5px solid #E9D6B0; color: #E9D6B0; }
+.pulse { animation: pulse 1.6s ease-in-out infinite; }
+@keyframes pulse { 50% { box-shadow: 0 0 0 6px rgba(212,168,87,.25); } }
+.row { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+.num { font-variant-numeric: tabular-nums; }
+.down { color: var(--stop); } .up { color: var(--ok); }
+.wa { background: var(--wa) !important; }
+.wa .bar { display: flex; align-items: center; gap: 8px; padding-bottom: 8px; border-bottom: 1px solid #1f2c33; font-size: .9rem; }
+.wa .bar img { width: 30px; height: 30px; border-radius: 50%; }
+.bub { max-width: 85%; padding: 8px 10px; border-radius: 10px; font-size: .82rem; line-height: 1.4; }
+.bub.in { background: var(--wa-in); align-self: flex-start; }
+.bub.out { background: var(--wa-out); align-self: flex-end; }
+.bub small { display: block; color: rgba(255,255,255,.5); font-size: .68rem; text-align: right; margin-top: 2px; }
+.bub .auto { color: var(--warn); font-size: .68rem; text-transform: uppercase; letter-spacing: .1em; display: block; margin-bottom: 2px; }
+.typing { margin-top: auto; display: flex; gap: 8px; align-items: center; background: #1f2c33; border-radius: 999px; padding: 8px 12px; font-size: .8rem; color: rgba(255,255,255,.75); }
+.typing b { margin-left: auto; width: 30px; height: 30px; border-radius: 50%; background: #00A884; display: grid; place-items: center; color: #fff; font-weight: 600; }
+.nfc { margin: 40px auto 0; width: 230px; height: 145px; border-radius: 14px; background: radial-gradient(ellipse at 50% 45%, #2a2218, #050403 75%); border: 1px solid #3a3226;
+  display: grid; place-items: center; position: relative; }
+.nfc img { width: 80px; border-radius: 50%; }
+.tapdot { position: absolute; right: 18px; bottom: 14px; width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--gold); animation: ring 1.4s ease-out infinite; }
+@keyframes ring { from { transform: scale(.6); opacity: 1; } to { transform: scale(1.8); opacity: 0; } }
+.big { text-align: center; font: 800 1.6rem/1.1 var(--display); text-transform: uppercase;
+  background: linear-gradient(180deg, #8A6A3A, var(--gold-hi)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.center { text-align: center; color: var(--muted); font-size: .85rem; }
+.flow { display: grid; gap: 8px; margin-top: 6px; }
+.flow .card { display: flex; gap: 10px; align-items: center; }
+.flow .ico { width: 34px; height: 34px; flex: none; border-radius: 10px; display: grid; place-items: center; background: rgba(212,168,87,.12); color: var(--gold-hi); font-size: .8rem; font-weight: 600; }
+.arrow { text-align: center; color: var(--gold); line-height: 1; font-size: .9rem; }
+
+.who { margin-top: 34px; border-top: 1px solid var(--line); padding-top: 22px; }
+.who h3 { font: 600 1.2rem var(--display); margin: 0 0 12px; }
+.who .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap: 12px; }
+.who .col { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 14px 16px; }
+.who .col b { display: block; color: var(--gold); font-weight: 500; letter-spacing: .1em; text-transform: uppercase; font-size: .8rem; margin-bottom: 6px; }
+.who ul { margin: 0; padding-left: 18px; color: var(--muted); }
+.who li { margin: 4px 0; }
+.who li.done { color: var(--ok); list-style: '✓  '; }
+</style>
+
+<div class="wrap">
+  <header>
+    <img src="data:image/webp;base64,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" alt="Precious Beauty logo">
+    <div class="grow">
+      <h1>Precious Beauty</h1>
+      <p id="subtitle"></p>
+    </div>
+    <div class="lang" role="group" aria-label="Language">
+      <button id="l-en" aria-pressed="true">EN</button>
+      <button id="l-it" aria-pressed="false">IT</button>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist" id="tabs"></nav>
+
+  <section class="stage">
+    <div class="story">
+      <div class="progress" id="progress"></div>
+      <div class="step-n" id="stepn"></div>
+      <h2 id="title"></h2>
+      <div id="body"></div>
+      <div class="nav">
+        <button class="btn" id="back"></button>
+        <button class="btn gold" id="next"></button>
+      </div>
+    </div>
+    <div class="phone" aria-live="polite"><div class="screen" id="screen"></div></div>
+  </section>
+
+  <section class="who" id="who"></section>
+</div>
+
+<script>
+const LOGO = 'data:image/webp;base64,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'
+const T = {
+  en: {
+    subtitle: 'How everything works, step by step. Tap Next.',
+    tabs: ['A new client', "Precious's day", 'Going online'],
+    step: (i, n) => `Step ${i} of ${n}`, back: 'Back', next: 'Next', again: 'Start again',
+    whoTitle: 'Who does what before launch',
+    who: [
+      ['Me (done)', ['Website in 5 languages', 'Studio: agenda, clients, stock, follow-ups', 'Privacy notice, P.IVA, security settings', 'NFC card design + tap page'], true],
+      ['You', ['Click "connect GitHub" in Vercel (1 minute)', 'Buy the domain, e.g. preciousbeauty.it (~€10/year)', 'Order the NFC cards']],
+      ['Precious', ['Photos of her own work + signed consent forms', 'Instagram, TikTok and Google review links', 'Opening hours', 'Set up WhatsApp Business away message']],
+    ],
+  },
+  it: {
+    subtitle: 'Come funziona tutto, passo dopo passo. Tocca Avanti.',
+    tabs: ['Una nuova cliente', 'La giornata di Precious', 'Andare online'],
+    step: (i, n) => `Passo ${i} di ${n}`, back: 'Indietro', next: 'Avanti', again: 'Ricomincia',
+    whoTitle: 'Chi fa cosa prima del lancio',
+    who: [
+      ['Io (fatto)', ['Sito in 5 lingue', 'Studio: agenda, clienti, magazzino, messaggi', 'Privacy, P.IVA, sicurezza', 'Biglietto NFC + pagina tap'], true],
+      ['Tu', ['Clic su "collega GitHub" in Vercel (1 minuto)', 'Comprare il dominio, es. preciousbeauty.it (~10€/anno)', 'Ordinare i biglietti NFC']],
+      ['Precious', ['Foto dei suoi lavori + liberatorie firmate', 'Link Instagram, TikTok e recensioni Google', 'Orari di apertura', 'Messaggio di assenza su WhatsApp Business']],
+    ],
+  },
+}
+
+// Each step: title, text, optional "say it like this" line, optional status, and the phone screen.
+const STORIES = {
+  en: [
+    [
+      { t: 'She taps the business card', p: 'A woman sees the card at the salon or gets one from a friend. She holds it against her phone. <strong>No app, no QR code needed</strong> (the QR on the back works too).', say: 'Just tap my card on your phone.', s: 'card' },
+      { t: 'Precious\'s page opens', p: 'Her phone opens a short page in <strong>her own language</strong> (Italian, English, German, French or Spanish) with three buttons: ask on WhatsApp, save the contact, see prices.', s: 'tap' },
+      { t: 'The message is already written', p: 'She taps <strong>Ask for info on WhatsApp</strong>. WhatsApp opens with the text ready. She only presses Send. Nothing is sent without her tap.', say: 'You don\'t even have to type. Just press send.', s: 'wa1' },
+      { t: 'Precious is busy? WhatsApp answers', p: 'If Precious is braiding, WhatsApp Business sends her <strong>away message</strong> automatically, in 5 languages, with prices and what to send.', s: 'wa2' },
+      { t: 'Precious books her in', p: 'In her Studio, Precious adds the appointment and taps <strong>Confirm</strong>. The client gets a clean confirmation in her language.', s: 'wa3' },
+      { t: 'The website does the selling', p: 'Anyone can open the website: prices for women and men, styles, the address with directions, and a Book button on every section.', s: 'site' },
+    ],
+    [
+      { t: 'Morning: open the Studio', p: 'Precious opens her Studio from a bookmark on her phone. Today\'s appointments are at the top. <strong>Her data stays on her phone</strong>, private.', s: 'agenda' },
+      { t: 'Client finished? Tap Done', p: 'When a braid appointment is finished, she taps <strong>Done</strong>. The products it used are <strong>taken out of stock automatically</strong>: 3 packs of hair, a bit of mousse, beads. Wrong tap? Undo.', say: 'You never count packs by hand again.', s: 'done' },
+      { t: 'Delivery arrived', p: 'The supplier delivers. She opens <strong>Delivery arrived</strong>, types what came in, saves once. She can also scan barcodes with the phone camera.', s: 'delivery' },
+      { t: 'Next day: the thank-you message', p: 'The Studio prepares a short <strong>thank you + review request</strong> in the client\'s language. Precious taps Send on WhatsApp. More reviews, more new clients.', s: 'follow' },
+      { t: 'Weeks later: "time to rebook?"', p: 'When braids are due again (about 6 weeks), a friendly reminder appears. <strong>Never more than one message every 14 days</strong>, never to someone who said STOP, never to someone already booked.', say: 'Clients are reminded, never annoyed.', s: 'rebook' },
+      { t: 'Every week: one backup', p: 'One tap downloads a backup file. If the phone breaks, everything comes back on the new one.', s: 'backup' },
+    ],
+    [
+      { t: 'The recipe is saved', p: 'Think of the website as a <strong>recipe</strong>. It is written and stored safely on GitHub, with every version kept.', s: 'recipe', st: ['ok', 'Done'] },
+      { t: 'A safety guard checks it', p: 'Before anything goes public, a guard checks the recipe. It <strong>refuses to publish</strong> while the sample photos (other stylists\' work) or fake links are still inside. This protects Precious from copyright claims.', s: 'guard', st: ['stop', 'Waiting for her photos + links'] },
+      { t: 'The oven and shop window: Vercel', p: '<strong>Vercel</strong> bakes the recipe into a real website and shows it to the world, fast and with the secure padlock (https). It is free for a site like this. When we change a photo or a price, it <strong>re-bakes by itself in about a minute</strong>.', say: 'You change it, it updates itself.', s: 'oven', st: ['warn', 'Needs 1 click: connect GitHub'] },
+      { t: 'The street address: the domain', p: 'The domain is the address people type, like <strong>preciousbeauty.it</strong>. About €10 a year, in Precious\'s name. We point it at Vercel once.', s: 'domain', st: ['warn', 'To buy'] },
+      { t: 'Open for business', p: 'The NFC cards point to the new address, the Google profile shows the site, and clients start booking. Legal page, P.IVA and privacy are already in place.', s: 'live', st: ['warn', 'After the steps above'] },
+    ],
+  ],
+  it: [
+    [
+      { t: 'Avvicina il biglietto al telefono', p: 'Una ragazza vede il biglietto in salone o lo riceve da un\'amica. Lo appoggia al telefono. <strong>Nessuna app, nessun QR</strong> (il QR sul retro funziona comunque).', say: 'Appoggia il mio biglietto al telefono.', s: 'card' },
+      { t: 'Si apre la pagina di Precious', p: 'Il telefono apre una pagina nella <strong>sua lingua</strong> (italiano, inglese, tedesco, francese o spagnolo) con tre pulsanti: chiedi su WhatsApp, salva il contatto, vedi i prezzi.', s: 'tap' },
+      { t: 'Il messaggio è già scritto', p: 'Tocca <strong>Chiedi info su WhatsApp</strong>. WhatsApp si apre con il testo pronto. Deve solo premere Invia. Niente parte senza il suo tocco.', say: 'Non devi neanche scrivere, premi solo invia.', s: 'wa1' },
+      { t: 'Precious è impegnata? Risponde WhatsApp', p: 'Se Precious sta facendo le trecce, WhatsApp Business manda in automatico il <strong>messaggio di assenza</strong>, in 5 lingue, con prezzi e cosa inviare.', s: 'wa2' },
+      { t: 'Precious la prenota', p: 'Nello Studio, Precious aggiunge l\'appuntamento e tocca <strong>Conferma</strong>. La cliente riceve una conferma chiara nella sua lingua.', s: 'wa3' },
+      { t: 'Il sito vende da solo', p: 'Chiunque può aprire il sito: prezzi donna e uomo, stili, indirizzo con indicazioni e un pulsante Prenota in ogni sezione.', s: 'site' },
+    ],
+    [
+      { t: 'Mattina: apre lo Studio', p: 'Precious apre il suo Studio da un segnalibro sul telefono. In alto ci sono gli appuntamenti di oggi. <strong>I dati restano sul suo telefono</strong>, privati.', s: 'agenda' },
+      { t: 'Cliente finita? Tocca Fatto', p: 'Finite le trecce, tocca <strong>Fatto</strong>. I prodotti usati <strong>escono dal magazzino da soli</strong>: 3 pacchi di capelli, un po\' di mousse, perline. Tocco sbagliato? Annulla.', say: 'Non conti più i pacchi a mano.', s: 'done' },
+      { t: 'Arriva la consegna', p: 'Arriva il fornitore. Apre <strong>Consegna arrivata</strong>, scrive cosa è arrivato, salva una volta. Può anche scansionare i codici a barre con la fotocamera.', s: 'delivery' },
+      { t: 'Il giorno dopo: il grazie', p: 'Lo Studio prepara un breve <strong>grazie + richiesta di recensione</strong> nella lingua della cliente. Precious tocca Invia su WhatsApp. Più recensioni, più clienti nuove.', s: 'follow' },
+      { t: 'Settimane dopo: "rifacciamo?"', p: 'Quando le trecce vanno rifatte (circa 6 settimane) appare un promemoria gentile. <strong>Mai più di un messaggio ogni 14 giorni</strong>, mai a chi ha scritto STOP, mai a chi è già prenotata.', say: 'Le clienti si ricordano di te, senza fastidio.', s: 'rebook' },
+      { t: 'Ogni settimana: un backup', p: 'Un tocco scarica un file di backup. Se il telefono si rompe, tutto torna sul nuovo.', s: 'backup' },
+    ],
+    [
+      { t: 'La ricetta è salvata', p: 'Pensa al sito come a una <strong>ricetta</strong>. È scritta e conservata al sicuro su GitHub, con tutte le versioni.', s: 'recipe', st: ['ok', 'Fatto'] },
+      { t: 'Un controllo di sicurezza', p: 'Prima di pubblicare, un controllo verifica la ricetta. <strong>Rifiuta di pubblicare</strong> finché ci sono le foto di esempio (lavori di altre parrucchiere) o link finti. Così Precious è protetta da problemi di copyright.', s: 'guard', st: ['stop', 'In attesa di foto e link'] },
+      { t: 'Il forno e la vetrina: Vercel', p: '<strong>Vercel</strong> "cuoce" la ricetta in un sito vero e lo mostra al mondo, veloce e con il lucchetto di sicurezza (https). Gratis per un sito così. Quando cambiamo una foto o un prezzo, <strong>si aggiorna da solo in circa un minuto</strong>.', say: 'Tu cambi, lui si aggiorna da solo.', s: 'oven', st: ['warn', 'Serve 1 clic: collegare GitHub'] },
+      { t: 'L\'indirizzo: il dominio', p: 'Il dominio è l\'indirizzo che si scrive, tipo <strong>preciousbeauty.it</strong>. Circa 10€ l\'anno, intestato a Precious. Lo colleghiamo a Vercel una volta sola.', s: 'domain', st: ['warn', 'Da comprare'] },
+      { t: 'Si apre!', p: 'I biglietti NFC puntano al nuovo indirizzo, il profilo Google mostra il sito e le clienti iniziano a prenotare. Privacy, P.IVA e pagine legali sono già pronte.', s: 'live', st: ['warn', 'Dopo i passi sopra'] },
+    ],
+  ],
+}
+
+// Phone screens (same for both languages except a few labels)
+const L = (en, it) => (lang === 'it' ? it : en)
+const head = (label) => `<div class="app-h"><img src="${LOGO}" alt="">${label}</div>`
+const SCREENS = {
+  card: () => `<div><div class="nfc"><img src="${LOGO}" alt=""><span class="tapdot"></span></div><p class="center" style="margin-top:22px">${L('Hold the card near the top of the phone', 'Avvicina il biglietto alla parte alta del telefono')}</p></div>`,
+  tap: () => `<div style="align-items:center;text-align:center"><img src="${LOGO}" alt="" style="width:110px;border-radius:50%;margin-top:8px;box-shadow:0 0 30px rgba(212,168,87,.3)"><div class="big">Precious Beauty</div><p class="center">${L('Save my contact, then message me.', 'Salva il contatto, poi scrivimi.')}</p><span class="pill g pulse" style="width:100%">${L('Ask for info on WhatsApp', 'Chiedi info su WhatsApp')}</span><span class="pill o" style="width:100%">${L('Save contact', 'Salva contatto')}</span><span class="pill" style="color:#E9D6B0">${L('Prices & styles', 'Prezzi e stili')}</span><p class="center">Via Paleocapa 8/B, Bergamo</p></div>`,
+  wa1: () => `<div class="wa"><div class="bar"><img src="${LOGO}" alt="">Precious Beauty</div><div class="typing">${L("Hi Precious! I have your business card and I'd like more info…", 'Ciao Precious! Ho il tuo biglietto da visita e vorrei più informazioni…')}<b class="pulse">➤</b></div></div>`,
+  wa2: () => `<div class="wa"><div class="bar"><img src="${LOGO}" alt="">Precious Beauty</div><div class="bub out">${L("Hi Precious! I'd like more info about your services and prices.", 'Ciao Precious! Vorrei più informazioni su servizi e prezzi.')}<small>10:42 ✓✓</small></div><div class="bub in"><span class="auto">${L('Automatic reply', 'Risposta automatica')}</span>${L("Hi! I'm with a client right now and will reply as soon as I can. To book, send the style, a photo and your preferred day.", 'Ciao! Sono con una cliente e ti rispondo appena possibile. Per prenotare manda lo stile, una foto e il giorno che preferisci.')}<small>10:42</small></div></div>`,
+  wa3: () => `<div class="wa"><div class="bar"><img src="${LOGO}" alt="">Precious Beauty</div><div class="bub out">${L('Knotless braids, Saturday morning? 📷', 'Knotless, sabato mattina? 📷')}<small>10:45 ✓✓</small></div><div class="bub in">${L('Hi Amara, your appointment for braids is confirmed: Saturday 18 October, 10:00. See you soon! — Precious', 'Ciao Amara, il tuo appuntamento per trecce è confermato: sabato 18 ottobre, 10:00. A presto! — Precious')}<small>12:10</small></div></div>`,
+  site: () => `<div><div class="big" style="font-size:2.3rem;margin-top:6px">Precious</div><div class="card"><div class="row"><span>${L('Braids', 'Trecce')}</span><span class="num">${L('from', 'da')} 25€</span></div></div><div class="card"><div class="row"><span>${L('Haircut', 'Taglio')}</span><span class="num">15€</span></div></div><div class="card"><div class="row"><span>${L('Lashes', 'Ciglia')}</span><span class="num">${L('from', 'da')} 20€</span></div></div><div class="card"><div class="t">${L('Visit the salon', 'Vieni in salone')}</div>Via Paleocapa 8/B<br>24122 Bergamo · ${L('Directions', 'Indicazioni')} →</div><span class="pill g">${L('Book on WhatsApp', 'Prenota su WhatsApp')}</span></div>`,
+  agenda: () => `<div>${head('Studio · Agenda')}<div class="card"><div class="t">${L('Today', 'Oggi')}</div></div><div class="card"><div class="row"><span><b class="num">10:00</b> Amara · ${L('Braids', 'Trecce')}</span></div></div><div class="card"><div class="row"><span><b class="num">14:30</b> Lucas · ${L('Haircut', 'Taglio')}</span></div></div><div class="card"><div class="t">${L('Tomorrow', 'Domani')}</div><span class="num">11:00</span> Daniel · ${L('Braids', 'Trecce')}</div></div>`,
+  done: () => `<div>${head('Studio · Agenda')}<div class="card" style="border-color:rgba(212,168,87,.5)"><b>Amara</b> ${L('done. Stock updated:', 'fatto. Magazzino aggiornato:')}</div><div class="card"><div class="row"><span>${L('Braiding hair 1B', 'Capelli 1B')}</span><span class="num"><span class="down">−3</span> → 17</span></div><div class="row"><span>Mousse</span><span class="num"><span class="down">−0.25</span> → 3.75</span></div><div class="row"><span>${L('Beads', 'Perline')}</span><span class="num"><span class="down">−10</span> → 190</span></div></div><span class="pill o">${L('Undo', 'Annulla')}</span></div>`,
+  delivery: () => `<div>${head(L('Studio · Stock', 'Studio · Magazzino'))}<div class="card"><div class="t">${L('Delivery arrived', 'Consegna arrivata')}</div></div><div class="card"><div class="row"><span>Edge control</span><span class="num up">+5</span></div><div class="row"><span>Mousse</span><span class="num up">+6</span></div><div class="row"><span>${L('Braiding hair 1B', 'Capelli 1B')}</span><span class="num up">+20</span></div></div><span class="pill g pulse">${L('Add 3 products to stock', 'Aggiungi 3 prodotti')}</span><p class="center">${L('or scan barcodes with the camera', 'oppure scansiona i codici a barre')}</p></div>`,
+  follow: () => `<div class="wa"><div class="bar"><img src="${LOGO}" alt="">Sofia</div><div class="bub out">${L('Hi Sofia, thank you for coming in! I hope you love your new look. A quick review would mean a lot: g.page/… And tag me on Instagram 💛 — Precious', 'Ciao Sofia, grazie per la visita! Spero che il nuovo look ti piaccia. Una recensione per me vale tantissimo: g.page/… E taggami su Instagram 💛 — Precious')}<small>11:00 ✓✓</small></div><div class="bub in">⭐⭐⭐⭐⭐ ${L('Done! Love them', 'Fatto! Bellissime')}<small>11:20</small></div></div>`,
+  rebook: () => `<div>${head(L('Studio · Follow-ups', 'Studio · Messaggi'))}<div class="card"><div class="t">Grace · ${L('Time to rebook', 'Da riprenotare')}</div>${L('Last braids 6 weeks ago', 'Ultime trecce 6 settimane fa')}</div><span class="pill g">${L('Send on WhatsApp', 'Invia su WhatsApp')}</span><div class="card"><div class="row"><span>Lucía</span><span class="num down">STOP</span></div>${L('Not shown: she said STOP', 'Non mostrata: ha detto STOP')}</div><div class="card"><div class="row"><span>Daniel</span><span class="up">${L('booked', 'prenotato')}</span></div>${L('Not shown: already coming', 'Non mostrato: viene già')}</div></div>`,
+  backup: () => `<div style="align-items:center;text-align:center">${head(L('Studio · Backup', 'Studio · Backup'))}<div class="card" style="width:100%;margin-top:30px"><div class="t">precious-studio.json</div>${L('Clients, agenda, stock', 'Clienti, agenda, magazzino')}</div><span class="pill g pulse" style="width:100%">${L('Download backup', 'Scarica backup')}</span><p class="center">${L('Keep it private: it holds client data.', 'Tienilo privato: contiene dati delle clienti.')}</p></div>`,
+  recipe: () => flow([['GH', 'GitHub', L('The recipe: all the code, every version', 'La ricetta: tutto il codice, ogni versione'), 'ok']]),
+  guard: () => flow([['GH', 'GitHub', L('Recipe', 'Ricetta'), 'ok'], ['✓', L('Safety guard', 'Controllo'), L('35 sample photos · 3 fake links', '35 foto di esempio · 3 link finti'), 'stop']]),
+  oven: () => flow([['GH', 'GitHub', L('Recipe', 'Ricetta'), 'ok'], ['✓', L('Safety guard', 'Controllo'), L('Passed', 'Superato'), 'ok'], ['▲', 'Vercel', L('Builds + hosts · https 🔒', 'Costruisce + ospita · https 🔒'), 'warn']]),
+  domain: () => flow([['▲', 'Vercel', L('The website', 'Il sito'), 'ok'], ['www', 'preciousbeauty.it', L('The address people type', "L'indirizzo che si scrive"), 'warn']]),
+  live: () => `<div style="align-items:center;text-align:center"><div class="card" style="width:100%;font-size:.75rem">🔒 preciousbeauty.it</div><img src="${LOGO}" alt="" style="width:120px;border-radius:50%;margin-top:14px;box-shadow:0 0 40px rgba(212,168,87,.35)"><div class="big" style="font-size:2rem">${L('Open', 'Aperto')}</div><p class="center">${L('NFC card · Google · Instagram → one website', 'Biglietto NFC · Google · Instagram → un solo sito')}</p><span class="pill g">${L('Book on WhatsApp', 'Prenota su WhatsApp')}</span></div>`,
+}
+function flow(items) {
+  const colors = { ok: 'var(--ok)', warn: 'var(--warn)', stop: 'var(--stop)' }
+  return `<div>${head(L('How it goes online', 'Come va online'))}<div class="flow">${items.map(([ico, name, sub, st], i) =>
+    `${i ? '<div class="arrow">↓</div>' : ''}<div class="card"><span class="ico">${ico}</span><span style="flex:1"><span class="t">${name}</span><br><span style="color:var(--muted)">${sub}</span></span><span style="width:10px;height:10px;border-radius:50%;background:${colors[st]}"></span></div>`).join('')}</div></div>`
+}
+
+let lang = 'en', tab = 0, step = 0
+try { const s = JSON.parse(localStorage.getItem('pb-walk') || '{}'); lang = s.lang || lang } catch {}
+
+const $ = (id) => document.getElementById(id)
+function render() {
+  const t = T[lang], steps = STORIES[lang][tab], st = steps[step]
+  document.documentElement.lang = lang
+  $('subtitle').textContent = t.subtitle
+  $('l-en').setAttribute('aria-pressed', lang === 'en'); $('l-it').setAttribute('aria-pressed', lang === 'it')
+  $('tabs').innerHTML = t.tabs.map((name, i) => `<button role="tab" aria-selected="${i === tab}" data-tab="${i}"><b>${i + 1}</b>${name}</button>`).join('')
+  $('progress').innerHTML = steps.map((_, i) => `<span class="${i <= step ? 'on' : ''}"></span>`).join('')
+  $('stepn').textContent = t.step(step + 1, steps.length)
+  $('title').textContent = st.t
+  $('body').innerHTML = `<p>${st.p}</p>` +
+    (st.say ? `<div class="say"><small>${lang === 'it' ? 'Dillo così' : 'Say it like this'}</small><span>“${st.say}”</span></div>` : '') +
+    (st.st ? `<span class="status ${st.st[0]}"><i></i>${st.st[1]}</span>` : '')
+  $('screen').innerHTML = SCREENS[st.s]()
+  $('back').textContent = t.back; $('back').disabled = tab === 0 && step === 0
+  const last = tab === 2 && step === steps.length - 1
+  $('next').textContent = last ? t.again : t.next
+  $('who').innerHTML = `<h3>${t.whoTitle}</h3><div class="grid">${t.who.map(([h, items, done]) =>
+    `<div class="col"><b>${h}</b><ul>${items.map((x) => `<li class="${done ? 'done' : ''}">${x}</li>`).join('')}</ul></div>`).join('')}</div>`
+}
+$('next').onclick = () => {
+  const n = STORIES[lang][tab].length
+  if (step < n - 1) step++
+  else if (tab < 2) { tab++; step = 0 }
+  else { tab = 0; step = 0 }
+  render()
+}
+$('back').onclick = () => {
+  if (step > 0) step--
+  else if (tab > 0) { tab--; step = STORIES[lang][tab].length - 1 }
+  render()
+}
+$('tabs').onclick = (e) => { const b = e.target.closest('[data-tab]'); if (b) { tab = +b.dataset.tab; step = 0; render() } }
+for (const l of ['en', 'it']) $('l-' + l).onclick = () => { lang = l; try { localStorage.setItem('pb-walk', JSON.stringify({ lang })) } catch {} ; render() }
+document.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') $('next').click(); if (e.key === 'ArrowLeft') $('back').click() })
+render()
+</script>
