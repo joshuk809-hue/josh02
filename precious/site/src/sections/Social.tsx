@@ -32,6 +32,7 @@ export default function Social() {
           <span>
             <span className="block text-xs uppercase tracking-widest text-[#D4A857]">{t.visit.title}</span>
             <address className="mt-1 not-italic text-lg text-[#F3EBDD]">{BUSINESS.street}<br />{BUSINESS.postalCode} {BUSINESS.city} ({BUSINESS.province})</address>
+            <span className="mt-1 block text-sm text-[#E9D6B0]">{t.visit.hours}</span>
             <span className="mt-2 inline-block text-sm text-[#E9D6B0]/70 underline-offset-4 group-hover:underline">{t.visit.directions} →</span>
           </span>
         </a>
