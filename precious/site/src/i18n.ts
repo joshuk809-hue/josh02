@@ -12,7 +12,7 @@ const en = {
   },
   prices: {
     title: 'Prices', women: 'Women', men: 'Men', from: 'from',
-    note: 'Final price depends on length, size and style. Send a photo on WhatsApp for an exact quote.',
+    note: 'Final price depends on length, size and style. Send a photo on WhatsApp for an exact quote. All prices are final prices.',
     styles: 'Styles I do',
   },
   styles: {
@@ -51,7 +51,7 @@ const it: Dict = {
   },
   prices: {
     title: 'Prezzi', women: 'Donna', men: 'Uomo', from: 'da',
-    note: 'Il prezzo finale dipende da lunghezza, misura e stile. Mandami una foto su WhatsApp per un preventivo.',
+    note: 'Il prezzo finale dipende da lunghezza, misura e stile. Mandami una foto su WhatsApp per un preventivo. Tutti i prezzi sono prezzi finali.',
     styles: 'Stili che faccio',
   },
   styles: {
@@ -89,7 +89,7 @@ const de: Dict = {
   },
   prices: {
     title: 'Preise', women: 'Damen', men: 'Herren', from: 'ab',
-    note: 'Der Endpreis hängt von Länge, Größe und Style ab. Schick mir ein Foto per WhatsApp für ein genaues Angebot.',
+    note: 'Der Endpreis hängt von Länge, Größe und Style ab. Schick mir ein Foto per WhatsApp für ein genaues Angebot. Alle Preise sind Endpreise.',
     styles: 'Meine Styles',
   },
   styles: {
@@ -127,7 +127,7 @@ const fr: Dict = {
   },
   prices: {
     title: 'Tarifs', women: 'Femme', men: 'Homme', from: 'dès',
-    note: 'Le prix final dépend de la longueur, de la taille et du style. Envoyez une photo sur WhatsApp pour un devis précis.',
+    note: 'Le prix final dépend de la longueur, de la taille et du style. Envoyez une photo sur WhatsApp pour un devis précis. Tous les prix sont des prix finaux.',
     styles: 'Mes styles',
   },
   styles: {
@@ -165,7 +165,7 @@ const es: Dict = {
   },
   prices: {
     title: 'Precios', women: 'Mujer', men: 'Hombre', from: 'desde',
-    note: 'El precio final depende del largo, el tamaño y el estilo. Envíame una foto por WhatsApp para un presupuesto exacto.',
+    note: 'El precio final depende del largo, el tamaño y el estilo. Envíame una foto por WhatsApp para un presupuesto exacto. Todos los precios son precios finales.',
     styles: 'Estilos que hago',
   },
   styles: {

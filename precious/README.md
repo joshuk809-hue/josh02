@@ -30,6 +30,10 @@ Precious Beauty di Omoruyi Precious · Via Paleocapa 8/B, 24122 Bergamo (BG) · 
 - **Fonts**: served from the site itself, so no visitor data goes to Google Fonts.
 - **Same details everywhere**: use these exact details, spelled the same way, on the Google Business Profile, Instagram and Facebook. Google ranks local businesses better when the name, address and phone match everywhere.
 
+## Going live
+
+Follow **`DEPLOY.md`**: the legal and security checklist plus Vercel steps. `npm run release` refuses to build until the sample photos and placeholder links are replaced.
+
 ## Before going live
 
 1. Edit `site/src/config.ts`: Instagram, TikTok and Google review link (from her Google Business Profile → "Ask for reviews"). Add opening hours there and to `openingHours` in the `index.html` structured data once confirmed. The WhatsApp number, +39 371 578 0893, is already set.
