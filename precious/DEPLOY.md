@@ -33,6 +33,8 @@ A checklist to put the site online the legal way in Italy and the EU. It's based
 
 ## 4. Deploy on Vercel (about 15 minutes)
 
+> **Status:** project `precious-beauty` is created and linked to the repo (root `precious/site`). A preview of the `staging` branch is live and protected; the production build is blocked by the launch guard until step 2 is done. The free Hobby plan is non-commercial only, so upgrade the team to **Pro** before the live launch.
+
 1. Create a **Vercel** account at vercel.com with her email, and turn on two-factor login.
 2. **Add New → Project**, then import the GitHub repository `joshuk809-hue/josh02`.
 3. Settings:
@@ -49,7 +51,21 @@ A checklist to put the site online the legal way in Italy and the EU. It's based
    - Check the headers at securityheaders.com; it should score **A**.
    - Test the structured data with Google's Rich Results Test (search for it); it should find a "HairSalon".
 
-## 5. Google Business Profile (free, the biggest boost for local customers)
+## 4b. The private studio (Cloudflare Pages + Access, free)
+
+The website build leaves the studio out. The studio is built and hosted on its own:
+
+1. Cloudflare dashboard → **Workers & Pages → Create → Pages → Connect to Git** → `joshuk809-hue/josh02`, production branch `claude/qr-fidelity-crm-tracker-qyy6hp`.
+   - **Root directory:** `precious/site`
+   - **Build command:** `npm run build:studio`
+   - **Output:** `dist`
+   - Project name: something unguessable, e.g. `pb-studio-<random>`.
+2. **Zero Trust → Access → Applications → Add → Self-hosted**: domain `<project>.pages.dev`, plus `*.<project>.pages.dev` for previews. Policy: **Allow** → **Emails** = Precious's email + yours. Login method: **One-time PIN**.
+3. In the Pages project, **Settings → Access policy**: enable it for preview deployments too.
+4. **Maintenance copy:** push to the `staging` branch. Cloudflare builds a preview at `staging.<project>.pages.dev`, behind the same login. Load example data there to test; her real data stays on her phone.
+5. Security headers come from `public/_headers` (same rules as `vercel.json`, plus `noindex`).
+
+ (free, the biggest boost for local customers)
 
 - Create or claim it at google.com/business with **exactly** these details: `Precious Beauty` · `Via Paleocapa 8/B, 24122 Bergamo BG` · `+39 371 578 0893`, category "Parrucchiere" (add "Treccine africane"), the website domain, and opening hours.
 - Then copy the "Ask for reviews" link into `config.ts` and redeploy.
