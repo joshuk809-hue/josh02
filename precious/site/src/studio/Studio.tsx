@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { BarChart3, Camera, CalendarDays, Check, Copy, Download, MessageCircle, Minus, Package, PackageCheck, Plus, ScanLine, Send, Trash2, Undo2, Upload, Users, X } from 'lucide-react'
 import { SERVICES } from '../data'
 import { DICTS, LANGS, type Lang } from '../i18n'
-import { waLink } from '../config'
+import { BUSINESS, waLink } from '../config'
 import { adjustStock, completeAppointment, demoState, dueFollowUps, emptyState, findByBarcode, load, PRESETS, reopenAppointment, restock, save, uid, usageReport, RULES, type Appointment, type Client, type State, type StockItem } from './store'
 import { AUTO_REPLIES, CONFIRM, FOLLOW } from './templates'
 
@@ -65,7 +65,7 @@ export default function Studio() {
             <p className="text-sm font-semibold uppercase tracking-widest text-[#D4A857]">Precious Studio</p>
             <p className="text-xs text-white/50">Saved on this device</p>
           </div>
-          <a href="#top" className={ghost}>Website</a>
+          <a href={BUSINESS.url} target="_blank" rel="noopener noreferrer" className={ghost}>Website</a>
         </div>
         <nav className="mx-auto flex max-w-5xl gap-1 overflow-x-auto px-3 pb-3">
           {TABS.map(([id, label, Icon]) => (

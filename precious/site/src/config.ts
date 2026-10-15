@@ -1,6 +1,7 @@
 // Precious's business details. Replace the placeholders before going live.
 export const BUSINESS = {
   name: 'Precious Beauty',
+  url: 'https://preciousbeauty.it',
   legalName: 'Precious Beauty di Omoruyi Precious', // ditta individuale, as on the receipt
   vat: '04902180167', // Partita IVA (checksum valid, Bergamo office 016)
   street: 'Via Paleocapa 8/B',
