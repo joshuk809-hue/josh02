@@ -11,7 +11,7 @@ export default function Hero() {
     ['#about', t.nav.about], ['#prices', t.nav.prices], ['#styles', t.nav.styles], ['#contact', t.nav.contact],
   ]
   return (
-    <section className="relative flex h-screen min-h-[600px] flex-col" style={{ overflowX: 'clip' }}>
+    <section className="relative flex h-screen h-[100svh] min-h-[600px] flex-col" style={{ overflowX: 'clip' }}>
       <FadeIn as="nav" delay={0} y={-20} className="flex items-center justify-between px-6 md:px-10 pt-6 md:pt-8">
         {links.map(([href, label]) => (
           <a key={href} href={href} className="text-sm md:text-lg lg:text-[1.4rem] font-medium uppercase tracking-wider text-[#E9D6B0] transition-opacity duration-200 hover:opacity-70">
@@ -26,7 +26,7 @@ export default function Hero() {
             key={l}
             onClick={() => setLang(l)}
             aria-pressed={lang === l}
-            className={`rounded-full px-2.5 py-1 text-[11px] sm:text-xs uppercase tracking-widest transition-colors duration-200 ${lang === l ? 'bg-[#D4A857] text-[#1A1206]' : 'text-[#E9D6B0]/70 hover:text-[#E9D6B0]'}`}
+            className={`inline-flex min-h-10 min-w-10 items-center justify-center rounded-full px-2.5 text-[11px] sm:text-xs uppercase tracking-widest transition-colors duration-200 ${lang === l ? 'bg-[#D4A857] text-[#1A1206]' : 'text-[#E9D6B0]/70 hover:text-[#E9D6B0]'}`}
           >
             {l}
           </button>
@@ -35,7 +35,7 @@ export default function Hero() {
 
       <div className="overflow-hidden">
         <FadeIn as="h1" delay={0.15} y={40} className="hero-heading w-full whitespace-nowrap text-center font-black uppercase leading-none tracking-tight text-[19vw] sm:text-[19.5vw] md:text-[20vw] mt-4 sm:mt-2 md:-mt-3">
-          Precious
+          Precious<span className="sr-only"> Beauty</span>
         </FadeIn>
       </div>
 
