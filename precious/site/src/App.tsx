@@ -4,6 +4,7 @@ import Marquee from './sections/Marquee'
 import About from './sections/About'
 import Prices from './sections/Prices'
 import Styles from './sections/Styles'
+import Work from './sections/Work'
 import Social from './sections/Social'
 import TapCard from './sections/TapCard'
 import Privacy from './sections/Privacy'
@@ -39,6 +40,7 @@ export default function App() {
         <About />
         <Prices />
         <Styles />
+        <Work />
         <Social />
       </main>
       )}

@@ -7,9 +7,9 @@ import { useT } from '../i18n'
 import { waLink } from '../config'
 
 const CARDS = [
-  ['knotless-copper', 'boho-bob-braids', 'jumbo-knotless-beads'],
-  ['triangle-plaits-beads', 'cornrow-man-bun', 'stitch-cornrows'],
-  ['tapered-cut-design', 'lashes', 'interlocked-locs'],
+  ['w-knotless-beads', 'w-braided-ponytail', 'w-long-braids'],
+  ['m-cornrows-side', 'm-cornrow-design', 'm-cornrows'],
+  ['m-twists-top', 'm-two-strand-twists', 'm-twists'],
 ].map((c) => c.map(byFile))
 
 function Img({ g, h, sample }: { g?: GalleryItem; h?: string; sample: string }) {

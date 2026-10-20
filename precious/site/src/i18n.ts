@@ -25,6 +25,7 @@ const en = {
     book: 'Book this style',
     sample: 'Sample photo',
   },
+  work: { title: "My work", text: "Real clients, real styles, straight from my chair in Bergamo." },
   social: {
     title: 'Love your look?',
     text: 'Your review helps other people find me, and every follow keeps you first in line for new styles and openings.',
@@ -64,6 +65,7 @@ const it: Dict = {
     book: 'Prenota questo stile',
     sample: 'Foto di esempio',
   },
+  work: { title: "I miei lavori", text: "Clienti veri, acconciature vere, direttamente dalla mia poltrona a Bergamo." },
   social: {
     title: 'Ti piace il tuo look?',
     text: 'La tua recensione aiuta altre persone a trovarmi, e seguendomi sarai la prima a vedere nuovi stili e disponibilità.',
@@ -102,6 +104,7 @@ const de: Dict = {
     book: 'Diesen Style buchen',
     sample: 'Beispielfoto',
   },
+  work: { title: "Meine Arbeiten", text: "Echte Kundinnen und Kunden, echte Styles, direkt aus meinem Salon in Bergamo." },
   social: {
     title: 'Liebst du deinen Look?',
     text: 'Deine Bewertung hilft anderen, mich zu finden, und als Follower siehst du neue Styles und freie Termine zuerst.',
@@ -140,6 +143,7 @@ const fr: Dict = {
     book: 'Réserver ce style',
     sample: "Photo d'exemple",
   },
+  work: { title: "Mes réalisations", text: "De vrais clients, de vraies coiffures, tout droit de mon fauteuil à Bergame." },
   social: {
     title: 'Vous aimez votre look ?',
     text: "Votre avis aide d'autres personnes à me trouver, et en me suivant vous découvrez en premier les nouveaux styles et créneaux.",
@@ -178,6 +182,7 @@ const es: Dict = {
     book: 'Reservar este estilo',
     sample: 'Foto de ejemplo',
   },
+  work: { title: "Mis trabajos", text: "Clientes reales, peinados reales, directamente desde mi sillón en Bérgamo." },
   social: {
     title: '¿Te encanta tu look?',
     text: 'Tu reseña ayuda a otras personas a encontrarme, y si me sigues verás primero los nuevos estilos y huecos libres.',

@@ -3,15 +3,25 @@ import Magnet from '../components/Magnet'
 import GlossyLogo from '../components/GlossyLogo'
 import { ContactButton } from '../components/Buttons'
 import { LANGS, useT } from '../i18n'
-import { waLink } from '../config'
+import { useEffect, useRef } from 'react'
+import { BUSINESS, waLink } from '../config'
 
 export default function Hero() {
   const { t, lang, setLang } = useT()
+  const video = useRef<HTMLVideoElement>(null)
+  useEffect(() => { if (matchMedia('(prefers-reduced-motion: reduce)').matches) video.current?.pause() }, [])
   const links = [
-    ['#about', t.nav.about], ['#prices', t.nav.prices], ['#styles', t.nav.styles], ['#contact', t.nav.contact],
+    ['#about', t.nav.about], ['#prices', t.nav.prices], ['#styles', t.nav.styles],['#contact', t.nav.contact],
   ]
   return (
-    <section className="relative flex h-screen h-[100svh] min-h-[600px] flex-col" style={{ overflowX: 'clip' }}>
+    <section className="relative isolate flex min-h-[600px] h-[100dvh] flex-col" style={{ overflowX: 'clip' }}>
+      {/* Backdrop: her own work on a slow loop, dimmed and vignetted so the gold type stays the hero */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <video ref={video} src="videos/hero.mp4" poster="videos/hero.jpg" autoPlay muted loop playsInline className="h-full w-full scale-105 object-cover opacity-[0.38] saturate-[0.85] md:blur-[3px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_20%,#0C0C0C_85%)]" />
+        <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#0C0C0C] to-transparent" />
+        <div className="absolute inset-3 rounded-[28px] border border-[#D4A857]/25 sm:inset-5 md:rounded-[40px]" />
+      </div>
       <FadeIn as="nav" delay={0} y={-20} className="flex items-center justify-between px-6 md:px-10 pt-6 md:pt-8">
         {links.map(([href, label]) => (
           <a key={href} href={href} className="text-sm md:text-lg lg:text-[1.4rem] font-medium uppercase tracking-wider text-[#E9D6B0] transition-opacity duration-200 hover:opacity-70">
@@ -41,6 +51,7 @@ export default function Hero() {
 
       <div className="mt-auto flex items-end justify-between gap-4 px-6 md:px-10 pb-7 sm:pb-8 md:pb-10">
         <FadeIn delay={0.35} y={20}>
+          <p className="mb-3 flex items-center gap-3 text-[10px] sm:text-xs uppercase tracking-[0.35em] text-[#D4A857]"><span className="h-px w-8 bg-[#D4A857]" />{BUSINESS.city}</p>
           <p className="max-w-[160px] sm:max-w-[220px] md:max-w-[280px] font-light uppercase leading-snug tracking-wide text-[#E9D6B0]" style={{ fontSize: 'clamp(0.75rem, 1.4vw, 1.4rem)' }}>
             {t.hero.tagline}
           </p>

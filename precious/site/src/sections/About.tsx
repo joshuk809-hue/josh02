@@ -6,10 +6,10 @@ import { useT } from '../i18n'
 import { waLink } from '../config'
 
 const corners = [
-  { f: 'knotless-copper', cls: 'top-[4%] left-[1%] sm:left-[2%] md:left-[4%] w-[110px] sm:w-[150px] md:w-[190px]', d: 0.1, x: -80 },
-  { f: 'cornrow-man-bun', cls: 'bottom-[8%] left-[3%] sm:left-[6%] md:left-[10%] w-[95px] sm:w-[130px] md:w-[165px]', d: 0.25, x: -80 },
-  { f: 'boho-bob-braids', cls: 'top-[4%] right-[1%] sm:right-[2%] md:right-[4%] w-[110px] sm:w-[150px] md:w-[190px]', d: 0.15, x: 80 },
-  { f: 'star-cornrows', cls: 'bottom-[8%] right-[3%] sm:right-[6%] md:right-[10%] w-[120px] sm:w-[155px] md:w-[200px]', d: 0.3, x: 80 },
+  { f: 'w-box-braids', cls: 'top-[4%] left-[1%] sm:left-[2%] md:left-[4%] w-[110px] sm:w-[150px] md:w-[190px]', d: 0.1, x: -80 },
+  { f: 'm-cornrows-back', cls: 'bottom-[8%] left-[3%] sm:left-[6%] md:left-[10%] w-[95px] sm:w-[130px] md:w-[165px]', d: 0.25, x: -80 },
+  { f: 'w-side-braids', cls: 'top-[4%] right-[1%] sm:right-[2%] md:right-[4%] w-[110px] sm:w-[150px] md:w-[190px]', d: 0.15, x: 80 },
+  { f: 'm-twists', cls: 'bottom-[8%] right-[3%] sm:right-[6%] md:right-[10%] w-[120px] sm:w-[155px] md:w-[200px]', d: 0.3, x: 80 },
 ]
 
 export default function About() {

@@ -1,4 +1,155 @@
 {
   "_note": "Photos of Precious's own work only, each with the client's signed consent (precious/legal/liberatoria-foto.md). Put the .webp (about 800px wide) in public/gallery/ and add {src, title, for: women|men, own: true}. The marquee, About circles and Styles cards pick photos by file name (Marquee.tsx, About.tsx, Styles.tsx). The old sample photos (other stylists' work) are in precious/reference-photos/ for inspiration only: never publish them.",
-  "items": []
+  "items": [
+    {
+      "src": "gallery/w-knotless-beads.webp",
+      "title": "Knotless braids with beads",
+      "for": "women",
+      "own": true
+    },
+    {
+      "src": "gallery/w-cornrows-top.webp",
+      "title": "Cornrows into braids",
+      "for": "women",
+      "own": true
+    },
+    {
+      "src": "gallery/w-long-braids.webp",
+      "title": "Long box braids",
+      "for": "women",
+      "own": true
+    },
+    {
+      "src": "gallery/w-side-braids.webp",
+      "title": "Side-swept braids",
+      "for": "women",
+      "own": true
+    },
+    {
+      "src": "gallery/w-box-braids.webp",
+      "title": "Box braids",
+      "for": "women",
+      "own": true
+    },
+    {
+      "src": "gallery/w-braided-ponytail.webp",
+      "title": "Braided half-up ponytail",
+      "for": "women",
+      "own": true
+    },
+    {
+      "src": "gallery/w-box-braids-back.webp",
+      "title": "Box braids, back view",
+      "for": "women",
+      "own": true
+    },
+    {
+      "src": "gallery/m-cornrows-side.webp",
+      "title": "Men's cornrows, side view",
+      "for": "men",
+      "own": true
+    },
+    {
+      "src": "gallery/m-cornrows.webp",
+      "title": "Men's cornrows",
+      "for": "men",
+      "own": true
+    },
+    {
+      "src": "gallery/m-cornrows-back.webp",
+      "title": "Men's cornrows, back view",
+      "for": "men",
+      "own": true
+    },
+    {
+      "src": "gallery/m-twists.webp",
+      "title": "Two-strand twists",
+      "for": "men",
+      "own": true
+    },
+    {
+      "src": "gallery/m-twists-top.webp",
+      "title": "Twists, top view",
+      "for": "men",
+      "own": true
+    },
+    {
+      "src": "gallery/m-cornrow-design.webp",
+      "title": "Curved cornrow design",
+      "for": "men",
+      "own": true
+    },
+    {
+      "src": "gallery/m-two-strand-twists.webp",
+      "title": "Short two-strand twists",
+      "for": "men",
+      "own": true
+    },
+    {
+      "src": "gallery/m-twists-crown.webp",
+      "title": "Two-strand twists, crown",
+      "for": "men",
+      "own": true
+    },
+    {
+      "src": "gallery/m-twists-back.webp",
+      "title": "Twists, back view",
+      "for": "men",
+      "own": true
+    },
+    {
+      "src": "gallery/m-twists-close.webp",
+      "title": "Twists, close-up",
+      "for": "men",
+      "own": true
+    },
+    {
+      "src": "gallery/m-cornrow-swirl.webp",
+      "title": "Swirl cornrows",
+      "for": "men",
+      "own": true
+    },
+    {
+      "src": "gallery/m-cornrow-curves.webp",
+      "title": "Curved cornrows, back",
+      "for": "men",
+      "own": true
+    },
+    {
+      "src": "gallery/m-cornrows-close.webp",
+      "title": "Cornrows, close-up",
+      "for": "men",
+      "own": true
+    },
+    {
+      "src": "gallery/m-twists-full.webp",
+      "title": "Full head of twists",
+      "for": "men",
+      "own": true
+    },
+    {
+      "src": "gallery/w-braids-half-up.webp",
+      "title": "Half-up box braids",
+      "for": "women",
+      "own": true
+    },
+    {
+      "src": "gallery/w-braids-long-back.webp",
+      "title": "Long braids, back",
+      "for": "women",
+      "own": true
+    },
+    {
+      "src": "gallery/w-cornrows-braids.webp",
+      "title": "Cornrows into long braids",
+      "for": "women",
+      "own": true
+    },
+    {
+      "src": "gallery/m-cornrows-angle.webp",
+      "title": "Men's cornrows, angle",
+      "for": "men",
+      "own": true
+    }
+  ]
 }
