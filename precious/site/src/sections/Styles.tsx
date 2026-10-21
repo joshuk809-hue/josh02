@@ -14,7 +14,7 @@ const CARDS = [
 
 function Img({ g, h, sample }: { g?: GalleryItem; h?: string; sample: string }) {
   return (
-    <div className="relative overflow-hidden rounded-[40px] sm:rounded-[50px] md:rounded-[60px]" style={h ? { height: h } : { height: '100%' }}>
+    <div className="relative overflow-hidden rounded-[40px] sm:rounded-[50px] md:rounded-[60px]" style={h ? { height: h } : { position: 'absolute', inset: 0 }}>
       {g ? <img src={g.src} alt={g.title} loading="lazy" className="h-full w-full object-cover" />
         : <div className="flex h-full w-full items-center justify-center bg-black ring-1 ring-inset ring-[#D4A857]/25">{!h && <img src="brand/logo-disc.webp" alt="" loading="lazy" className="w-3/5 max-w-[260px]" />}</div>}
       {g && !g.own && <span className="absolute bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-black/60 px-3 py-1 text-[10px] uppercase tracking-widest text-white/80">{sample}</span>}
@@ -47,7 +47,8 @@ function Card({ i, total, progress }: { i: number; total: number; progress: Retu
             <Img g={a} h="clamp(130px, 16vw, 230px)" sample={t.styles.sample} />
             <Img g={b} h="clamp(160px, 22vw, 340px)" sample={t.styles.sample} />
           </div>
-          <div className="w-[60%]"><Img g={c} sample={t.styles.sample} /></div>
+          {/* absolute fill: the big photo takes the left column's height, or its own tall ratio makes the card outgrow its sticky slot on desktop */}
+          <div className="relative w-[60%]"><Img g={c} sample={t.styles.sample} /></div>
         </div>
       </motion.div>
     </div>

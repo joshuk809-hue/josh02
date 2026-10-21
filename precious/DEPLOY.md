@@ -34,6 +34,15 @@ Nothing blocks the launch any more. The site only ever shows photos marked `"own
 
 Vercel's free plan is for non-commercial use only and Pro costs $20 a month, so both live projects run on Cloudflare Pages (free; its terms don't restrict business use). The studio sits behind Cloudflare Access (free up to 50 users). The Vercel project `precious-beauty` was only a test: pause or delete it once Cloudflare is live.
 
+**Live now (21/10/2026):** the website is the Pages project `precious-beauty` (Cloudflare account joshuk809@gmail.com), on `preciousbeauty.it` and `www.preciousbeauty.it`. It is deployed by direct upload, not from Git, so a push does **not** update it. To publish a change:
+
+```bash
+cd precious/site && npm run release      # build with the launch checks
+cd .. && npx wrangler pages deploy site/dist --project-name precious-beauty --branch main
+```
+
+Run the deploy from `precious/`, not `site/`: from `site/` wrangler tries to auto-configure the Vite project and fails. **Rollback:** Cloudflare dashboard → Workers & Pages → precious-beauty → Deployments → the previous one → "Rollback to this deployment". The steps below (Git connection, studio) are still to do.
+
 1. Create a free Cloudflare account and turn on two-factor login.
 2. **Workers & Pages → Create → Pages → Connect to Git** → `joshuk809-hue/josh02`. Make two projects from the same repo, both with production branch `claude/qr-fidelity-crm-tracker-qyy6hp`, root directory `precious/site` and output `dist`:
 

@@ -10,8 +10,8 @@ export const BUSINESS = {
   province: 'BG',
   phoneDisplay: '+39 371 578 0893',
   whatsapp: '393715780893', // +39 371 578 0893, international format, digits only
-  instagram: 'https://www.instagram.com/reel/CvX5zGPtrrW/', // a reel of hers; swap for the profile URL when known
-  tiktok: 'https://vm.tiktok.com/ZGdCaPuCt/',
+  instagram: 'https://www.instagram.com/precious_beauty_hair_salon/',
+  tiktok: 'https://www.tiktok.com/@preciousbeautyhairsaloon',
   // Until her Google Business Profile gives a review link ("Ask for reviews" → g.page/r/...), send people to her Maps listing.
   reviewUrl: '',
 }
