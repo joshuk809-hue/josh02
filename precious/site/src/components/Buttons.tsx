@@ -25,7 +25,7 @@ export function GhostButton({ href, children }: { href: string; children: ReactN
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-block rounded-full border-2 border-[#E9D6B0] px-8 py-3 sm:px-10 sm:py-3.5 text-sm sm:text-base font-medium uppercase tracking-widest text-[#E9D6B0] transition-colors duration-200 hover:bg-[#E9D6B0]/10"
+      className="inline-block rounded-full border-2 border-sand px-8 py-3 sm:px-10 sm:py-3.5 text-sm sm:text-base font-medium uppercase tracking-widest text-sand transition-colors duration-200 hover:bg-sand/10"
     >
       {children}
     </a>

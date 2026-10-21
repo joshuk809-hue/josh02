@@ -10,12 +10,12 @@ export default function Prices() {
   const [g, setG] = useState<Gender>('women')
   const list = servicesFor(g)
   return (
-    <section id="prices" className="rounded-t-[40px] sm:rounded-t-[50px] md:rounded-t-[60px] bg-[#F3EBDD] px-5 sm:px-8 md:px-10 py-20 sm:py-24 md:py-32 text-[#0C0C0C]">
+    <section id="prices" className="rounded-t-[40px] sm:rounded-t-[50px] md:rounded-t-[60px] bg-cream px-5 sm:px-8 md:px-10 py-20 sm:py-24 md:py-32 text-ink">
       <FadeIn as="h2" className="mb-10 sm:mb-12 text-center font-black uppercase leading-none tracking-tight" style={{ fontSize: 'clamp(3rem, 12vw, 160px)' }}>
         {t.prices.title}
       </FadeIn>
 
-      <div className="mx-auto mb-14 sm:mb-20 flex w-fit rounded-full bg-[#0C0C0C]/[0.06] p-1">
+      <div className="mx-auto mb-14 sm:mb-20 flex w-fit rounded-full bg-ink/6 p-1">
         {(['women', 'men'] as Gender[]).map((k) => (
           <button
             key={k}
@@ -23,7 +23,7 @@ export default function Prices() {
             aria-pressed={g === k}
             className="relative rounded-full px-7 py-2.5 text-sm sm:text-base font-medium uppercase tracking-widest"
           >
-            {g === k && <motion.span layoutId="gender-pill" className="absolute inset-0 rounded-full bg-[#0C0C0C]" transition={{ type: 'spring', bounce: 0.15, duration: 0.45 }} />}
+            {g === k && <motion.span layoutId="gender-pill" className="absolute inset-0 rounded-full bg-ink" transition={{ type: 'spring', bounce: 0.15, duration: 0.45 }} />}
             <span className={`relative transition-colors duration-200 ${g === k ? 'text-[#F2DBA6]' : ''}`}>{t.prices[k]}</span>
           </button>
         ))}
@@ -55,7 +55,7 @@ export default function Prices() {
             <h3 className="mt-14 mb-5 font-medium uppercase tracking-widest opacity-60">{t.prices.styles}</h3>
             <div className="flex flex-wrap gap-2">
               {STYLES[g].map((s) => (
-                <span key={s} className="rounded-full border border-[#0C0C0C]/20 px-4 py-2 text-sm font-light">{s}</span>
+                <span key={s} className="rounded-full border border-ink/20 px-4 py-2 text-sm font-light">{s}</span>
               ))}
             </div>
           </motion.div>

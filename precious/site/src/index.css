@@ -1,11 +1,39 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-:root { color-scheme: dark; }
-html, body, #root { background: #0C0C0C; }
-body { font-family: 'Kanit', sans-serif; color: #F3EBDD; -webkit-font-smoothing: antialiased; }
+@theme {
+  --font-kanit: Kanit, sans-serif;
+
+  --color-ink: #0c0c0c;
+  --color-cream: #f3ebdd;
+  --color-gold: #d4a857;
+  --color-sand: #e9d6b0;
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+/* In the base layer: unlayered, this reset would beat every Tailwind v4 spacing utility */
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { color-scheme: dark; }
+  html, body, #root { background: #0C0C0C; }
+  body { font-family: 'Kanit', sans-serif; color: #F3EBDD; -webkit-font-smoothing: antialiased; }
+}
 
 /* Gold version of the inspiration's gradient heading */
 .hero-heading {

@@ -21,7 +21,7 @@ function Clip({ name }: { name: string }) {
       poster={`videos/${name}.jpg`}
       muted loop playsInline preload="none"
       aria-hidden
-      className="aspect-[9/16] w-[62vw] max-w-[260px] shrink-0 snap-center rounded-[28px] object-cover ring-1 ring-[#D4A857]/40 sm:w-[240px]"
+      className="aspect-9/16 w-[62vw] max-w-[260px] shrink-0 snap-center rounded-[28px] object-cover ring-1 ring-[#D4A857]/40 sm:w-[240px]"
     />
   )
 }
@@ -33,8 +33,8 @@ export default function Work() {
       <FadeIn as="h2" className="hero-heading px-5 text-center font-black uppercase leading-none tracking-tight" style={{ fontSize: 'clamp(2.6rem, 10vw, 140px)' }}>
         {t.work.title}
       </FadeIn>
-      <FadeIn delay={0.1}><p className="mx-auto mt-6 max-w-xl px-6 text-center font-light leading-relaxed text-[#E9D6B0]/80" style={{ fontSize: 'clamp(0.95rem, 1.6vw, 1.2rem)' }}>{t.work.text}</p></FadeIn>
-      <div className="mt-12 flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-4 sm:justify-center [scrollbar-width:none]">
+      <FadeIn delay={0.1}><p className="mx-auto mt-6 max-w-xl px-6 text-center font-light leading-relaxed text-sand/80" style={{ fontSize: 'clamp(0.95rem, 1.6vw, 1.2rem)' }}>{t.work.text}</p></FadeIn>
+      <div className="mt-12 flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-4 sm:justify-center scrollbar-none">
         {CLIPS.map((c) => <Clip key={c} name={c} />)}
       </div>
     </section>

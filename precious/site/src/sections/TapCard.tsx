@@ -18,12 +18,12 @@ export default function TapCard() {
   const c = COPY[lang]
   const pill = 'flex w-full items-center justify-center gap-2 rounded-full px-6 py-4 text-sm font-medium uppercase tracking-widest transition-transform duration-150 active:scale-[0.98]'
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#0C0C0C] px-6 py-12">
+    <div className="flex min-h-screen items-center justify-center bg-ink px-6 py-12">
       <div className="flex w-full max-w-sm flex-col items-center gap-8 text-center">
         <FadeIn y={20} className="w-56"><GlossyLogo /></FadeIn>
         <FadeIn delay={0.1} y={14}>
           <h1 className="hero-heading text-4xl font-black uppercase tracking-tight">{BUSINESS.name}</h1>
-          <p className="mt-2 font-light text-[#E9D6B0]/80">{c.hint}</p>
+          <p className="mt-2 font-light text-sand/80">{c.hint}</p>
         </FadeIn>
         <FadeIn delay={0.2} y={14} className="flex w-full flex-col gap-3">
           <a
@@ -35,17 +35,17 @@ export default function TapCard() {
           >
             <MessageCircle size={18} aria-hidden /> {c.ask}
           </a>
-          <a href="precious.vcf" download="Precious Beauty.vcf" className={`${pill} border-2 border-[#E9D6B0] text-[#E9D6B0]`}>
+          <a href="precious.vcf" download="Precious Beauty.vcf" className={`${pill} border-2 border-sand text-sand`}>
             <UserPlus size={18} aria-hidden /> {c.save}
           </a>
-          <a href="#top" className={`${pill} text-[#E9D6B0]/80`}>
+          <a href="#top" className={`${pill} text-sand/80`}>
             <Sparkles size={18} aria-hidden /> {c.site}
           </a>
         </FadeIn>
-        <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm font-light text-[#E9D6B0]/70 hover:text-[#E9D6B0]">
+        <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm font-light text-sand/70 hover:text-sand">
           <MapPin size={15} aria-hidden /> {BUSINESS.street}, {BUSINESS.city}
         </a>
-        <p className="-mt-5 select-all font-light tabular-nums tracking-wider text-[#E9D6B0]/60">{BUSINESS.phoneDisplay}</p>
+        <p className="-mt-5 select-all font-light tabular-nums tracking-wider text-sand/60">{BUSINESS.phoneDisplay}</p>
       </div>
     </div>
   )

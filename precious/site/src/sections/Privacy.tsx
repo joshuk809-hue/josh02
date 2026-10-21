@@ -27,16 +27,16 @@ export default function Privacy() {
   const { lang } = useT()
   const [title, rows] = lang === 'it' ? ['Informativa privacy', IT] : ['Privacy notice', EN]
   return (
-    <div className="min-h-screen bg-[#0C0C0C] px-5 py-16 text-[#E9D6B0]">
+    <div className="min-h-screen bg-ink px-5 py-16 text-sand">
       <article className="mx-auto max-w-2xl">
-        <a href="#top" className="text-sm text-[#D4A857] hover:underline">← {BUSINESS.name}</a>
+        <a href="#top" className="text-sm text-gold hover:underline">← {BUSINESS.name}</a>
         <h1 className="hero-heading mt-6 text-4xl font-black uppercase tracking-tight sm:text-5xl">{title}</h1>
-        <p className="mt-3 text-sm text-[#E9D6B0]/60">{lang === 'it' ? 'Ultimo aggiornamento' : 'Last updated'}: {UPDATED}</p>
+        <p className="mt-3 text-sm text-sand/60">{lang === 'it' ? 'Ultimo aggiornamento' : 'Last updated'}: {UPDATED}</p>
         <div className="mt-10 grid gap-8">
           {rows.map(([h, p]) => (
             <section key={h}>
-              <h2 className="mb-2 text-sm font-medium uppercase tracking-widest text-[#D4A857]">{h}</h2>
-              <p className="font-light leading-relaxed text-[#F3EBDD]/85">{p}</p>
+              <h2 className="mb-2 text-sm font-medium uppercase tracking-widest text-gold">{h}</h2>
+              <p className="font-light leading-relaxed text-cream/85">{p}</p>
             </section>
           ))}
         </div>

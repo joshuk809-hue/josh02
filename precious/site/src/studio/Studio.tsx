@@ -21,10 +21,10 @@ const svcName = (id: string, lang: Lang = 'en') => DICTS[lang].services[id] ?? i
 const copyText = (t: string) => (navigator.clipboard ? navigator.clipboard.writeText(t).then(() => true, () => false) : Promise.resolve(false))
 const fmtDay = (d: Date) => d.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' })
 const fmtTime = (d: Date) => d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
-const input = 'w-full rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2.5 text-[15px] outline-none transition-colors focus:border-[#D4A857]'
+const input = 'w-full rounded-xl border border-white/10 bg-white/4 px-3 py-2.5 text-[15px] outline-hidden transition-colors focus:border-gold'
 const btn = 'inline-flex items-center justify-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-transform duration-150 active:scale-[0.97]'
-const gold = `${btn} bg-[#D4A857] text-[#1A1206] hover:bg-[#E2BC72]`
-const ghost = `${btn} border border-white/15 text-[#E9D6B0] hover:bg-white/5`
+const gold = `${btn} bg-gold text-[#1A1206] hover:bg-[#E2BC72]`
+const ghost = `${btn} border border-white/15 text-sand hover:bg-white/5`
 
 // Two taps instead of a confirm() dialog: first tap arms, second tap within 3s acts.
 function ConfirmButton({ onConfirm, label, children }: { onConfirm: () => void; label: string; children: ReactNode }) {
@@ -46,7 +46,7 @@ function ConfirmButton({ onConfirm, label, children }: { onConfirm: () => void; 
 }
 
 function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <div className={`rounded-3xl border border-white/10 bg-white/[0.03] p-4 sm:p-5 ${className}`}>{children}</div>
+  return <div className={`rounded-3xl border border-white/10 bg-white/3 p-4 sm:p-5 ${className}`}>{children}</div>
 }
 
 export default function Studio() {
@@ -57,12 +57,12 @@ export default function Studio() {
   const due = useMemo(() => dueFollowUps(s), [s])
 
   return (
-    <div className="min-h-screen bg-[#0C0C0C] text-[#F3EBDD]">
-      <header className="sticky top-0 z-20 border-b border-white/10 bg-[#0C0C0C]/90 backdrop-blur">
+    <div className="min-h-screen bg-ink text-cream">
+      <header className="sticky top-0 z-20 border-b border-white/10 bg-ink/90 backdrop-blur-sm">
         <div className="mx-auto flex max-w-5xl items-center gap-3 px-4 py-3">
           <img src="brand/logo-disc.webp" alt="" className="h-10 w-10 rounded-full" />
           <div className="flex-1">
-            <p className="text-sm font-semibold uppercase tracking-widest text-[#D4A857]">Precious Studio</p>
+            <p className="text-sm font-semibold uppercase tracking-widest text-gold">Precious Studio</p>
             <p className="text-xs text-white/50">Saved on this device</p>
           </div>
           <a href={BUSINESS.url} target="_blank" rel="noopener noreferrer" className={ghost}>Website</a>
@@ -70,7 +70,7 @@ export default function Studio() {
         <nav className="mx-auto flex max-w-5xl gap-1 overflow-x-auto px-3 pb-3">
           {TABS.map(([id, label, Icon]) => (
             <button key={id} onClick={() => setTab(id)} className="relative shrink-0 rounded-full px-4 py-2 text-sm">
-              {tab === id && <motion.span layoutId="tab-pill" className="absolute inset-0 rounded-full bg-[#D4A857]" transition={{ type: 'spring', bounce: 0.15, duration: 0.4 }} />}
+              {tab === id && <motion.span layoutId="tab-pill" className="absolute inset-0 rounded-full bg-gold" transition={{ type: 'spring', bounce: 0.15, duration: 0.4 }} />}
               <span className={`relative inline-flex items-center gap-1.5 ${tab === id ? 'text-[#1A1206]' : 'text-white/70'}`}>
                 <Icon size={15} aria-hidden /> {label}
                 {id === 'follow' && due.length > 0 && <span className="rounded-full bg-[#B4552D] px-1.5 text-[11px] text-white">{due.length}</span>}
@@ -162,7 +162,7 @@ function Agenda({ s, update }: P) {
               <input className={input} placeholder="Client name" value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} />
               <input className={input} placeholder="WhatsApp number (+39…)" inputMode="tel" value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value })} />
               <label className="flex items-center gap-2 text-sm text-white/80">
-                <input type="checkbox" className="accent-[#D4A857]" checked={f.consent} onChange={(e) => setF({ ...f, consent: e.target.checked })} />
+                <input type="checkbox" className="accent-gold" checked={f.consent} onChange={(e) => setF({ ...f, consent: e.target.checked })} />
                 OK to send WhatsApp follow-ups
               </label>
             </>
@@ -177,7 +177,7 @@ function Agenda({ s, update }: P) {
       </Card>
       <div className="grid content-start gap-4">
         {doneAppt && (
-          <Card className="border-[#D4A857]/40">
+          <Card className="border-gold/40">
             <div className="flex flex-wrap items-center gap-3">
               <p role="status" className="flex-1 text-sm">
                 <b>{clients.get(doneAppt.clientId)?.name}</b> done.{' '}
@@ -198,7 +198,7 @@ function Agenda({ s, update }: P) {
         )}
         {[...days].map(([day, list]) => (
           <Card key={day} className={isPast(day) ? 'border-[#B4552D]/50' : ''}>
-            <h3 className="mb-3 text-sm uppercase tracking-widest text-[#D4A857]">
+            <h3 className="mb-3 text-sm uppercase tracking-widest text-gold">
               {dayLabel(day)}
               {isPast(day) && <span className="ml-2 rounded-full bg-[#B4552D] px-2 py-0.5 text-[11px] normal-case tracking-normal text-white">Past · mark done or no-show</span>}
             </h3>
@@ -207,7 +207,7 @@ function Agenda({ s, update }: P) {
                 const c = clients.get(a.clientId)
                 const d = new Date(a.at)
                 return (
-                  <li key={a.id} className="flex flex-wrap items-center gap-2 rounded-2xl bg-white/[0.03] p-3">
+                  <li key={a.id} className="flex flex-wrap items-center gap-2 rounded-2xl bg-white/3 p-3">
                     <span className="min-w-14 whitespace-nowrap font-semibold tabular-nums">{fmtTime(d)}</span>
                     <span className="flex-1 min-w-[140px]">{c?.name ?? 'Unknown'} <span className="text-white/50">· {svcName(a.serviceId)}</span></span>
                     {c?.phone && (
@@ -277,7 +277,7 @@ function Clients({ s, update }: P) {
           </div>
           <textarea className={input} rows={3} placeholder="Notes (hair type, allergies, favourite style…)" value={edit.notes} onChange={(e) => setEdit({ ...edit, notes: e.target.value })} />
           <label className="flex items-start gap-2 text-sm text-white/80">
-            <input type="checkbox" className="mt-1 accent-[#D4A857]" checked={edit.consent} onChange={(e) => setEdit({ ...edit, consent: e.target.checked })} />
+            <input type="checkbox" className="mt-1 accent-gold" checked={edit.consent} onChange={(e) => setEdit({ ...edit, consent: e.target.checked })} />
             Agreed to receive WhatsApp follow-ups (untick if they replied STOP)
           </label>
           <div className="flex gap-2">
@@ -357,10 +357,10 @@ function Stock({ s, update }: P) {
 
       {cats.map((cat) => (
         <Card key={cat}>
-          <h3 className="mb-3 text-sm uppercase tracking-widest text-[#D4A857]">{cat}</h3>
+          <h3 className="mb-3 text-sm uppercase tracking-widest text-gold">{cat}</h3>
           <ul className="grid gap-2">
             {s.stock.filter((i) => i.category === cat).map((i) => (
-              <li key={i.id} className={`flex flex-wrap items-center gap-2 rounded-2xl p-3 ${i.qty <= i.min ? 'bg-[#B4552D]/15' : 'bg-white/[0.03]'}`}>
+              <li key={i.id} className={`flex flex-wrap items-center gap-2 rounded-2xl p-3 ${i.qty <= i.min ? 'bg-[#B4552D]/15' : 'bg-white/3'}`}>
                 <span className="flex-1 min-w-[150px]">
                   {i.name} <span className="text-xs text-white/40">min {i.min}</span>
                   {i.barcode && <ScanLine size={13} className="ml-1 inline text-white/40" aria-label="Has barcode" />}
@@ -380,7 +380,7 @@ function Stock({ s, update }: P) {
         <h3 className="mb-3 font-semibold">Add product</h3>
         <div className="mb-3 flex flex-wrap gap-1.5">
           {PRESETS.filter((p) => !s.stock.some((i) => i.name === p.name)).map((p) => (
-            <button key={p.name} className="rounded-full border border-white/15 px-3 py-1.5 text-xs text-white/75 transition-colors hover:border-[#D4A857] hover:text-[#E9D6B0]" onClick={() => setF({ ...blankProduct, ...p, barcode: f.barcode })}>
+            <button key={p.name} className="rounded-full border border-white/15 px-3 py-1.5 text-xs text-white/75 transition-colors hover:border-gold hover:text-sand" onClick={() => setF({ ...blankProduct, ...p, barcode: f.barcode })}>
               + {p.name}
             </button>
           ))}
@@ -428,9 +428,9 @@ function ScanBar({ s, update, onNew }: P & { onNew: (barcode: string) => void })
   return (
     <Card>
       <div className="flex flex-wrap items-center gap-2">
-        <div className="flex rounded-full bg-white/[0.05] p-1 text-sm">
+        <div className="flex rounded-full bg-white/5 p-1 text-sm">
           {(['use', 'restock'] as const).map((m) => (
-            <button key={m} onClick={() => setMode(m)} aria-pressed={mode === m} className={`rounded-full px-3 py-1.5 transition-colors ${mode === m ? 'bg-[#D4A857] text-[#1A1206]' : 'text-white/70'}`}>
+            <button key={m} onClick={() => setMode(m)} aria-pressed={mode === m} className={`rounded-full px-3 py-1.5 transition-colors ${mode === m ? 'bg-gold text-[#1A1206]' : 'text-white/70'}`}>
               {m === 'use' ? 'Scan = used one' : 'Scan = arrived one'}
             </button>
           ))}
@@ -527,8 +527,8 @@ function Recipes({ s, update }: P) {
         {SERVICES.map((svc) => {
           const lines = s.recipes[svc.id] ?? []
           return (
-            <div key={svc.id} className="rounded-2xl bg-white/[0.03] p-3">
-              <p className="mb-2 text-sm font-medium text-[#E9D6B0]">{svcName(svc.id)}</p>
+            <div key={svc.id} className="rounded-2xl bg-white/3 p-3">
+              <p className="mb-2 text-sm font-medium text-sand">{svcName(svc.id)}</p>
               {lines.map((l, idx) => (
                 <div key={idx} className="mb-1.5 flex items-center gap-1.5">
                   <select className={`${input.replace('w-full ', '')} min-w-0 flex-1 py-1.5 text-sm`} aria-label={`${svcName(svc.id)} product`} value={l.itemId} onChange={(e) => setLines(svc.id, lines.map((x, j) => (j === idx ? { ...x, itemId: e.target.value } : x)))}>
@@ -538,7 +538,7 @@ function Recipes({ s, update }: P) {
                   <button className="rounded-full p-1.5 text-white/50 hover:text-white" aria-label="Remove" onClick={() => setLines(svc.id, lines.filter((_, j) => j !== idx))}><X size={14} /></button>
                 </div>
               ))}
-              {s.stock[0] && <button className="text-xs text-[#D4A857] hover:underline" onClick={() => setLines(svc.id, [...lines, { itemId: s.stock[0].id, qty: 1 }])}>+ Add product</button>}
+              {s.stock[0] && <button className="text-xs text-gold hover:underline" onClick={() => setLines(svc.id, [...lines, { itemId: s.stock[0].id, qty: 1 }])}>+ Add product</button>}
             </div>
           )
         })}
@@ -607,9 +607,9 @@ function FollowUps({ s, update }: P) {
           <Card key={c.id}>
             <div className="mb-2 flex flex-wrap items-center gap-2">
               <span className="font-medium">{c.name}</span>
-              <span className="rounded-full bg-[#D4A857]/15 px-2.5 py-0.5 text-xs text-[#E2BC72]">{labels[kind]}</span>
+              <span className="rounded-full bg-gold/15 px-2.5 py-0.5 text-xs text-[#E2BC72]">{labels[kind]}</span>
             </div>
-            <p className="mb-3 whitespace-pre-line rounded-2xl bg-white/[0.04] p-3 text-sm text-white/80">{text}</p>
+            <p className="mb-3 whitespace-pre-line rounded-2xl bg-white/4 p-3 text-sm text-white/80">{text}</p>
             <div className="flex flex-wrap gap-2">
               <a className={gold} target="_blank" rel="noopener noreferrer" href={waLink(text, c.phone)} onClick={() => record(c.id, kind, appt?.id)}>
                 <Send size={15} /> Send on WhatsApp
@@ -657,10 +657,10 @@ function Settings({ s, setS }: { s: State; setS: (s: State) => void }) {
         {AUTO_REPLIES.map((r) => (
           <div key={r.title} className="mb-4">
             <div className="mb-2 flex items-center gap-2">
-              <h3 className="flex-1 text-sm uppercase tracking-widest text-[#D4A857]">{r.title}</h3>
+              <h3 className="flex-1 text-sm uppercase tracking-widest text-gold">{r.title}</h3>
               <button className={ghost} onClick={() => copy(r.text, r.title)}><Copy size={15} /> {copied === r.title ? 'Copied' : copied === `${r.title}:fail` ? 'Select the text to copy' : 'Copy'}</button>
             </div>
-            <p className="whitespace-pre-line rounded-2xl bg-white/[0.04] p-3 text-sm text-white/80">{r.text}</p>
+            <p className="whitespace-pre-line rounded-2xl bg-white/4 p-3 text-sm text-white/80">{r.text}</p>
           </div>
         ))}
       </Card>
@@ -676,7 +676,7 @@ function Settings({ s, setS }: { s: State; setS: (s: State) => void }) {
           <ConfirmButton label="Clear all data" onConfirm={() => setS(emptyState())}><Trash2 size={15} /> Clear all data</ConfirmButton>
         </div>
         {pending && (
-          <div className="mt-4 flex flex-wrap items-center gap-2 rounded-2xl bg-white/[0.04] p-3 text-sm">
+          <div className="mt-4 flex flex-wrap items-center gap-2 rounded-2xl bg-white/4 p-3 text-sm">
             <span className="flex-1">Backup has {pending.clients.length} clients and {pending.appointments.length} appointments. It replaces everything on this device.</span>
             <button className={gold} onClick={() => { setS(pending); setPending(null) }}>Replace data</button>
             <button className={ghost} onClick={() => setPending(null)}>Cancel</button>

@@ -25,7 +25,7 @@ export default function Marquee() {
   const b = useTransform(scrollYProgress, [0, 1], still ? [-400, -400] : [-700, -200])
   if (!GALLERY.length) return null
   return (
-    <section ref={ref} className="flex flex-col gap-3 overflow-hidden bg-[#0C0C0C] pt-24 sm:pt-32 md:pt-40 pb-10">
+    <section ref={ref} className="flex flex-col gap-3 overflow-hidden bg-ink pt-24 sm:pt-32 md:pt-40 pb-10">
       <Row items={women} x={a} />
       <Row items={men.length ? men : women} x={b} />
     </section>

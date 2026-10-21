@@ -29,7 +29,7 @@ export default function About() {
         <FadeIn as="h2" delay={0} y={40} className="hero-heading text-center font-black uppercase leading-none tracking-tight" style={{ fontSize: 'clamp(3rem, 12vw, 160px)' }}>
           {t.about.title}
         </FadeIn>
-        <AnimatedText text={t.about.text} className="max-w-[560px] text-center font-medium leading-relaxed text-[#E9D6B0]" style={{ fontSize: 'clamp(1rem, 2vw, 1.35rem)' }} />
+        <AnimatedText text={t.about.text} className="max-w-[560px] text-center font-medium leading-relaxed text-sand" style={{ fontSize: 'clamp(1rem, 2vw, 1.35rem)' }} />
       </div>
       <FadeIn className="relative z-10"><ContactButton href={waLink(t.bookGeneric)}>{t.hero.cta}</ContactButton></FadeIn>
     </section>
