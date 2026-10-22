@@ -3,7 +3,7 @@ import FadeIn from '../components/FadeIn'
 import { useT } from '../i18n'
 
 // Her own clips (captions removed), served from public/videos. Each plays only while on screen.
-const CLIPS = ['cornrows-men', 'twists', 'cornrows-design', 'knotless-braids', 'two-strand-twists']
+const CLIPS = ['cornrows-men', 'cornrows-men-2', 'twists', 'cornrows-design', 'knotless-braids', 'two-strand-twists']
 
 function Clip({ name }: { name: string }) {
   const ref = useRef<HTMLVideoElement>(null)
@@ -34,7 +34,7 @@ export default function Work() {
         {t.work.title}
       </FadeIn>
       <FadeIn delay={0.1}><p className="mx-auto mt-6 max-w-xl px-6 text-center font-light leading-relaxed text-sand/80" style={{ fontSize: 'clamp(0.95rem, 1.6vw, 1.2rem)' }}>{t.work.text}</p></FadeIn>
-      <div className="mt-12 flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-4 sm:justify-center scrollbar-none">
+      <div className="mt-12 flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-4 sm:justify-center-safe scrollbar-none">
         {CLIPS.map((c) => <Clip key={c} name={c} />)}
       </div>
     </section>
